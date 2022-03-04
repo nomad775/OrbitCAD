@@ -1,0 +1,223 @@
+﻿body {
+    width: 370px;
+    margin: auto;
+    background-color: #22324d;
+    touch-action: manipulation; /*prevents zoom on double tap*/
+    font-family: "VT323", "Lucida Console", "monospace";
+    font-size: 12pt;
+    border: 2px solid red;
+}
+
+/*-----------------------------------------------*/
+/*                 --- SVG ---                   */
+/*-----------------------------------------------*/
+.mfdFrame {
+    background-color: #131339;
+}
+
+g.fn text {
+    fill: greenyellow;
+    width: 60px; /*from/for svgSolarSystem*/
+}
+
+g.fn rect {
+    fill: #131339;
+}
+
+g.activeFn text {
+    fill: #131339;
+}
+
+g.activeFn rect{
+    fill: yellowgreen;
+}
+
+p.activeFn{
+    color: yellowgreen;
+    background-color: red;
+}
+
+p.inactiveFn{
+    color: yellowgreen;
+    background-color: blue;
+}
+
+.newFn {
+    fill: greenyellow;
+    width: 10px; /*from/for svgSolarSystem*/
+    font-family: "VT323", "Lucida Console", "monospace";
+    font-size: 3pt;
+    color:aquamarine;
+    background-color: aqua;
+}
+
+
+
+#mfdScreen {
+    /*position: relative;*/
+    width: 360px;
+    height: 360px;
+    background-color: #131339;
+}
+
+#onScreenText {
+    /*position: absolute;*/
+    width: 320px;
+    padding-left: 20px;
+    padding-right: 20px;
+    margin-top: 0px;
+    color: greenyellow;
+    font-family: "VT323";
+    font-size: 12pt;
+    overflow: hidden;
+}
+
+
+
+table {
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 25px;
+    
+}
+
+td {
+    color: greenyellow;
+    font-family: "VT323";
+    font-size: 12pt;
+    overflow: hidden;
+}
+
+td.dvLabel{
+    width: 100px;
+}
+
+td.data{
+    width: 100px;
+    text-align:right;
+}
+
+/*-----------------------------------------------*/
+/*            --- DISPLAY PANEL --- */
+/*-----------------------------------------------*/
+#displayContainer {
+    display: grid;
+    width: 350px;
+    grid-template-columns: 160px 160px;
+    /*grid-template-rows: 50px 50px 50px 50px 50px;*/
+    grid-row-gap: 5px;
+    grid-column-gap: 10px;
+    justify-content: center;
+    background-color: #484f5b;
+    border: 1px solid black;
+    border-radius: 8px;
+    padding: 5px;
+}
+
+.paramDisp {
+    color: white;
+    overflow: hidden;
+    padding: 5px;
+    border: 1px solid black;
+    background-color: #858c98;
+    border-radius: 3px;
+    font-size: 12px;
+}
+
+.paramDisp_hidden {
+    display: none;
+}
+
+.paramDisp_inactive {
+    color: #ddd;
+    overflow: hidden;
+    padding: 5px;
+    border: 1px solid black;
+    background-color: #858c98;
+    border-radius: 3px;
+    font-size: 12px;
+}
+
+/* LCD screen */
+.LCDscreen, input {
+    background-color: darkslategrey;
+    color: greenyellow;
+    font-family: "VT323";
+    font-size: 12pt;
+    border-radius: 2px;
+    text-align: right;
+    height: 18px;
+}
+
+input {
+    height: 16px;
+    width: auto;
+    border: none;
+}
+
+input.activeFn {
+    color: darkslategrey;
+    background-color: greenyellow;
+}
+
+input.fn{
+    color: greenyellow;
+    background-color: darkslategrey;
+}
+
+
+/* inactive LCD screen */
+div.paramDisp_inactive .LCDscreen, div.paramDisp_inactive input {
+    background-color: darkslategrey;
+    text-align: right;
+    color: black;
+    font-family: "VT323";
+    font-size: 12pt;
+    border-radius: 2px;
+}
+
+
+/*
+
+.LCDscreen span {
+    display: inline-block;
+    height: 20px;
+    vertical-align: middle;
+    padding-top: 1.5px;
+}
+*/
+/*inline block needed for tx Ln disp*/
+
+
+/*-----------------------------------------------*/
+/*            --- KEYBOARD PANEL ---             */
+/*-----------------------------------------------*/
+button {
+    height: 1.2cm;
+    width: 1.2cm;
+    margin: 1px;
+}
+
+/*-----------------------------------------------*/
+/*                 --- SVG ---                   */
+/*-----------------------------------------------*/
+svg * {
+   /* background-color: #131339;*/
+    vector-effect: non-scaling-stroke;
+}
+
+/*from/for svgSolarSystem*/
+.orbit {
+    fill: none;
+    
+    stroke-opacity: .3;
+}
+
+.planet {
+    stroke: black;
+}
+
+.planet_dim{
+    stroke: none;
+    fill-opacity: .3;
+}

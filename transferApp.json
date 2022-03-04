@@ -1,0 +1,321 @@
+{
+    "app": "transfer",
+    "pages": [
+        {
+            "id": "t0",
+            "label": "FN",
+            "fn": "()=> setActivePage('t0')",
+            "pageData": {
+                "pageFunctions": [
+                    {
+                        "id": "b0",
+                        "label": "",
+                        "fn": ""
+                    },
+                    {
+                        "id": "b1",
+                        "label": "",
+                        "fn": ""
+                    },
+                    {
+                        "id": "b2",
+                        "label": "",
+                        "fn": null
+                    },
+                    {
+                        "id": "b3",
+                        "label": "",
+                        "fn": null
+                    },
+                    {
+                        "id": "b4",
+                        "label": "",
+                        "fn": null
+                    },
+                    {
+                        "id": "b5",
+                        "label": "",
+                        "fn": null
+                    }
+                ],
+                "inputFields": [],
+                "outputFields": [],
+                "activePanels": []
+            }
+        },
+        {
+            "id": "t1",
+            "label": "ORGN-DEST",
+            "fn": "() => setActivePage('t1')",
+            "pageData": {
+                "pageFunctions": [
+                    {
+                        "id": "b0",
+                        "label": "SET UT",
+                        "fn": "setActiveField('utY')"
+                    },
+                    {
+                        "id": "b1",
+                        "label": "ORIGIN",
+                        "fn": "setActiveField('origin')"
+                    },
+                    {
+                        "id": "b2",
+                        "label": "DEST",
+                        "fn": "setActiveField('destination')"
+                    },
+                    {
+                        "id": "b3",
+                        "label": "",
+                        "fn": ""
+                    },
+                    {
+                        "id": "b4",
+                        "label": "",
+                        "fn": ""
+                    },
+                    {
+                        "id": "b5",
+                        "label": "NEXT",
+                        "fn": "activePage.setInactive(); initializeTransferOrbit(); setActivePage('t2')"
+                    }
+                ],
+                "inputFields": [
+                    "origin",
+                    "destination"
+                ],
+                "outputFields": [
+                    "utMean"
+                ],
+                "activePanels": [
+                    "#utPanelUnit"
+                ]
+            }
+        },
+        {
+            "id": "t2",
+            "label": "INCPT",
+            "fn": "setActivePage('t2'); setSolarSystemSVG();",
+            "pageData": {
+                "pageFunctions": [
+                    {
+                        "id": "b0",
+                        "label": "FWD",
+                        "fn": "startAnimation(1, () => {activeButton.setInactive;})"
+                    },
+                    {
+                        "id": "b1",
+                        "label": "BACK",
+                        "fn": "startAnimation(-1, () => {activeButton.setInactive;})"
+                    },
+                    {
+                        "id": "b2",
+                        "label": "",
+                        "fn": ""
+                    },
+                    {
+                        "id": "b3",
+                        "label": "",
+                        "fn": ""
+                    },
+                    {
+                        "id": "b4",
+                        "label": "",
+                        "fn": ""
+                    },
+                    {
+                        "id": "b5",
+                        "label": "NEXT",
+                        "fn": ""
+                    }
+                ],
+                "inputFields": [
+                ],
+                "outputFields": [
+                    "lan","argPe"
+                ],
+                "activePanels": [
+                    "#apPanelUnit",
+                    "#pePanelUnit",
+                    "#lanPanelUnit",
+                    "#argPePanelUnit",
+                    "#lnPanelUnit",
+                    "#utPanelUnit"
+                ]
+            }
+        },
+
+        {
+            "id": "t3",
+            "label": "EJECT",
+            "fn": "setActivePage('t3'); initializeEjectionOrbit();",
+            "pageData": {
+                "pageFunctions": [
+                    {
+                        "id": "b0",
+                        "label": "SET PE",
+                        "fn": "setActiveField('parkPe');"
+                    },
+                    {
+                        "id": "b1",
+                        "label": "SET AP",
+                        "fn": "setActiveField('parkAp');"
+                    },
+                    {
+                        "id": "b2",
+                        "label": "",
+                        "fn": null
+                    },
+                    {
+                        "id": "b3",
+                        "label": "",
+                        "fn": null
+                    },
+                    {
+                        "id": "b4",
+                        "label": "",
+                        "fn": null
+                    },
+                    {
+                        "id": "b5",
+                        "label": "CALC",
+                        "fn": "initializeEjectionOrbit();"
+                    }
+                ],
+                "inputFields": [
+                    "parkPe",
+                    "parkAp"
+                ],
+                "outputFields": [
+                    "ejectVpeCir",
+                    "ejectVpeHyp",
+                    "ejectDv",
+                    "ejectAngle",
+                    "ejectTOF",
+                    "ejectTOD"
+                ],
+                "activePanels": [
+                    "#pePanelUnit",
+                    "#apPanelUnit"
+                ]
+            }
+        },
+
+        {
+            "id": "t4",
+            "label": "CAPTURE",
+            "fn": "setActivePage('t4'); initializeCaptureOrbit();",
+            "pageData": {
+                "pageFunctions": [
+                    {
+                        "id": "b0",
+                        "label": "SET PE",
+                        "fn": "setActiveField('capPe')"
+                    },
+                    {
+                        "id": "b1",
+                        "label": "SET AP",
+                        "fn": "setActiveField('capAp')"
+                    },
+                    {
+                        "id": "b2",
+                        "label": "",
+                        "fn": null
+                    },
+                    {
+                        "id": "b3",
+                        "label": "",
+                        "fn": null
+                    },
+                    {
+                        "id": "b4",
+                        "label": "",
+                        "fn": null
+                    },
+                    {
+                        "id": "b5",
+                        "label": "CALC",
+                        "fn": "initializeCaptureOrbit();"
+                    }
+                ],
+                "inputFields": [
+                    "capPe",
+                    "capAp"
+                ],
+                "outputFields": [
+                    "capVsoi",
+                    "capVpeHyp",
+                    "capVpeCir",
+                    "capDv"
+                ],
+                "activePanels": [
+                    "#pePanelUnit",
+                    "#apPanelUnit"
+                ]
+            }
+        },
+
+        {
+            "id": "t5",
+            "label": "",
+            "fn": "() => setActivePage('t5')",
+            "pageData": {
+                "pageFunctions": [
+                    {
+                        "id": "b0",
+                        "label": "SET UT",
+                        "fn": "() => setActiveField('utY')"
+                    },
+                    {
+                        "id": "b1",
+                        "label": "SET T-PE",
+                        "fn": "() => setActiveField('tPeY')"
+                    },
+                    {
+                        "id": "b2",
+                        "label": "SET LAN",
+                        "fn": "() => setActiveField('lan')"
+                    },
+                    {
+                        "id": "b3",
+                        "label": "SET ARGPE",
+                        "fn": "() => setActiveField('argPe')"
+                    },
+                    {
+                        "id": "b4",
+                        "label": "",
+                        "fn": null
+                    },
+                    {
+                        "id": "b5",
+                        "label": "CALC",
+                        "fn": null
+                    }
+                ],
+                "inputFields": [
+                    "parkPe",
+                    "parkAp",
+                    "lan",
+                    "argPe"
+                ],
+                "outputFields": [
+                    "lnTx",
+                    "phaseMnvT",
+                    "phaseOrbits",
+                    "phasePe",
+                    "phaseAp",
+                    "phasePeriod",
+                    "phaseDv"
+                ],
+                "activePanels": [
+                    "#pePanelUnit",
+                    "#apPanelUnit",
+                    "#lanPanelUnit",
+                    "#argPePanelUnit",
+                    "#utPanelUnit",
+                    "#tPePanelUnit"
+                ]
+            }
+        }
+    ]
+}

@@ -1,0 +1,343 @@
+
+var origin;
+var destination;
+
+var parkOrbit;
+var ejectionOrbit;
+var txOrbit;
+
+class Orbit {
+
+    name = "theName";
+
+    sma = 0;
+    ecc = 0;
+    LnPe = 0;
+    mean0 = 0;
+
+    period = 0;
+
+    c = 0;
+    cx = 0;
+    cy = 0;
+
+    constructor(ap, pe, LAN_deg, argPe_deg, mu_parent) {
+
+        this.name = name;
+        this.mu_parent = mu_parent;
+
+        this.sma = (ap + pe) / 2;
+        this.ecc = (ap - pe) / (ap + pe);
+        this.period = 2 * pi * Math.sqrt(this.sma ** 3 / this.mu_parent);
+
+        this.LnPe = modRev((LAN_deg + argPe_deg) * pi/180);
+        this.mean0 = 0;
+
+        this.theta0 = this.trueAnomaly(this.mean0);
+        this.Ln0 = modRev(this.LnPe + this.theta0);
+
+        this.c = this.ecc * this.sma;
+        this.cx = this.c * Math.cos(this.LnPe);
+        this.cy = this.c * Math.sin(this.LnPe);
+    }
+
+    updateApPe(ap, pe) {
+        this.ap = ap;
+        this.pe = pe;
+        this.sma = (ap + pe) / 2;
+        this.ecc = (ap - pe) / (ap + pe);
+        this.period = 2 * pi * Math.sqrt(this.sma ** 3 / this.mu_parent);
+    }
+
+    updateOrientation(LAN_deg, argPe_deg) {
+
+        LAN_deg = Number(LAN_deg);
+        argPe_deg = Number(argPe_deg);
+
+        this.LnPe = modRev((LAN_deg + argPe_deg) * pi / 180);
+        this.mean0 = 0;
+
+        this.theta0 = this.trueAnomaly(this.mean0);
+        this.Ln0 = modRev(this.LnPe + this.theta0);
+
+        this.c = this.ecc * this.sma;
+        this.cx = this.c * Math.cos(this.LnPe);
+        this.cy = this.c * Math.sin(this.LnPe);
+    }
+
+    trueAnomaly(M) {
+
+        // eccentric anomaly
+        var E = M;
+
+        for (var i = 0; i < 7; i++) {
+            E = M + this.ecc * Math.sin(E);
+        }
+
+        // true anomaly
+        var theta = 2 * Math.atan(Math.sqrt((1 + this.ecc) / (1 - this.ecc)) * Math.tan(E / 2))
+
+        return modRev(theta, 4);
+    }
+
+    LnAtTimeT(t) {
+
+        var percent = t / this.period;
+
+        //mean anomaly relative to Pe
+        var M = percent * 2 * pi + this.mean0;
+
+        // true anomaly
+        var theta = this.trueAnomaly(M);
+        var Ln = this.LnPe + theta
+
+        return modRev(Ln, 4);
+    }
+
+    rAtLn(Ln) {
+        var r = this.sma * (1 - this.ecc ** 2) / (1 + this.ecc * Math.cos(Ln - this.LnPe))
+        return r;
+    }
+
+    v(r) {
+        return Math.sqrt(this.mu_parent * (2 / r - 1 / this.sma))
+    }
+
+    orbitTatLn(Ln) {
+
+        let theta = modRev(Ln - this.LnPe);
+        let E = 2 * Math.atan(Math.tan(theta / 2) / Math.sqrt((1 + this.ecc) / (1 - this.ecc)));
+        E = modRev(E);
+        let M = E - this.ecc * Math.sin(E);
+        
+        let obtT = M / (2 * pi) * this.period;
+
+        console.log("ln", Ln);
+        console.log("theta", theta);
+        console.log("M", M);
+        console.log("obt T", obtT);
+        return obtT;
+
+    }
+
+    solveAforPeriod(Tseconds) {
+        return Math.cbrt((Tseconds / (2 * pi)) ** 2 * this.mu_parent);
+    }
+
+    phaseOrbit(degs, Ln) {
+
+        let r1 = this.rAtLn(Ln);
+        let v1 = this.v(r1);
+
+        let t = this.period * (1- degs / 360);
+        this.solveAforPeriod(t);
+        
+        let r2 = 2 * this.sma - r1;
+
+        let ap = r1 > r2 ? r1 : r2;
+        let pe = r1 < r2 ? r1 : r2;
+        this.updateApPe(ap, pe);
+
+        let v2 = this.v(r1);
+        let deltaV = v2 - v1;
+        let tmnv = this.TatLn(Ln);
+
+        return { dv: deltaV, t: tmnv };
+    }
+
+    dvPlaneChange(Ln, inc) {
+
+        let v = this.v(this.rAtLn(Ln));
+        let dV = 2 * v * Math.sin(inc / 2);
+
+        return dV;
+    }
+
+    MeanLnAtTimeT(t) {
+        var percent = t / this.period;
+        var M = percent * 2 * pi + this.mean0;
+        var Ln = M + this.LnPe;
+
+        return modRev(Ln, 4);
+    }
+}
+
+function calculateEjectionDv(apAlt, peAlt) {
+    
+    if (apAlt == 0) apAlt = peAlt;
+
+    parkOrbit.updateApPe(apAlt + origin.r, peAlt + origin.r);
+
+    let v_soi = txOrbit.v_depart - txOrbit.vo;
+    ejectionOrbit = HyperbolicOrbit(origin, peAlt, v_soi);
+
+    fields["ejectVpeCir"].value = ejectionOrbit.vPeCir.toFixed(0);
+    fields["ejectVpeHyp"].value = ejectionOrbit.vPeHyp.toFixed(0);
+    fields["ejectDv"].value = ejectionOrbit.deltaV.toFixed(0);
+    fields["ejectAngle"].value = (ejectionOrbit.ejectionAngle * 180/pi).toFixed(1);
+    fields["ejectTOF"].value = ejectionOrbit.TOF; 
+    
+
+    updateDisplay("ejectVpeCir");
+    updateDisplay("ejectVpeHyp");
+    updateDisplay("ejectDv");
+    updateDisplay("ejectAngle");
+    updateDisplay("ejectTOF");
+}
+
+function calculatePlaneChangeDv() {
+    
+    fields["dvPlaneChange"].value = txOrbit.planeChangeDv().toFixed(0);
+    updateDisplay("dvPlaneChange");
+}
+
+function calculateCaptureDv(peAlt) {
+    
+    let v_soi = txOrbit.v_arrive - txOrbit.vd;
+    captureOrbit = new HyperbolicOrbit(destination, peAlt, v_soi);
+    let dv = captureOrbit.deltaV;
+
+    let r = Number(destination.r) + Number(peAlt);
+    let v_pe_cir = Math.sqrt(destination.mu / r);
+    let v_pe_hyp = v_pe_cir + dv;
+
+    fields["capVsoi"].value = -v_soi.toFixed(0);
+    fields["capVpeHyp"].value = v_pe_hyp.toFixed(0);
+    fields["capVpeCir"].value = v_pe_cir.toFixed(0);
+    fields["capDv"].value = captureOrbit.deltaV.toFixed(0);
+
+    updateDisplay("capVsoi", fields["capVsoi"].value);
+    updateDisplay("capVpeHyp");
+    updateDisplay("capVpeCir");
+    updateDisplay("capDv", captureOrbit.deltaV.toFixed(0));
+}
+
+function calculatePhaseChange() {
+
+    parkOrbit.updateOrientation(fields["lan"].value, fields["argPe"].value);
+
+    let utY = fields["utY"].value;
+    let utD = fields["utD"].value;
+    let utH = fields["utH"].value;
+    let utM = fields["utM"].value;
+
+    let utS = convertDateToSeconds(utY, utD, utH, utM);
+
+    let tPeY = fields["tPeY"].value;
+    let tPeD = fields["tPeD"].value;
+    let tPeH = fields["tPeH"].value;
+    let tPeM = fields["tPeM"].value;
+
+    let secondsToPe = convertDateToSeconds(tPeY, tPeD, tPeH, tPeM, true);
+    let orbitTnow = parkOrbit.period - secondsToPe;
+    
+    let LnTx = modRev(txOrbit.Ln_o + pi / 2 - ejectionOrbit.ejectionAngle, 4);
+    let orbitTLnTx = parkOrbit.orbitTatLn(LnTx);
+
+    let timeToLnTx = orbitTLnTx - orbitTnow;
+    if (timeToLnTx < 0) timeToLnTx += parkOrbit.period;
+
+    let deltaT = txOrbit.t - utS - timeToLnTx;
+    let orbits = deltaT / parkOrbit.period;
+
+    let r1 = parkOrbit.rAtLn(LnTx)
+    let v1 = parkOrbit.v(r1);
+
+    // solve for N (truncated) orbits (slower)
+    let nOrbits = Math.floor(orbits);
+
+    let newPeriod1 = deltaT / nOrbits;
+    let newSMA1 = parkOrbit.solveAforPeriod(newPeriod1);
+    let r2 = 2 * newSMA1 - r1;
+
+    parkOrbit.updateApPe(r1, r2);
+
+    let v2 = parkOrbit.v(r1);
+    let dv1 = v2 - v1;
+
+    // solve for N+1 orbits (faster)
+
+    let newPeriod2 = deltaT / (nOrbits + 1);
+    let newSMA2 = parkOrbit.solveAforPeriod(newPeriod2);
+    let r3 = 2 * newSMA2 - r1;
+    parkOrbit.updateApPe(r1, r3);
+    let v3 = parkOrbit.v(r1);
+    let dv2 = v1 - v3;
+
+    fields["lnTx"].value = (LnTx * 180 / pi).toFixed(1);
+    fields["phaseMnvT"].value = convertSecondsToDateObj(timeToLnTx).toString();
+    fields["phaseOrbits"].value = orbits.toFixed(3);
+
+    fields["phasePe"].value = ((r1 - origin.r) / 1000).toFixed(0);
+    fields["phaseAp"].value = ((r2 - origin.r)/1000).toFixed(0);
+    fields["phasePeriod"].value = convertSecondsToDateObj(newPeriod1).toString();
+    fields["phaseDv"].value = dv1.toFixed(2);
+
+    fields["phasePe2"].value = ((r1 - origin.r) / 1000).toFixed(0);
+    fields["phaseAp2"].value = ((r3 - origin.r) / 1000).toFixed(0);
+    fields["phasePeriod2"].value = convertSecondsToDateObj(newPeriod2).toString();
+    fields["phaseDv2"].value = dv2.toFixed(2);
+
+    updateDisplay("lnTx");
+    updateDisplay("phaseOrbits");
+    updateDisplay("phaseMnvT");
+
+    updateDisplay("phasePe");
+    updateDisplay("phaseAp");
+    updateDisplay("phasePeriod");
+    updateDisplay("phaseDv");
+
+    updateDisplay("phasePe2");
+    updateDisplay("phaseAp2");
+    updateDisplay("phasePeriod2");
+    updateDisplay("phaseDv2");
+
+    activeButton.setInactive();
+}
+
+function hyp(a, alpha) {
+
+    var pi = Math.atan(1) * 4;
+
+    var a = 465;
+    var alpha = 40 * pi / 180;
+
+    var b = a * Math.tan(alpha);
+    var ecc = 1 / Math.cos(alpha);
+    var F = a * ecc;
+    var r0 = F - a;
+
+    var left = -.5 * r0;
+    var top = -1.25 * r0;
+    var width = r0 * 2.5;
+
+    $("#ejectionOrbit").attr("viewBox", `${left} ${top} ${width} ${width}`);
+
+    var d = "M " + r0 + " 0 L ";
+
+    for (var t = 0; t < pi / 2; t += pi / 30) {
+
+        var x = F - a * Math.cosh(t);
+        var y = -b * Math.sinh(t);
+
+        d += x + " " + y + " ";
+    }
+
+    $("#hyperbola").attr("d", d);
+    $("#parkOrbit").attr("r", r0)
+
+    var x = 0;
+    var y = -b / a * F;
+    $("#asymptote").attr("x1", F).attr("y2", 0);
+    $("#asymptote").attr("x2", x).attr("y2", y);
+    $("#axis").attr("x2", r0);
+    $("#peMarker").attr("cx", r0);
+    $("#hyperbolaGroup").attr("transform", `rotate(${90 - alpha * 180 / pi})`);
+
+
+    var LnPlanet = 18.5
+    $("#LnDir").attr("x2", 2 * r0);
+    $("#LnDir").attr("transform", ` rotate(${-LnPlanet})`);
+
+}
+
