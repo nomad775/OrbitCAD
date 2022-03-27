@@ -1,0 +1,278 @@
+<svg id="topFrame" class="mfdFrame" height="50px" width="360px" viewBox="-180 0 360 50"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink">
+
+    <line x1="-120" y1="30" x2="-120" y2="50" stroke="blue" />
+    <line x1="-60" y1="30" x2="-60" y2="50" stroke="blue" />
+    <line x1="0" y1="30" x2="0" y2="50" stroke="blue" />
+    <line x1="60" y1="30" x2="60" y2="50" stroke="blue" />
+    <line x1="120" y1="30" x2="120" y2="50" stroke="blue" />
+
+    <g id="btnLabelGrpT0" class="fn">
+        <rect id="bckgrnT0" x="-180" y="30" height="20" width="58" zorder="" />
+        <text id="btnLabelT0" x="-150" y="45" text-anchor="middle">A</text>
+    </g>
+
+    <g id="btnLabelGrpT1" class="fn">
+        <rect id="bckgrnT1" x="-120" y="30" height="20" width="58" />
+        <text id="btnLabelT1" x="-90" y="45" text-anchor="middle">B</text>
+    </g>
+
+    <g id="btnLabelGrpT2" class="fn">
+        <rect id="bckgrnT2" x="-60" y="30" height="20" width="58" />
+        <text id="btnLabelT2" x="-30" y="45" text-anchor="middle">C</text>
+    </g>
+    <g id="btnLabelGrpT3" class="fn">
+        <rect id="bckgrnT3" x="0" y="30" height="20" width="58" />
+        <text id="btnLabelT3" x="30" y="45" text-anchor="middle">D</text>
+    </g>
+    <g id="btnLabelGrpT4" class="fn">
+        <rect id="bckgrnT4" x="60" y="30" height="20" width="58" />
+        <text id="btnLabelT4" x="90" y="45" text-anchor="middle">E</text>
+    </g>
+
+    <g id="btnLabelGrpT5" class="fn">
+        <rect id="bckgrnT5" x="120" y="30" height="20" width="58" />
+        <text id="btnLabelT5" x="150" y="45" text-anchor="middle">F</text>
+    </g>
+
+    <path d="M 0 30 H170 A 10 10 0 0 1 180 40 V50 H200 V0 H-200 V50 H-180 V40 A 10 10 0 0 1 -170 30   H0" stroke="black" fill="black"></path>
+
+    <rect id="btnT0" x="-175" y="5" height="20" width="50" rx="5" ry="5" stroke="gray" fill="lightgray" onclick="buttons['t0'].click()" />
+    <rect id="btnT1" x="-115" y="5" height="20" width="50" rx="5" ry="5" stroke="gray" fill="lightgray" onclick="buttons['t1'].click()" />
+    <rect id="btnT2" x="-55" y="5" height="20" width="50" rx="5" ry="5" stroke="gray" fill="lightgray" onclick="buttons['t2'].click()" />
+    <rect id="btnT3" x="5" y="5" height="20" width="50" rx="5" ry="5" stroke="gray" fill="lightgray" onclick="buttons['t3'].click()" />
+    <rect id="btnT5" x="65" y="5" height="20" width="50" rx="5" ry="5" stroke="gray" fill="lightgray" onclick="buttons['t4'].click()" />
+    <rect id="btnT5" x="125" y="5" height="20" width="50" rx="5" ry="5" stroke="gray" fill="lightgray" onclick="buttons['t5'].click()" />
+
+</svg>
+
+<div id="mfdScreen" onwheel="zoomWheel(event)" onpointerdown="toggleMouseDown(event)" onpointerup="toggleMouseDown(event)" onmouseleave="boolDown=false" ontouchmove="pan(event)" ondblclick="zoomAll(event)" ontouchend="touchUp(event);boolDown=true">
+
+    <div style="display:none" id="onScreenText">
+
+        <table id="table2">
+            <tr>
+                <th colspan="2">Data Table</th>
+            </tr>
+            <tr>
+                <td class="dvLabel"></td>
+                <td class="data"></td>
+            </tr>
+            <tr>
+                <td class="dvLabel"></td>
+                <td class="data"></td>
+            </tr>
+            <tr>
+                <td class="dvLabel"></td>
+                <td class="data"></td>
+            </tr>
+            <tr>
+                <td class="dvLabel"></td>
+                <td class="data"></td>
+            </tr>
+            <tr>
+                <td class="dvLabel"></td>
+                <td class="data"></td>
+            </tr>
+            <tr>
+                <td class="dvLabel"></td>
+                <td class="data"></td>
+            </tr>
+        </table>
+
+        <table id="table3">
+            <tr>
+                <td class="dvLabel"></td>
+                <td class="data"></td>
+                <td class="data"></td>
+            </tr>
+            <tr>
+                <td class="dvLabel"></td>
+                <td class="data"></td>
+                <td class="data"></td>
+            </tr>
+            <tr>
+                <td class="dvLabel"></td>
+                <td class="data"></td>
+                <td class="data"></td>
+            </tr>
+            <tr>
+                <td class="dvLabel"></td>
+                <td class="data"></td>
+                <td class="data"></td>
+            </tr>
+        </table>
+
+        <table id="table1">
+            <tr>
+                <th colspan="2">DELTA V SUMMARY</th>
+            </tr>
+            <tr>
+                <td class="dvLabel">EJECTION</td>
+                <td class="data"></td>
+            </tr>
+            <tr>
+                <td class="dvLabel">PLANE CHANGE</td>
+                <td class="data"></td>
+            </tr>
+            <tr>
+                <td class="dvLabel">CAPTURE</td>
+                <td class="data"></td>
+            </tr>
+            <tr>
+                <td class="dvLabel">TOTAL</td>
+                <td class="data"></td>
+            </tr>
+
+            <tr>
+                <td class="dataLabel"></td>
+                <td></td>
+            </tr>
+        </table>
+
+    </div>
+
+    <svg id="planetSystem" class="mfdFrame" display="none" height="360" width="360" viewBox="-200 -250 500 500"
+        xmlns="http://www.w3.org/2000/svg"
+        xmlns:xlink="http://www.w3.org/1999/xlink">
+
+        <line id="sunDir" x1=0 y1=0 x2=-3 y2=0 stroke="yellow" stroke-width="1" />
+        <line id="prograde" x1="0" y1="0" x2="0" y2="-3" stroke="green" stroke-width="2.5" stroke-opacity=".4" stroke-dashArray="10 15 10"/>
+
+        <g id="hyperbolaGroup">
+            <path id="hyperbola" stroke="white" stroke-width="2.5" fill="none" d="M 93.01 0 L 92.30 -7.25   90.14 -14.72 86.49 -22.64" />
+
+            <line id="axis" x1=0 y1=0 x2=.05 y2=0 stroke="grey" stroke-dashArray="3 2 3" />
+            <line id="asymptote" x1="1.40" y1="0" x2=".4650" y2="-1.3153" stroke="gray" stroke-width="1" stroke-dashArray="3 2 3" stroke-opacity=".3" />
+            <!-- <circle id="peMarker" cx="0" cy="0" r="5" stroke="red" fill="none" /> -->
+            <!-- <circle id="soiMarker" cx="0" cy="0" r=".1" stroke="yellow" fill="none" stroke-dashArray="3 2 3" /> -->
+        </g>
+
+        <circle id="planetSystemSOI" cx="0" cy="0" r="1" stroke="white" fill="none" stroke-dashArray="20 50 20" stroke-opacity=".5"/>
+        <circle id="planetSystemPark" cx="0" cy="0" r=".20" stroke="gray" fill="none" />
+        <circle id="planetSystemPlanet" cx="0" cy="0" r=".10" stroke="blue" fill="cyan" />
+
+    </svg>
+
+    <svg id="solarSystem" height="360" width="360" viewBox="-1100 -1100 1900 1900"
+        xmlns="http://www.w3.org/2000/svg"
+        xmlns:xlink="http://www.w3.org/1999/xlink">
+
+        <circle id="originSelected" cx="0" cy="0" r="25" fill="none" />
+        <circle id="destSelected" cx="0" cy="0" r="25" fill="none" />
+
+        <circle id="sun" cx="0" cy="0" r="2.5" fill="yellow" stroke="orange" stroke-width="1" />
+
+        <!-- arc path rx ry angle large-angle-flag sweep-flag (1-cw; 0-ccw) end_x endy-->
+        <!-- M ap.x, ap.y
+                            A s.maj.axis s.min.axis lonPe 0 0 pe.x pe.y -->
+        <!-- M pe.x pe.y
+                            A s.maj.axis s.min.axis lonPe 0 0 ap.x ap.y -->
+
+        <path class="orbit" id="MohoOrbit" stroke="peachpuff" d="M   -5.50   62.92
+                                                                        A 52.63   51.57  -265    0 0    3.67  -41.95
+                                                                        A 52.63   51.57  -265    0 0   -5.50   62.92 " />
+        <path class="orbit" id="EveOrbit" stroke="purple" d="M  -95.93   25.70
+                                                                        A 98.33   98.32  -195    0 0   94.02  -25.19
+                                                                        A 98.33   98.32  -195    0 0  -95.93   25.7  " />
+        <path class="orbit" id="KerbinOrbit" stroke="cyan" d="M -136.00    0
+                                                                        A 136.00 136.00  -180    0 0  136.00    0
+                                                                        A 136.00 136.00  -180    0 0 -136.00    0    " />
+        <path class="orbit" id="DunaOrbit" stroke="red" d="M  155.37  152.68
+                                                                        A 207.26 207.00  -315.5  0 0 -140.30 -137.87
+                                                                        A 207.26 207.00  -315.5  0 0  155.37  152.68 " />
+        <path class="orbit" id="DresOrbit" stroke="chocolate" d="M -460.51   81.20
+                                                                        A 408.39 404.08  -190    0 0  343.88  -60.63
+                                                                        A 408.39 404.08  -190    0 0 -460.51   81.2  " />
+
+        <path class="orbit" id="JoolOrbit" stroke="green" d="M  348.91 -552.57
+                                                                        A 687.74 686.87   -232    0 0 -444.58  569.04
+                                                                        A 687.74 686.87   -232    1 0  348.91 -552.57 " />
+
+        <path class="orbit" id="EelooOrbit" stroke="gray" d="M -729.89 -869.84 A 901.19 870.20  -130    0 0 428.66 510.86
+                                                                        A 901.19 870.20  -130    0 0 -729.89 -869.84 " />
+
+        <circle class="planet" id="Moho" cx="-5.50" cy="62.92" r="18" fill="peachpuff" onclick="planetClickAsInput(event,'Moho')"/>
+        <circle class="planet" id="Eve" cx="-95.93" cy="25.70" r="18" fill="purple" onclick="planetClickAsInput(event,'Eve')" />
+        <circle class="planet" id="Kerbin" cx="-136.00" cy="0" r="18" fill="cyan" onclick="planetClickAsInput(event,'Kerbin')"/>
+        <circle class="planet" id="Duna" cx="155.37" cy="152.68" r="18" fill="crimson" onclick="planetClickAsInput(event,'Duna')"/>
+        <circle class="planet" id="Dres" cx="-460.51" cy="81.20" r="18" fill="#a44128" onclick="planetClickAsInput(event,'Dres')"/>
+        <circle class="planet" id="Jool" cx="348.92" cy="-552.57" r="18" fill="green" onclick="planetClickAsInput(event,'Jool')"/>
+        <circle class="planet" id="Eeloo" cx="-729.89" cy="-869.84" r="18" fill="gray" onclick="planetClickAsInput(event,'Eeloo')"/>
+
+        <path id="txOrbit" stroke="gray" fill="none" stroke-dashArray="6 4 6" />
+
+        <!-- DECORATIONS -->
+
+        <circle class="planet" id="planet_destination_future" cx="0" cy="0" r="18" fill="red" fill-opacity="30%"/>
+
+        <line id="line1" x1="0" y1="0" x2="120" y2="120" stroke="lightblue" stroke-dashArray="15 5 5 5 1 5 5 5 10 5" />
+
+        <g id="txMarker" transform="translate(10,10)" stroke-width="2">
+            <circle id="txMarker" cx="0" cy="0" r="12" stroke="green" fill="none" stroke-opacity="70%" />
+            <line x1="10" y1="0" x2="18" y2="0" stroke="green" />
+            <line x1="0" y1="10" x2="0" y2="18" stroke="green" />
+            <line x1="-10" y1="0" x2="-18" y2="0" stroke="green" />
+            <line x1="0" y1="-10" x2="0" y2="-18" stroke="green" />
+            <circle cx="0" cy="0" r="1" storke="green" fill="green" />
+        </g>
+
+        <path id="destTOF" stroke="yellow" stroke-width=3 fill="none" stroke-opacity="30%" />
+        <path id="txTOF" stroke="lightgreen" stroke-width=3 fill="none" stroke-opacity="30%" />
+
+    </svg>
+
+</div>
+
+<svg id="bottomFrame" class="mfdFrame" height="50" width="360" viewBox="-180 0 360 50"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!--<svg id="bottomFrame" class="mfdFrame" height="50px" width="360px" viewBox="-180 0 360 50" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">-->
+
+    <line x1="-120" y1="0" x2="-120" y2="20" stroke="blue" />
+    <line x1="-60" y1="0" x2="-60" y2="20" stroke="blue" />
+    <line x1="0" y1="0" x2="0" y2="20" stroke="blue" />
+    <line x1="60" y1="0" x2="60" y2="20" stroke="blue" />
+    <line x1="120" y1="0" x2="120" y2="20" stroke="blue" />
+
+    <g class="fn">
+        <rect x="-175" y="0" height="20" width="50" fill="none" />
+        <text id="btnLabelB0" x="-150" y="15" text-anchor="middle">A</text>
+    </g>
+
+    <g class="fn">
+        <rect x="-115" y="0" height="20" width="50" fill="none" />
+        <text class="fn" id="btnLabelB1" text-anchor="middle" x="-90" y="15">B</text>
+    </g>
+
+    <g class="fn">
+        <rect x="-55" y="0" height="20" width="50" fill="none" />
+        <text class="fn" id="btnLabelB2" text-anchor="middle" x="-30" y="15">C</text>
+    </g>
+
+    <g class="fn">
+        <rect x="5" y="0" height="20" width="50" fill="none" />
+        <text class="fn" id="btnLabelB3" text-anchor="middle" x="30" y="15">D</text>
+    </g>
+
+    <g class="fn">
+        <rect x="65" y="0" height="20" width="50" fill="none" />
+        <text id="btnLabelB4" text-anchor="middle" x="90" y="15">E</text>
+    </g>
+
+    <g class="fn">
+        <rect x="125" y="0" height="20" width="50" fill="none" />
+        <text id="btnLabelB5" text-anchor="middle" x="150" y="15">F</text>
+    </g>
+
+    <path d="M 0 20 H180 V0 H200 V50 H-200 V0 H-180 V20 H0" stroke="black" fill="black"></path>
+
+    <rect id="btnB0" x="-175" y="25" height="20" width="50" rx="5" ry="5" stroke="gray" fill="lightgray" onclick="buttons['b0'].click()"/>
+    <rect id="btnB1" x="-115" y="25" height="20" width="50" rx="5" ry="5" stroke="gray" fill="lightgray" onclick="buttons['b1'].click()"/>
+    <rect id="btnB2" x="-55" y="25" height="20" width="50" rx="5" ry="5" stroke="gray" fill="lightgray" onclick="buttons['b2'].click()"/>
+    <rect id="btnB3" x="5" y="25" height="20" width="50" rx="5" ry="5" stroke="gray" fill="lightgray" onclick="buttons['b3'].click()"/>
+    <rect id="btnB4" x="65" y="25" height="20" width="50" rx="5" ry="5" stroke="gray" fill="lightgray" onclick="buttons['b4'].click()"/>
+    <rect id="btnB5" x="125" y="25" height="20" width="50" rx="5" ry="5" stroke="gray" fill="lightgray" onclick="buttons['b5'].click()"/>
+
+</svg>

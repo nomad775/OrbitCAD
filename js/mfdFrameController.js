@@ -12,35 +12,83 @@ class Button {
     _label = "";
     _fn;
     _isActive = false;
+    _isDisabled = false;
 
-    constructor(btnElementStr, labelElementStr) {
-        this.buttonElement = $(btnElementStr);
-        this.labelElement = $(labelElementStr);
+    constructor(idStr, btnElementStr, labelElementStr) {
+
+        console.log(idStr);
+
+        this.btnGroup = document.getElementById(idStr);
+        console.log(this.btnGroup);
+
+        //this.buttonElement = $(btnElementStr);
+        
+        this.labelElement = this.btnGroup.getElementsByTagName("text").item(0);
+        
+        console.log(this.labelElement);
+    
     }
 
     setActive(toggle) {
 
         this._isActive = true;
-        this.labelElement.parent().addClass("activeFn");
+        //this.labelElement.parent.addClass("btnLabel-active");
+
+        
+        let jqElement = $(this.btnGroup)
+        
+        jqElement.addClass("btnLabel-active").removeClass("btnLabel");
+        jqElement.removeClass("btnLabel-disabled");
+
+        console.log(jqElement);
 
         if(toggle) activeButton.setInactive();
         activeButton = this;
     }
 
     setInactive() {
+
         this._isActive = false;
-        this.labelElement.parent().removeClass("activeFn");
-        //activeButton = undefined;
+        $(this.btnGroup).removeClass("btnLabel-active")
+        $(this.btnGroup).addClass("btnLabel");
+        
     }
 
+    setDisabled(){
+
+        this._isDisabled = true;
+
+        let jqElement = $(this.btnGroup)
+        jqElement.removeClass("btnLabel");
+        jqElement.removeClass("btnLabel-active");
+
+        jqElement.addClass("btnLabel-disabled");
+
+    }
+
+    setEnabled() {
+
+        this._isDisabled = false;
+
+        let jqElement = $(this.btnGroup)
+        jqElement.removeClass("btnLabel-disabled");
+        jqElement.removeClass("btnLabel-active");
+
+        jqElement.addClass("btnLabel");
+
+    }
+    
     click() {
+        
+        console.log(this._label + " click");
+
         this.setActive();
         this._fn();
     }
 
     set label(theLabel) {
         this._label = theLabel;
-        this.labelElement.text(theLabel);
+        this.labelElement.textContent = theLabel;
     }
 
     set fn(fn) {
@@ -95,11 +143,6 @@ function setActivePage(id) {
 
     dataObj = pages[id];
 
-    //console.log("data object for active page");
-    //console.log(dataObj);
-
-    let pageButton = dataObj["pageButton"];
-
     let buttonData = dataObj["pageFunctions"];
     let inputFields = dataObj["inputFields"];
     let outputFields = dataObj["outputFields"];
@@ -150,7 +193,7 @@ function setActivePage(id) {
 
 }
 
-function setAppData(appData) {
+function setAppData(appData) { 
 
     console.log("starting app : " + appData.app + "  (async from initialize MFD)");
 
@@ -204,7 +247,7 @@ function keyPress(event, k) {
 
 function planetClickAsInput(event, planetId){
 
-    //console.log("planet clicked", planetId, "for active field ", activeField);
+    console.log("planet clicked", planetId, "for active field ", activeField);
 
     activeField.value = planetId;
     updateDisplay(activeField.id);
@@ -233,19 +276,19 @@ function processTimeFields(yField, dField, hField, mField, outField, isUT) {
 
 function initializeButtonElements() {
 
-    buttons["b0"] = new Button("#btnB0", "#btnLabelB0");
-    buttons["b1"] = new Button("#btnB1", "#btnLabelB1");
-    buttons["b2"] = new Button("#btnB2", "#btnLabelB2");
-    buttons["b3"] = new Button("#btnB3", "#btnLabelB3");
-    buttons["b4"] = new Button("#btnB4", "#btnLabelB4");
-    buttons["b5"] = new Button("#btnB5", "#btnLabelB5");
+    buttons["b0"] = new Button("b0", "#btnB0", "#btnLabelB0");
+    buttons["b1"] = new Button("b1", "#btnB1", "#btnLabelB1");
+    buttons["b2"] = new Button("b2", "#btnB2", "#btnLabelB2");
+    buttons["b3"] = new Button("b3", "#btnB3", "#btnLabelB3");
+    buttons["b4"] = new Button("b4", "#btnB4", "#btnLabelB4");
+    buttons["b5"] = new Button("b5", "#btnB5", "#btnLabelB5");
 
-    buttons["t0"] = new Button("#btnT0", "#btnLabelT0");
-    buttons["t1"] = new Button("#btnT1", "#btnLabelT1");
-    buttons["t2"] = new Button("#btnT2", "#btnLabelT2");
-    buttons["t3"] = new Button("#btnT3", "#btnLabelT3");
-    buttons["t4"] = new Button("#btnT4", "#btnLabelT4");
-    buttons["t5"] = new Button("#btnT5", "#btnLabelT5");
+    buttons["t0"] = new Button("t0", "#btnT0", "#btnLabelT0");
+    buttons["t1"] = new Button("t1", "#btnT1", "#btnLabelT1");
+    buttons["t2"] = new Button("t2", "#btnT2", "#btnLabelT2");
+    buttons["t3"] = new Button("t3", "#btnT3", "#btnLabelT3");
+    buttons["t4"] = new Button("t4", "#btnT4", "#btnLabelT4");
+    buttons["t5"] = new Button("t5", "#btnT5", "#btnLabelT5");
 }
 
 
@@ -264,6 +307,20 @@ function initializeMFD() {
 
 
 
+function onOriginDestinationChange() {
+
+    if (fields["origin"].value != "Origin" && fields["destination"].value != "Destination") {
+        activeButton.setInactive();
+        buttons["b5"].setActive();
+    }
+    else{
+        buttons["b5"].setDisabled();
+        activeButton.setInactive();
+    }
+
+
+}
+
 function initGlobalFields() {
 
     let setInactive = () => { activeButton.setInactive(); setActiveField("none"); }
@@ -277,8 +334,8 @@ function initGlobalFields() {
 
     fields["utNow"] = { value: 0, dataElement: "", callback: () => { currentTime = this.value; } };
 
-    fields["origin"] = { id: "origin", label: "ORIGIN", value: "Origin", x: 0, buttonLabel: '', labelElement: '#junk', dataElement: "#originName", callback: setInactive };
-    fields["destination"] = { id: "destination", label: "DESTINATION", value: "Destination", x: 0, buttonLabel: '', labelElement: '#junk', dataElement: "#destinationName", callback: setInactive };
+    fields["origin"] =      { id: "origin",      label: "ORIGIN",      value: "Origin",      x: 0, buttonLabel: '', labelElement: '#junk', dataElement: "#originName",      callback: ()=> {onOriginDestinationChange();} };
+    fields["destination"] = { id: "destination", label: "DESTINATION", value: "Destination", x: 0, buttonLabel: '', labelElement: '#junk', dataElement: "#destinationName", callback: ()=> {onOriginDestinationChange();} };
 
 
     fields["parkPe"] = { value: 101, dataElement: "input[name='pe']", callback: setInactive };

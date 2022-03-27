@@ -7,6 +7,13 @@ const secondsPerHour = 60 * secondsPerMinute;
 const secondsPerDay = 6 * secondsPerHour;
 const secondsPerYear = 426 * secondsPerDay;
 
+function radToDeg(rad, decPlcs=2){
+    
+    let deg = rad * 180/pi;
+    let p = 10 * decPlcs
+    deg = Math.round(deg * p)/p;
+    return deg;
+}
 
 function modRev(angleRad) {
 

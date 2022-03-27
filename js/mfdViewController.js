@@ -1,4 +1,17 @@
 var viewBox;
+var initialViewBoxWidth;
+
+var mapWidth;
+var mapHeight;
+
+var zoom = 1;
+
+var minZoom = .9;
+var maxZoom = 5;
+
+let zoomAnchorX = 0;
+let zoomAnchorY = 0;
+
 var boolDown;
 var mouseDown;
 
@@ -7,28 +20,24 @@ var lastTouch;
 var lastX;
 var lastY;
 
-let zoomAnchorX;
-let zoomAnchorY;
 
 let start, previousTimeStamp;
 let dir, err; delta=1;
 let animationDone;
 
-function mouseOver(event){
+function mouseMove(event){
     
     if(event.buttons==1){
         
         //pan
-        viewBox.x -= event.movementX * viewBox.width/360;
-        viewBox.y -= event.movementY * viewBox.height/360;
+        viewBox.x -= event.movementX * viewBox.width/mapWidth;
+        viewBox.y -= event.movementY * viewBox.height/mapHeight;
+
         event.preventDefault();
         event.stopImmediatePropagation();
 
     }else{
 
-        let imgWidth = 360;
-        let imgHeight =360;
-        
         let vbX = viewBox.x;
         let vbY = viewBox.y;
         
@@ -38,24 +47,17 @@ function mouseOver(event){
         let mouseX = event.offsetX;
         let mouseY = event.offsetY;
         
-        let dx = vbwidth / imgWidth * mouseX + vbX
-        let dy = -(vbheight / imgHeight * mouseY + vbY)
+        let dx = (vbwidth / mapWidth * mouseX + vbX) *  unitFactor/scaleFactor;
+        let dy = -(vbheight / mapHeight * mouseY + vbY) * unitFactor/scaleFactor;
         
-        let r = Math.hypot(dx,dy)
-        let theta = Math.atan2(dy,dx) * 180/Math.PI
-        
-        dx = Math.round(dx*100)/100;
-        dy = Math.round(dy*100)/100;
-        
-        r = Math.round(r*100)/100;
-        theta = Math.round(theta*100)/100
-        
+        let r = Math.hypot(dx,dy);
+        let theta = radToDeg(modRev(Math.atan2(dy,dx)));
+
         zoomAnchorX = mouseX;
         zoomAnchorY = mouseY;
         
-        $("#xyCoordinates").text(`${dx}, ${dy}`);
-        $("#polarCoordinates").text(`${r} <  ${theta}deg`);
-        $("#zoom").text(` zoom ${Math.round(1900 / viewBox.width * 100) / 100}`);
+        document.getElementById("xyCoordinates").textContent = (`${dx.toFixed(2)}, ${dy.toFixed(2)}`);
+        document.getElementById("polarCoordinates").textContent = (`${r.toFixed(2)} <  ${theta.toFixed(2)}deg`);
     }
         
 }
@@ -70,72 +72,48 @@ function zoomWheel(event) {
     var v = event.deltaY;
     //deltaY is + 100 or -100
 
-    var zoomPercent = Math.sign(v) * viewBox.width * .25;
-
-    zoom(zoomPercent);
+    zoomPerCent(Math.sign(v) * .25);
 
     event.preventDefault();
     event.stopImmediatePropagation();
-    $("#zoom").text(` zoom ${Math.round(1900/viewBox.width*100)/100}`);
 }
 
-function zoom(amount) {
+function zoomPerCent(amount) {
     
-    viewBox.width += amount;
-    viewBox.height += amount;
+    let p = 1 + amount;
 
-    viewBox.x += -amount * zoomAnchorX / 360;
-    viewBox.y += -amount * zoomAnchorY / 360; //  / 2;
+    let w1 = viewBox.width;
+    let h1 = viewBox.height;
 
-    //if (viewBox.width < 1) viewBox.width = 1;
+    let a = amount * w1;
+
+    w = w1 * p
+    h = h1 * p;
+
+    zoom = Math.round(initialViewBoxWidth/ w * 100)/100;
+
+    if(zoom < maxZoom && zoom > minZoom){
+
+        viewBox.width *= p;
+        viewBox.height *= p;
+        
+        viewBox.x += -a * zoomAnchorX / mapWidth;
+        viewBox.y += -a * zoomAnchorY / mapHeight;
+        
+    }
     
-    //if (viewBox.x < -1900) viewBox.x = -1900;
-    //if (viewBox.y < -1900) viewBox.y = -1900;
-
-    //if (viewBox.height > 2000) viewBox.height = 2000;
-    //if (viewBox.width > 2000) viewBox.width = 2000;
-
-    //if (viewBox.x > -200) viewBox.x = -200;
-    //if (viewBox.y > -200) viewBox.y = -200;
-
-    //if (viewBox.height < 30) viewBox.height = 30;
-    //if (viewBox.width < 30) viewBox.width = 30;
-
-    /* var r = 12 / rScale[zoom];
-     console.log(r);
-
-     document.querySelectorAll(".planet").forEach(
-         function(item, index){
-             var radius = item.attributes.getNamedItem("r");
-             radius.nodeValue=r; //25/zoom;
-             console.log("R:" + r);
-         }
-     )*/
-}
-
-function zoomPlanet(planetName){
-
-    let svgPlanet = svgPlanets[planetName];
-
-    let r = svgPlanet.soi * 1.1;
-
-    let x = svgPlanet.x-r/2;
-    let y = svgPlanet.y-r/2;
-
-    viewBox.x = x;
-    viewBox.y = y;
-    viewBox.height = r;
-    viewBox.width = r;
-
+    document.getElementById("zoom").textContent = ` zoom ${zoom}`;
 }
 
 function zoomWindow(x0,y0,w,h){
 
     viewBox.x = x0;
     viewBox.y = y0;
+
     viewBox.height = h;
     viewBox.width = w;
 
+    document.getElementById("zoom").textContent = ` zoom ${Math.round(initialViewBoxWidth / viewBox.width * 100) / 100}`;
 }
 
 
@@ -145,10 +123,24 @@ function zoomPlanetOrbit(planetName){
     
     let boundingBox = element.getBBox();
 
-    viewBox.x=  boundingBox.x;
-    viewBox.y = boundingBox.y;
-    viewBox.width = boundingBox.width;
-    viewBox.height = boundingBox.height;
+    zoomWindow(boundingBox.x*1.1, boundingBox.y*1.1, boundingBox.width * 1.1, boundingBox.height*1.1);
+
+}
+
+function zoomTxOrbit() { //planet1, planet2){
+
+    var planet1 = txOrbit.originPlanet;
+    var planet2 = txOrbit.destinationPlanet;
+
+    var planetO;
+
+    if (planet1.sma > planet2.sma) {
+        planetO = planet1;
+    } else {
+        planetO = planet2;
+    }
+
+    zoomPlanetOrbit(planetO.name);
 }
 
 function zoomAll(event) {
@@ -160,7 +152,7 @@ function toggleMouseDown(event) {
 }
 
 function mouseUp(event){
-    
+
 }
 
 function touchDown(event) {
@@ -173,94 +165,64 @@ function touchUp() {
     lastY = NaN;
 }
 
-function pan(event) {
-
-    event.preventDefault();
-    event.stopImmediatePropagation();
-
-    //if(!mouseDown.active) return;
-    //if (boolDown) {
-    if (event.touches.length == 1) {
-
-        let x = event.touches[0].clientX;
-        let y = event.touches[0].clientY;
-
-        let dx = x - lastX;
-        let dy = y - lastY;
-
-        if (!isNaN(dx) && !isNaN(dy)) {
-
-            viewBox.x -= dx * 2;
-            viewBox.y -= dy * 2;
-
-        }
-
-        lastX = x;
-        lastY = y;
-
-    } else {
-
-        let x0 = event.touches[0].clientX;
-        let y0 = event.touches[0].clientY;
-        let x1 = event.touches[1].clientX;
-        let y1 = event.touches[1].clientY;
-        let d = Math.sqrt((x1 - x0) ** 2 + (y1 - y0) ** 2);
-        let deltaD = lastD - d;
-
-        if (d > lastD) {
-            zoom(-150);
-        } else {
-            zoom(150)
-        }
-
-        lastD = d;
-    }
-}
-
 
 function setSolarSystemSVG() {
 
+    console.log("set solar system SVG");
+
     // switch SVG's
-    $("#solarSystem").attr("display", "initial");
-    $("#planetSystem").attr("display", "none");
+    document.getElementById("planetSystem").setAttribute("display", "none");
+    document.getElementById("solarSystem").setAttribute("display", "initial");
 
     scaleFactor = 1 / 1e8;
+    unitScale = 1 / 1e9;
 
     // set viewBox to new SVG
     var svg = document.getElementById("solarSystem");
     viewBox = svg.viewBox.baseVal;
+
+    initialViewBoxWidth = viewBox.width;
+    mapWidth = svg.scrollWidth;
+    mapHeight = svg.scrollHeight;
+
+    maxZoom = 150;
+    minZoom = .9;
+
 }
 
-function setPlanetSystemSVG(thePlanet) {
+function setPlanetSystemSVG(thePlanet, width) {
 
     console.log("set to planet system SVG");
 
     // switch SVG's
-    $("#solarSystem").attr("display", "none");
-    $("#planetSystem").attr("display", "initial");
-
+    document.getElementById("solarSystem").setAttribute("display", "none");
+    document.getElementById("planetSystem").setAttribute("display", "initial");
+    
     scaleFactor = 1 / 1e6;
+    unitFactor = 1 / 1e6;
 
     // set viewBox to new SVG
     var svg = document.getElementById("planetSystem");
-    viewBox = svg.viewBox.baseVal;
 
-    let r = thePlanet.r;
-    let soi = thePlanet.soi;
-    let Ln = txOrbit.Ln_o;
+    mapWidth = svg.scrollWidth;
+    mapHeight = svg.scrollHeight;
 
-    Ln = modRev(Ln+Math.PI);
+    let soi = thePlanet.soi * scaleFactor;
+    let eqR = thePlanet.eqR * scaleFactor;
 
-    let sx = 2 * soi * scaleFactor * Math.cos(Ln);
-    let sy = -2 * soi * scaleFactor * Math.sin(Ln);
-   
-    $("#planetSystemPlanet").attr("r", r * scaleFactor);
-    $("#planetSystemSOI").attr("r", soi * scaleFactor);
+    let r = (8 * eqR + 2 * soi) / 10 * scaleFactor;
     
-    $("#sunDir").attr("x2", sx).attr("y2", sy);
+    svg.viewBox.baseVal.x = -soi;
+    svg.viewBox.baseVal.y = -soi;
+    svg.viewBox.baseVal.width = soi * 2;
+    svg.viewBox.baseVal.height = soi * 2;
+    
+    viewBox = svg.viewBox.baseVal;
+    initialViewBoxWidth = viewBox.width;
 
-    $("#prograde").attr("x1", sy).attr("y1", -sx);
-    $("#prograde").attr("x2", -sy).attr("y2", sx);
+    minZoom = .5;
+    maxZoom = soi/eqR/2;
+
 }
 
 
@@ -281,7 +243,7 @@ function animationStep(timestamp) {
         // previous step has completed
 
         displayedTime += dir * (1 * 6 * 60 * 60) * delta;
-        window.dispatchEvent(timeChangeEvent);
+        window.dispatchEvent(displayedTimeChangeEvent);
 
         var lastErrDir = err;
 
@@ -323,11 +285,11 @@ function initializeScreen(){
     mouseDown = { active: false, x: 0, y: 0 };
     boolDown = false;
     
-    var svg = document.getElementById("solarSystem");
-    svg.addEventListener("mousemove", mouseOver);
+    var svg1 = document.getElementById("solarSystem");
+    svg1.addEventListener("mousemove", mouseMove);
 
     var svg2 = document.getElementById("planetSystem");
-    svg2.addEventListener("mousemove", mouseOver);
+    svg2.addEventListener("mousemove", mouseMove);
 
-    setSolarSystemSVG();
+    //setSolarSystemSVG();
 }

@@ -1,5 +1,5 @@
 ﻿body {
-    width: 370px;
+    width: 600px;
     margin: auto;
     background-color: #22324d;
     touch-action: manipulation; /*prevents zoom on double tap*/
@@ -9,18 +9,62 @@
 }
 
 /*-----------------------------------------------*/
-/*                 --- SVG ---                   */
+/*         --- SVG FRAME BUTTONS ---             */
 /*-----------------------------------------------*/
-.mfdFrame {
-    background-color: #131339;
+#mfdFrame {
+    fill:#1a1a1a;;
+    /* #131339;*/
 }
 
-g.fn text {
+#mfdScreen {
+    /*position: relative;*/
+    width: 500px;
+    height: 500px;
+    fill: #131339;
+    stroke: #22324d;
+    stroke-width: 3px;
+    /* #131339; */
+
+   
+}
+
+svg text{
+    text-anchor: middle;
     fill: greenyellow;
-    width: 60px; /*from/for svgSolarSystem*/
+    font-size: 18px;
 }
 
-g.fn rect {
+g.btnLabel rect{
+    stroke-width: 1;
+    stroke: #09091b;
+    fill: none;
+}
+
+/* highlighed text, background */
+g.btnLabel-active text{
+    fill:black;
+}
+
+g.btnLabel-active rect{
+    fill: greenYellow;
+}
+
+/* disabled button */
+g.btnLabel-disabled text{
+    fill: rgba(173, 255, 74, .3);
+}
+
+g.btnLabel-disabled rect{
+    fill:none;
+}
+
+/* input fields */
+/* g.fn text {
+    fill: greenyellow;
+    width: 60px;
+} */
+
+/* g.fn rect {
     fill: #131339;
 }
 
@@ -30,11 +74,12 @@ g.activeFn text {
 
 g.activeFn rect{
     fill: yellowgreen;
-}
+} */
+
 
 p.activeFn{
-    color: yellowgreen;
-    background-color: red;
+    color: black;
+    background-color: greenYellow;
 }
 
 p.inactiveFn{
@@ -42,60 +87,6 @@ p.inactiveFn{
     background-color: blue;
 }
 
-.newFn {
-    fill: greenyellow;
-    width: 10px; /*from/for svgSolarSystem*/
-    font-family: "VT323", "Lucida Console", "monospace";
-    font-size: 3pt;
-    color:aquamarine;
-    background-color: aqua;
-}
-
-
-
-#mfdScreen {
-    /*position: relative;*/
-    width: 360px;
-    height: 360px;
-    background-color: #131339;
-}
-
-#onScreenText {
-    /*position: absolute;*/
-    width: 320px;
-    padding-left: 20px;
-    padding-right: 20px;
-    margin-top: 0px;
-    color: greenyellow;
-    font-family: "VT323";
-    font-size: 12pt;
-    overflow: hidden;
-}
-
-
-
-table {
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 25px;
-    
-}
-
-td {
-    color: greenyellow;
-    font-family: "VT323";
-    font-size: 12pt;
-    overflow: hidden;
-}
-
-td.dvLabel{
-    width: 100px;
-}
-
-td.data{
-    width: 100px;
-    text-align:right;
-}
 
 /*-----------------------------------------------*/
 /*            --- DISPLAY PANEL --- */
@@ -177,17 +168,6 @@ div.paramDisp_inactive .LCDscreen, div.paramDisp_inactive input {
 }
 
 
-/*
-
-.LCDscreen span {
-    display: inline-block;
-    height: 20px;
-    vertical-align: middle;
-    padding-top: 1.5px;
-}
-*/
-/*inline block needed for tx Ln disp*/
-
 
 /*-----------------------------------------------*/
 /*            --- KEYBOARD PANEL ---             */
@@ -206,11 +186,17 @@ svg * {
     vector-effect: non-scaling-stroke;
 }
 
+.svgMap{
+    position: relative;
+    top: -525px;
+    left: 100px;
+}
+
+
 /*from/for svgSolarSystem*/
 .orbit {
     fill: none;
-    
-    stroke-opacity: .3;
+    stroke-opacity: .5;
 }
 
 .planet {

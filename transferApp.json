@@ -4,7 +4,7 @@
         {
             "id": "t0",
             "label": "FN",
-            "fn": "()=> setActivePage('t0')",
+            "fn": "",
             "pageData": {
                 "pageFunctions": [
                     {
@@ -46,7 +46,7 @@
         {
             "id": "t1",
             "label": "ORGN-DEST",
-            "fn": "() => setActivePage('t1')",
+            "fn": "setActivePage('t1'); setSolarSystemSVG();",
             "pageData": {
                 "pageFunctions": [
                     {
@@ -126,7 +126,7 @@
                     {
                         "id": "b5",
                         "label": "NEXT",
-                        "fn": ""
+                        "fn": "setActivePage('t3'); initializeEjectionOrbit();"
                     }
                 ],
                 "inputFields": [
@@ -179,7 +179,7 @@
                     {
                         "id": "b5",
                         "label": "CALC",
-                        "fn": "initializeEjectionOrbit();"
+                        "fn": "initializeEjectionOrbit(); activeButton.setInactive();"
                     }
                 ],
                 "inputFields": [
@@ -235,7 +235,7 @@
                     {
                         "id": "b5",
                         "label": "CALC",
-                        "fn": "initializeCaptureOrbit();"
+                        "fn": "initializeCaptureOrbit(); activeButton.setInactive();"
                     }
                 ],
                 "inputFields": [
@@ -258,7 +258,7 @@
         {
             "id": "t5",
             "label": "",
-            "fn": "() => setActivePage('t5')",
+            "fn": "",
             "pageData": {
                 "pageFunctions": [
                     {
