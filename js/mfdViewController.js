@@ -190,7 +190,7 @@ function setSolarSystemSVG() {
 
 }
 
-function setPlanetSystemSVG(thePlanet, width) {
+function setPlanetSystemSVG(thePlanet) {
 
     console.log("set to planet system SVG");
 
@@ -210,8 +210,6 @@ function setPlanetSystemSVG(thePlanet, width) {
     let soi = thePlanet.soi * scaleFactor;
     let eqR = thePlanet.eqR * scaleFactor;
 
-    let r = (8 * eqR + 2 * soi) / 10 * scaleFactor;
-    
     svg.viewBox.baseVal.x = -soi;
     svg.viewBox.baseVal.y = -soi;
     svg.viewBox.baseVal.width = soi * 2;

@@ -9,6 +9,7 @@ const displayedTimeChangeEvent = new Event('displayedTimeChange');
 
 var scaleFactor  = 1/1e8;
 var unitFactor = 1/1e9;
+var showAligned = true;
 
 var r = 10;
 
@@ -359,10 +360,14 @@ class SVGhyperbolicOrbit{
         let soi = this.orbit.soi * scaleFactor
         let thetaSOI = this.orbit.thetaSoi;
         
-        this.endx = soi * Math.cos(thetaSOI);
-        this.endy = -soi * Math.sin(thetaSOI);
+        console.log("theta SOI", radToDeg(thetaSOI));
+        console.log("turn angle", radToDeg(this.orbit.turnAngle));
+        console.log("asin", radToDeg(Math.asin(1/this.orbit.e)));
+        
+        this.endy = soi * Math.cos(thetaSOI);
+        this.endx = soi * Math.sin(thetaSOI);
 
-        this.LnPe = this.orbit.lnPe(this.outbound, this.mirrored);
+        //this.LnPe = this.orbit.lnPe(this.outbound, this.mirrored);
     }
 
     drawVelocities(){
@@ -404,42 +409,31 @@ class SVGhyperbolicOrbit{
         let soi = this.orbit.soi * scaleFactor;
         let offset = 0; // this.orbit.b * scaleFactor;
 
-        let vscale = .001;
+        let vscale = soi / this.orbit.vpy * 1.25;
 
-        let vpx = -this.orbit.vp * Math.cos(this.orbit.fa) * vscale;
-        let vpy = -this.orbit.vp * Math.sin(this.orbit.fa) * vscale;
+        //let vpx = offset -this.orbit.vp * Math.cos(this.orbit.fa) * vscale;
+        //let vpy = - soi + this.orbit.vp * Math.sin(this.orbit.fa) * vscale;
+
+        let vpx = this.orbit.vpx * vscale;
+        let vpy = -this.orbit.vpy * vscale;
 
         document.getElementById("planetV").setAttribute("x1", offset);
-        document.getElementById("planetV").setAttribute("y1", soi);
+        document.getElementById("planetV").setAttribute("y1", 0);
         document.getElementById("planetV").setAttribute("x2", vpx);
         document.getElementById("planetV").setAttribute("y2", vpy);
 
         let vsx = offset;
-        let vsy = this.orbit.v3 * vscale;
+        let vsy = -this.orbit.v3 * vscale;
 
         document.getElementById("shipV").setAttribute("x1", offset);
-        document.getElementById("shipV").setAttribute("y1", soi);
+        document.getElementById("shipV").setAttribute("y1", 0);
         document.getElementById("shipV").setAttribute("x2", vsx);
         document.getElementById("shipV").setAttribute("y2", vsy);
 
-        document.getElementById("shipRelV").setAttribute("x1", vsx);
-        document.getElementById("shipRelV").setAttribute("y1", vsy);
-        document.getElementById("shipRelV").setAttribute("x2", vpx);
-        document.getElementById("shipRelV").setAttribute("y2", vpy);
-
-        let x = radToDeg(Math.atan2(vsy-vpy,vsx-vsy));
-        document.getElementById("velocities").setAttribute("transform", `rotate(${radToDeg(-this.orbit.lnp)})`);
-
-        let x1 = soi * Math.cos(this.orbit.thetaSoi - this.orbit.lnPe);
-        let y1 = soi * Math.sin(this.orbit.thetaSoi - this.orbit.lnPe);
-
-        let x2 = x1 + 10 * Math.sin(this.orbit.delta);
-        let y2 = y1 + 10 * Math.cos(this.orbit.delta);
-
-        //document.getElementById("shipRelV").setAttribute("x1", x1);
-        //document.getElementById("shipRelV").setAttribute("y1", y1);
-        //document.getElementById("shipRelV").setAttribute("x2", x2);
-        //document.getElementById("shipRelV").setAttribute("y2", y2);
+        document.getElementById("shipRelV").setAttribute("x1", vpx);
+        document.getElementById("shipRelV").setAttribute("y1", vpy);
+        document.getElementById("shipRelV").setAttribute("x2", vsx);
+        document.getElementById("shipRelV").setAttribute("y2", vsy);
 
     }
 
@@ -457,17 +451,21 @@ class SVGhyperbolicOrbit{
         // bottom half is A E H J (capture)
         // top half is J I G D (eject)
 
-        let ax = 2 * this.a + this.c;
-        let ay = this.b * Math.sqrt(3);
+        // re-done to draw vertical
+        // swapped ax and ay; bx and by
+        // top half now right half
 
-        let bx = 2 / 3 * this.a + this.c ;
-        let by = this.b * (48 - 26 * Math.sqrt(3)) / 18;
+        let ay = 2 * this.a + this.c;
+        let ax = -this.b * Math.sqrt(3);
 
-        let cx = bx;
-        let cy = -by;
+        let by = 2 / 3 * this.a + this.c ;
+        let bx = -this.b * (48 - 26 * Math.sqrt(3)) / 18;
 
-        let dx = ax;
-        let dy = -ay;
+        let cx = -bx;
+        let cy = by;
+
+        let dx = -ax;
+        let dy = ay;
 
         // points for half-ing
         let ex = (ax + bx) / 2;
@@ -492,35 +490,135 @@ class SVGhyperbolicOrbit{
         let path = "";
         let m = this.mirrored ? -1: 1;
 
+        let k = 1;
+
         if(this.outbound){ 
             path = `M ${m * jx},${jy} C ${m* ix},${iy} ${m * gx},${gy} ${m * dx},${dy} L ${m * this.endx},${this.endy}`;
         }else{
-            this.endy *= -1
-            path = `M ${m * this.endx},${this.endy} L ${m * ax},${ay} C ${m* ex},${ey} ${m * hx},${hy} ${m * jx},${jy}`;            
+            k = -1
+            path = `M ${-this.endx},${m * this.endy} L ${ax},${m * ay} C ${ex},${m * ey} ${hx},${m * hy} ${jx},${m * jy}`;            
         }
     
         // full hyperbola
-        //path = `M ${this.endx}, ${-this.endy} L ${ax},${ay} C ${bx},${by} ${cx},${cy} ${dx},${dy} L${this.endx}, ${this.endy}`;
+        //path = `M ${-this.endx}, ${this.endy} L ${ax},${ay} C ${bx},${by} ${cx},${cy} ${dx},${dy} L${this.endx}, ${this.endy}`;
 
 
         let hyp = document.getElementById("hyperbola");
         hyp.setAttributeNS(null, "d", path);
 
-        document.getElementById("axis").setAttribute("x2", m * this.c);
+        document.getElementById("axis").setAttribute("y1", 0);
+        document.getElementById("axis").setAttribute("x1", 0);
 
-        document.getElementById("asymptote").setAttribute("x1", m * this.c);
+        document.getElementById("axis").setAttribute("y2", m * this.c);
+        document.getElementById("axis").setAttribute("x2", 0);
+
+        document.getElementById("asymptote").setAttribute("y1", m * this.c);
+        document.getElementById("asymptote").setAttribute("x1", 0);
         
-        document.getElementById("asymptote").setAttribute("x2", m * this.endx);
+        document.getElementById("asymptote").setAttribute("x2", k * m * this.endx);
         document.getElementById("asymptote").setAttribute("y2", this.endy);
         
+
+        let theta = this.orbit.getRotation(this.outbound);
+        
         let hypGroup = document.getElementById("hyperbolaGroup");
-        hypGroup.setAttributeNS(null, "transform", `rotate(${-radToDeg(this.LnPe)})`)
+        hypGroup.setAttributeNS(null, "transform", `rotate(${-radToDeg(theta)})`)
 
     }
 }
 
 
-function initializeTransferSVG(){
+function initializeCaptureSVG(captureOrbit, mirrored) {
+
+    console.log("initialize capture SVG");
+    
+    setPlanetSystemSVG(txOrbit.destinationPlanet);
+
+    // adjust planet features
+    let eqR = captureOrbit.eqR * scaleFactor;
+    let soi = captureOrbit.soi * scaleFactor;
+    let park = captureOrbit.rp * scaleFactor;
+
+    let ln = txOrbit.Ln_da;
+    
+    let fa = captureOrbit.fa;
+
+    let x = soi * Math.sin(fa);
+    let y = -soi * Math.cos(fa);
+
+    document.getElementById("planetSystemPlanet").setAttribute("r", eqR);
+    document.getElementById("planetSystemSOI").setAttribute("r", soi);
+    document.getElementById("planetSystemPark").setAttribute("r", park);
+
+    document.getElementById("sunDir").setAttribute("x2", -soi);
+    document.getElementById("sunDir").setAttribute("y2", 0);
+
+    document.getElementById("shipOrbit").setAttribute("x1", 0);
+    document.getElementById("shipOrbit").setAttribute("y1", soi);
+    document.getElementById("shipOrbit").setAttribute("x2", 0);
+    document.getElementById("shipOrbit").setAttribute("y2", -soi);
+
+    document.getElementById("planetOrbit").setAttribute("x1", x);
+    document.getElementById("planetOrbit").setAttribute("y1", y);
+    document.getElementById("planetOrbit").setAttribute("x2", -x);
+    document.getElementById("planetOrbit").setAttribute("y2", -y);
+
+    svgCaptureOrbit = new SVGhyperbolicOrbit(captureOrbit, false, mirrored);
+
+    if (!showAligned) {
+        document.getElementById("alignment").setAttribute("transform", "rotate(180)");
+    } else {
+        document.getElementById("alignment").setAttribute("transform", `rotate(${-radToDeg(ln)})`);
+    }
+}
+
+function initializeEjectionSVG(ejectionOrbit, mirrored){
+    
+    console.log("initialize ejection SVG");
+    
+    setPlanetSystemSVG(txOrbit.originPlanet);
+
+    // adjust planet features
+    let r = ejectionOrbit.eqR * scaleFactor;
+    let soi = ejectionOrbit.soi * scaleFactor;
+    let park = ejectionOrbit.rp * scaleFactor;
+
+    let ln = txOrbit.Ln_o;
+
+    let fa = ejectionOrbit.fa;
+    let x = soi * Math.sin(fa);
+    let y = -soi * Math.cos(fa);
+    
+    // circles
+    document.getElementById("planetSystemPlanet").setAttribute("r", r);
+    document.getElementById("planetSystemSOI").setAttribute("r", soi);
+    document.getElementById("planetSystemPark").setAttribute("r", park);
+
+    // lines
+    document.getElementById("sunDir").setAttribute("x2", -soi);
+    document.getElementById("sunDir").setAttribute("y2", 0); 
+
+    document.getElementById("shipOrbit").setAttribute("x1", 0);
+    document.getElementById("shipOrbit").setAttribute("y1", soi);
+    document.getElementById("shipOrbit").setAttribute("x2", 0);
+    document.getElementById("shipOrbit").setAttribute("y2", -soi);
+
+    document.getElementById("planetOrbit").setAttribute("x1", x);
+    document.getElementById("planetOrbit").setAttribute("y1", y);
+    document.getElementById("planetOrbit").setAttribute("x2", -x);
+    document.getElementById("planetOrbit").setAttribute("y2", -y);
+
+    svgEjectOrbit = new SVGhyperbolicOrbit(ejectionOrbit, true, mirrored);
+
+    if(!showAligned){
+        document.getElementById("alignment").setAttribute("transform", "");
+    }else{
+        document.getElementById("alignment").setAttribute("transform", `rotate(${-radToDeg(ln)})`);
+    }
+}
+
+
+function initializeTransferSVG() {
 
     console.log("initialize transfer SVG");
 
@@ -540,116 +638,6 @@ function initializeTransferSVG(){
 
 }
 
-function initializeEjectionSVG(ejectionOrbit, mirrored){
-    
-    console.log("initialize ejection SVG");
-    
-    // adjust planet features
-    let r = ejectionOrbit.eqR * scaleFactor;
-    let soi = ejectionOrbit.soi * scaleFactor;
-    
-    let park = ejectionOrbit.rp * scaleFactor;
-    let Ln = txOrbit.Ln_o;
-    
-    let sx = 2 * soi * Math.cos(Ln + Math.PI);
-    let sy = -2 * soi * Math.sin(Ln + Math.PI);
-
-    setPlanetSystemSVG(txOrbit.originPlanet);
-    
-    document.getElementById("planetSystemPlanet").setAttribute("r", r);
-    document.getElementById("planetSystemSOI").setAttribute("r", soi);
-    document.getElementById("planetSystemPark").setAttribute("r", park);
-
-    document.getElementById("sunDir").setAttribute("x2", sx);
-    document.getElementById("sunDir").setAttribute("y2", sy); 
-
-    document.getElementById("prograde").setAttribute("x1", sy);
-    document.getElementById("prograde").setAttribute("y1", -sx);
-    document.getElementById("prograde").setAttribute("x2", -sy);
-    document.getElementById("prograde").setAttribute("y2", sx);
-
-    svgEjectOrbit = new SVGhyperbolicOrbit(ejectionOrbit, true, mirrored);
-    
-    let z = 3 * park ;
-    zoomWindow(-z/2, -z/2, z, z)
-
-}
-
-function initializeCaptureSVG(captureOrbit, mirrored){
-
-    console.log("initialize capture SVG");
-
-    setPlanetSystemSVG(txOrbit.destinationPlanet);
-
-    // adjust planet features
-    let eqR = captureOrbit.eqR * scaleFactor;
-    let soi = captureOrbit.soi * scaleFactor;
-
-    let park = captureOrbit.rp * scaleFactor;
-    let Ln = txOrbit.Ln_da;
-    
-    let sunDirX =  Math.cos(Ln + Math.PI) * 3 * soi;
-    let sunDirY = -Math.sin(Ln + Math.PI) * 3 * soi;
-
-    let planetOrbitRadius = txOrbit.destinationPlanet.rAtLn(Ln);
-    let phi = txOrbit.destinationPlanet.flightAngleAtTheta(Ln - txOrbit.destinationPlanet.LnPe);
-    
-    let vp = txOrbit.vd;
-    let vs = txOrbit.v_arrive;
-
-    let vpX = vp * Math.cos(phi);
-    let vpY = vp * Math.sin(phi);
-
-    let vrelX = vs - vpX;
-    let vrelY = vpY;
-
-    let vrel = Math.hypot(vrelX, vrelY);
-    let vang = Math.atan2(vrelY,vrelX);
-
-    // prograde directions
-    let txPrograde = Ln + Math.PI/2;
-    let planetPrograde = txPrograde + phi;
-
-    let planetProgradeX = Math.cos(planetPrograde);
-    let planetProgradeY = -Math.sin(planetPrograde);
-
-    let xi = planetProgradeX * soi;
-    let yi = planetProgradeY * soi;
-
-    let shipProgradeX = Math.cos(txPrograde);
-    let shipProgradeY = -Math.sin(txPrograde);
-
-    let shipVelX = - soi * Math.cos(vang);
-    let shipVelY = soi * Math.sin(vang);
-
-    document.getElementById("planetSystemPlanet").setAttribute("r", eqR);
-    document.getElementById("planetSystemSOI").setAttribute("r", soi);
-    document.getElementById("planetSystemPark").setAttribute("r", park);
-
-    document.getElementById("sunDir").setAttribute("x2", sunDirX);
-    document.getElementById("sunDir").setAttribute("y2", sunDirY);
-
-    document.getElementById("planetOrbit").setAttribute("x1", -planetProgradeX * 3 * soi);
-    document.getElementById("planetOrbit").setAttribute("y1", -planetProgradeY * 3 * soi);
-    document.getElementById("planetOrbit").setAttribute("x2", planetProgradeX * 3 * soi);
-    document.getElementById("planetOrbit").setAttribute("y2", planetProgradeY * 3 * soi);
-
-    // document.getElementById("shipV").setAttribute("x1", xi);
-    // document.getElementById("shipV").setAttribute("y1", yi);
-    // document.getElementById("shipV").setAttribute("x2", shipProgradeX * 3 + xi);
-    // document.getElementById("shipV").setAttribute("y2", shipProgradeY * 3 + yi);
-
-    //document.getElementById("shipVel").setAttribute("x1", shipProgradeX);
-    //document.getElementById("shipVel").setAttribute("y1", shipProgradeY);
-    //document.getElementById("shipVel").setAttribute("x2", planetProgradeX);
-    //document.getElementById("shipVel").setAttribute("y2", planetProgradeY);
-
-    svgCaptureOrbit = new SVGhyperbolicOrbit(captureOrbit, false, mirrored);
-    
-    let z = 6 * r;
-    zoomWindow(-z / 2, -z / 2, z, z)
-
-}
 
 function initializeSolarSystemSVG() {
 

@@ -97,8 +97,6 @@
 
         <script>
 
-            //window.onload(initialize());
-
             const planets = {};
 
             var txOrbit;
@@ -106,9 +104,67 @@
             var currentTime = 0;
             var displayedTime = 0;
 
+            function initializeFromQueryString(){
+
+                let params = new URLSearchParams(location.search);
+                let hasParams = params.has("utY");
+                console.log("has paramaters " + hasParams);
+
+                //alert("has params " + hasParams + "\n search: " + window.location.search);
+                
+                if(!hasParams){
+                    console.log("no history");
+                    return false;
+                }
+
+                console.log("from history");
+                console.log(params.get("origin"));
+                console.log(params.get("destination"));
+                
+                originName = params.get("origin");
+                destinationName = params.get("destination");
+                disabledDestName = originName;
+
+                let y = params.get("utY");
+                let d = params.get("utD");
+                let h = params.get("utH");
+                let m = params.get("utM");
+
+                //let utNow = `y${y} d${d} ${h}:${m}`
+                currentTime = (y - 1) * secondsPerYear + (d - 1) * secondsPerDay + h * secondsPerHour + m * secondsPerMinute;
+
+                document.forms["origin-destination"]["utY"].value = y;
+                document.forms["origin-destination"]["utD"].value = d;
+                document.forms["origin-destination"]["utH"].value = h;
+                document.forms["origin-destination"]["utM"].value = m;
+
+                document.forms["origin-destination"]["origin"].value = originName;
+                document.forms["origin-destination"]["destination"].value = destinationName;
+
+                console.log("initialized from history");
+
+                return true;
+            }
+
             function initialize() {
 
                 getPlanetsXML(() => {
+                    
+                    initializeFromQueryString();
+
+                    window.addEventListener("displayedTimeChange", displayedTimeChange);
+                   
+                    let originOpt = document.getElementById("originSet")
+
+                    originOpt.addEventListener("click", originChange)
+                    originOpt.addEventListener("change", (e) => svgTxOrbit.eventHandler(e));
+                    originOpt.value = originName;
+                    
+                    let destOpt = document.getElementById("destinationSet")
+                    destOpt.addEventListener("click", destinationChange)
+                    destOpt.addEventListener("change", (e) => svgTxOrbit.eventHandler(e));
+                    destOpt.value = destinationName;
+                    
 
                     initializeScreen();
                     initializeSolarSystemSVG();
@@ -116,25 +172,14 @@
                     initializeTransferOrbit();
                     initializeTransferSVG();
 
-                    window.addEventListener("displayedTimeChange", displayedTimeChange);
+                    currentTimeChange();
 
-                    console.log("intialized");
-
-                    displayedTime=txOrbit.solveTForRdv(currentTime);
-                    //date = convertSecondsToUT(displayedTime);
-    
-                    //initializeTransferSVG();
-
-                    document.getElementById("originSet").addEventListener("click", originChange)
-                    document.getElementById("originSet").addEventListener("change", (e) => svgTxOrbit.eventHandler(e));
-                    
-                    document.getElementById("destinationSet").addEventListener("click", destinationChange)
-                    document.getElementById("destinationSet").addEventListener("change", (e) => svgTxOrbit.eventHandler(e));
-
-                    window.dispatchEvent(displayedTimeChangeEvent);
-                    
-                    //currentTimeChange();
+                    //displayedTime=txOrbit.solveTForRdv(currentTime);
+                    //window.dispatchEvent(displayedTimeChangeEvent);
+                        
                     zoomTxOrbit();
+                        
+                    console.log("intialized");
 
                 });
             }
@@ -143,18 +188,12 @@
         
         <script>
 
-            // const secondsPerMinute = 60;
-            // const secondsPerHour = secondsPerMinute * 60;
-            // const secondsPerDay = secondsPerHour * 6;
-            // const secondsPerYear = secondsPerDay * 426;
-
             let originName = "Kerbin";
             let destinationName = "Duna";
             let disabledDestName="Kerbin";
 
             function originChange(){
 
-                console.log("");
                 console.log("changing origin");
                 
                 originName = document.forms["origin-destination"]["origin"].value;
@@ -166,8 +205,12 @@
                 txOrbit.originPlanet = planets[originName];
                 txOrbit.destinationPlanet = planets[destinationName];
                 
+                updateQueryString();
+
                 displayedTime = txOrbit.solveTForRdv(currentTime);
+
                 window.dispatchEvent(displayedTimeChangeEvent);
+
                 zoomTxOrbit();
                 
             }
@@ -223,6 +266,8 @@
 
                 displayedTime = txOrbit.solveTForRdv(currentTime);
                 window.dispatchEvent(displayedTimeChangeEvent);
+
+                updateQueryString();
                 zoomTxOrbit();
 
                 console.log("destination changed to " + destinationName);
@@ -245,6 +290,7 @@
                 document.forms["origin-destination"]["utSeconds"].value = currentTime;
                 document.getElementById("outCurrentTime").textContent= convertSecondsToDateObj(currentTime).toString();
 
+                updateQueryString();
             }
 
             function displayedTimeChange(event){
@@ -279,31 +325,49 @@
 
             }
 
+            function updateQueryString(){
+
+                let frmElement = document.querySelector("form");
+                let frmData = new FormData(frmElement);
+
+                let params = new URLSearchParams(frmData);
+
+                let url = window.location.pathname;
+                url += "?" + params.toString();
+
+                //const url = new URL(window.location.href);
+                //url.searchParams.set(key, value);
+                window.history.pushState({}, '', url.toString());
+            }
+
             function onSubmit(event) {
 
-                event.preventDefault();
+                // if form action attribute is blank then form data is appended to current location
+                // inject location with parameter into history to back button returns to current state
 
-                let element = document.querySelector("form");
-                console.log(element);
+                let frmElement = document.querySelector("form");
+                let frmData = new FormData(frmElement);
                 
-                let fd= new FormData(element);
-                fd.set("X", "124")
+                let params = new URLSearchParams(frmData);
                 
-                for (let [name, value] of fd) {
-                        console.log(`${name} = ${value}`); // key1 = value1, then key2 = value2
-                    }
+                let url = window.location.pathname;
+                url += "?" + params.toString();
 
+                console.log(params.toString());
+                console.log(url);
+
+                window.history.pushState({},"", url);
+                
+                
+                //event.preventDefault();
+
+                // for (let [name, value] of fd) {
+                    //         params.append(`${name}`, `${value}`); // key1 = value1, then key2 = value2
+                    // }
                     
+                    
+                return;
                 
-
-                // var request = new XMLHttpRequest();
-                // request.open("POST", "form2.html");
-                // request.send(fd);
-                
-                //console.log(request);
-
-                return false;
-
             }
 
         </script>
@@ -319,7 +383,7 @@
                 <!-- action="file.php" -->
                 <!-- target="_self" -->
                 <!-- method="GET" -->
-                <form name="origin-destination" autocomplete="off"  action="form2.html">
+                <form name="origin-destination" autocomplete="off" onsubmit="onSubmit(event)" action="form2.html">
             
                     <fieldset oninput="currentTimeChange()">
                         <legend>Current Game Date</legend>
@@ -354,7 +418,7 @@
                                 <label for="originEve">Eve</label>
                             </li>
                             <li>
-                                <input type="radio" id="originKerbin" name="origin" value="Kerbin" checked="true" />
+                                <input type="radio" id="originKerbin" name="origin" value="Kerbin"/>
                                 <label for="originKerbin">Kerbin</label>
                             </li>
                             <li>
@@ -388,11 +452,11 @@
                                 <label for="eve">Eve</label>
                             </li>
                             <li>
-                                <input type="radio" id="optDestKerbin" name="destination" value="Kerbin" disabled="true" />
+                                <input type="radio" id="optDestKerbin" name="destination" value="Kerbin"/>
                                 <label for="kerbin">Kerbin</label>
                             </li>
                             <li>
-                                <input type="radio" id="optDestDuna" name="destination" value="Duna" checked="true" />
+                                <input type="radio" id="optDestDuna" name="destination" value="Duna"/>
                                 <label for="duna">Duna</label>
                             </li>
                             <li>

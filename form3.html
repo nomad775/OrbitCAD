@@ -70,7 +70,7 @@
             function fromPrev(){
                
                 console.log("start 3");
-
+                
                 let params = new URLSearchParams(location.search);
 
                 let originName = params.get("origin");
@@ -102,6 +102,7 @@
                 svg2.addEventListener("mousemove", mouseMove);
 
                 peChange();
+                console.log(scaleFactor);
             }
 
             function peChange(){
@@ -137,8 +138,10 @@
                 document.getElementById("outDv").textContent = dv.toFixed(2);
                 document.getElementById("outTod").textContent = convertSecondsToDateObj(tod).toString();
                 
-                document.getElementById("outTurnAngle").textContent = radToDeg(captureOrbit.turnAngle/2);
-                document.getElementById("outEjectionAngle").textContent = 90 + radToDeg(captureOrbit.turnAngle/2);
+                document.getElementById("outTurnAngle").textContent = radToDeg(captureOrbit.turnAngle,2);
+                document.getElementById("outV2Angle").textContent = radToDeg(captureOrbit.v2Angle,2);
+                document.getElementById("outV2AngleDelta").textContent = radToDeg(captureOrbit.v2AngleDelta,2);
+                document.getElementById("outEjectionAngle").textContent = 90 + radToDeg(captureOrbit.turnAngle,2);
                 
                 document.getElementById("outA").textContent = captureOrbit.a.toFixed(0);
                 document.getElementById("outE").textContent = captureOrbit.e.toFixed(4);
@@ -189,6 +192,10 @@
 
                 </form>
 
+                <label for="showAligned">Show aligned</label>
+                <input type="checkbox" name="chkShowAligned" checked="true"
+                    onchange="showAligned = this.checked; console.log(this.checked); initializeCaptureOrbit();">;
+
             </div>
 
             <div id="divMap">
@@ -197,32 +204,40 @@
 
                 <svg id="planetSystem" class="svgMap" height="500" width="500" viewBox="-250 -250 500 500"
                     onwheel="zoomWheel(event)" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                
-                    <line id="sunDir" x1="0" y1="0" x2="-3" y2="0" stroke="yellow" stroke-width="1" />
-                
-                    <line id="shipOrbit" x1="0" y1="0" x2="0" y2="-3" stroke="green" stroke-width="2.5" stroke-opacity=".4" stroke-dashArray="10 15 10" />
-                    <line id="planetOrbit" x1="0" y1="0" x2="0" y2="-3" stroke="orange" stroke-width="2.5" stroke-opacity=".4" stroke-dashArray="10 15 10" />
 
-                    <g id="hyperbolaGroup">
-                        <path id="hyperbola" stroke="grey" stroke-width="2.5" fill="none"  d="M 93.01 0 L 92.30 -7.25   90.14 -14.72 86.49 -22.64" />
-                        <line id="axis" x1="0" y1="0" x2=".05" y2="0" stroke="grey" stroke-dashArray="3 2 3" />
-                        <line id="asymptote" x1="1.40" y1="0" x2=".4650" y2="-1.3153" stroke="gray" stroke-width="1" stroke-dashArray="3 2 3" stroke-opacity=".3" />
+                    <defs>
+                        <marker id="arrowMarker" markerHeight="3" markerWidth="6" refx="6" refy="1.5" orient="auto">
+                            <path d="M 0,0 L 0,3 6,1.5 0,0" stroke="none" />
+                            <!-- <circle cx="2.5" cy="2.5" r="2.5"/> -->
+                        </marker>
+                    </defs>
+
+                    <g id="alignment">
+
+                        <line id="sunDir" x1="0" y1="0" x2="-3" y2="0" stroke="yellow" stroke-width="1" />
+                        <line id="planetOrbit" x1="0" y1="0" x2="0" y2="-3" stroke="blue" stroke-width="2.5" stroke-opacity=".4" stroke-dashArray="10 15 10" />
+                        <line id="shipOrbit" x1="0" y1="0" x2="0" y2="-3" stroke="green" stroke-width="2.5" stroke-opacity=".4" stroke-dashArray="10 15 10" />
+                        
+                        <g id="hyperbolaGroup">
+                            <path id="hyperbola" stroke="grey" stroke-width="2.5" fill="none"  d="M 93.01 0 L 92.30 -7.25   90.14 -14.72 86.49 -22.64" />
+                            <line id="axis" x1="0" y1="0" x2=".05" y2="0" stroke="grey" stroke-dashArray="3 2 3" />
+                            <line id="asymptote" x1="1.40" y1="0" x2=".4650" y2="-1.3153" stroke="gray" stroke-width="1" stroke-dashArray="3 2 3" stroke-opacity=".3" />
+                        </g>
+                        
+                        <g id="velocities">
+                            <line id = "planetV"  stroke="blue"      stroke-width="2.5" style="marker-end: url(#arrowMarker)"/>
+                            <line id = "shipV"    stroke="darkGreen" stroke-width="2.5" style="marker-end: url(#arrowMarker)"/>
+                            <line id = "shipRelV" stroke="red"       stroke-width="2.5" style="marker-end: url(#arrowMarker)"/>
+                        </g>
+
                     </g>
-                
+                        
                     <circle id="planetSystemSOI" cx="0" cy="0" r="100" stroke="black" fill="none" stroke-dashArray="20 50 20" stroke-opacity=".5" />
                     <circle id="planetSystemPark" cx="0" cy="0" r="6" stroke="gray" fill="none" />
                     <circle id="planetSystemPlanet" cx="0" cy="0" r="7" stroke="blue" fill="cyan" />
-                    
-                    <g id="velocities">
-                        <line id = "planetV" stroke="green"/>
-                        <line id = "shipV" stroke="darkGreen"/>
-                        <line id = "shipRelV"stroke="red" stroke-width="2.5" stroke-opacity=".4"/>
-                    </g>
-                    
-                    <use id="shipRelV2" href="#shipRelV"x="0" y="0"></use>
-
+                        
                 </svg>
-
+                    
                 <div id="divStatusBar">
                     <table>
                         <tr>
@@ -232,6 +247,7 @@
                         </tr>
                     </table>
                 </div>
+
             </div>
                 
             <div id="divOutput">
@@ -272,7 +288,14 @@
                         <td>Turn Angle</td>
                         <td id="outTurnAngle"></td>
                     </tr>
-                    
+                    <tr>
+                        <td>V2 Angle</td>
+                        <td id="outV2Angle"></td>
+                    </tr>
+                    <tr>
+                        <td>V2 Angle</td>
+                        <td id="outV2AngleDelta"></td>
+                    </tr>
                     <tr>
                         <td>Ejection Angle</td>
                         <td id="outEjectionAngle"></td>

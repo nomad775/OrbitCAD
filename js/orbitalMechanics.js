@@ -94,8 +94,16 @@ class Planet{
         return Math.sqrt(mu_sun * (2 / r - 1 / this.sma));
     }
     
-    flightAngleAtTheta(theta) {
-        return Math.atan(this.ecc * Math.sin(theta) / (1 + this.ecc * Math.cos(theta)));
+    flightAngleAtTheta(ln) {
+
+        let theta = modRev(ln-this.LnPe);
+        let fa = Math.atan(this.ecc * Math.sin(theta) / (1 + this.ecc * Math.cos(theta)))
+
+        console.log("theta", radToDeg(theta));
+        console.log("FA", radToDeg(fa));
+
+        //fa = theta > Math.PI ? fa : -fa;
+        return fa;
     }
 }
 
@@ -304,67 +312,6 @@ class HyperbolicOrbit{
         this.update(peAlt);
     }
 
-    getVelocitieds(body, t, v3){
-        
-        // assume v3 is in vertical direction
-        // - (downward) for caputure when going outbound
-
-        this.lnp = body.LnAtTimeT(t);
-        let r = body.rAtLn(this.lnp);
-        
-        let theta = radToDeg(this.lnp - body.LnPe);
-        let FA = radToDeg(body.flightAngleAtTheta(this.lnp-body.LnPe));
-
-        this.vp = body.v(r);
-        this.fa = -Math.PI/2 - body.flightAngleAtTheta(this.lnp-body.LnPe);
-        
-        this.vpx = this.vp * Math.cos(this.fa);
-        this.vpy = this.vp * Math.sin(this.fa);
-        
-        this.v2x = this.vpx;
-        this.v2y = -v3 - this.vpy;
-
-        this.v2 = Math.hypot(this.v2x, this.v2y);
-        this.v2Angle = Math.atan2(this.v2y, this.v2x);
-
-        this.delta = this.v2Angle-Math.PI/2;
-        
-        let deltaDeg = radToDeg(this.delta);
-        let v2AngleDeg = radToDeg(this.v2Angle);
-
-        //let vdir = this.lnp + Math.PI / 2;
-    }
-
-    update(peAlt){
-
-        this.rp = peAlt + this._eqR;
-
-        // e = c / a;
-        this.e = (-this._a + this.rp) / -this._a;
-        this.p = this._a * (1 - this.e ** 2);
-        this.b = Math.sqrt(-this._a * this.p);
-
-        this.turnAngle = Math.asin(1 / this.e);
-        
-        //console.log("body Ln " + radToDeg(this._bodyLn));
-        //console.log("turn " + radToDeg(this.turnAngle));
-        //console.log("lnPe " + radToDeg(this.lnPe));
-        
-        this.thetaSoi = modRev(Math.acos((this.p / this._soi - 1) / this.e));
-
-        // v0 - velocity at Pe, parking orbit
-        // v1 - velocity at Pe, hyperbolic orbit
-        // v2 - velocity at SOI, relative to planet
-        // v3 - velocity just past SOI, relative to sun, required for tx orbit
-
-        // calculate v1 from vis-viva eqn
-        let v1 = Math.sqrt(this._mu * (2 / this.rp - 1 / this.a));
-        let v0 = Math.sqrt(this._mu / this.rp);
-
-        this.deltaV = v1 - v0;
-
-    }
-
     get a(){
         return this._a;
     }
@@ -381,21 +328,95 @@ class HyperbolicOrbit{
         return this._v3;
     }
 
-    lnPe(outbound, mirrored){
-        
-        let ln;
+    update(peAlt) {
+
+        this.rp = peAlt + this._eqR;
+
+        // e = c / a;
+        this.e = (-this._a + this.rp) / -this._a;
+        this.p = this._a * (1 - this.e ** 2);
+        this.b = Math.sqrt(-this._a * this.p);
+
+        this.turnAngle = Math.asin(1 / this.e);
+        // this is the angle from horizontal (velocity direction at pe) to V_infinity
+        // in orbital mechanics this is delta / 2 (half the turn angle)
+
+        this.thetaSoi = modRev(Math.acos((this.p / this._soi - 1) / this.e));
+
+        // calculate v1 from vis-viva eqn
+        // calculate v0 from circluar orbit
+        let v1 = Math.sqrt(this._mu * (2 / this.rp - 1 / this.a));
+        let v0 = Math.sqrt(this._mu / this.rp);
+
+        this.deltaV = v1 - v0;
+
+    }
+
+    getVelocitieds(body, t, v3) {
+
+        // v0 - velocity at Pe, parking orbit
+        // v1 - velocity at Pe, hyperbolic orbit
+        // v2 - velocity at SOI, relative to planet
+        // v3 - velocity at SOI, relative to sun, required for tx orbit
+
+        // assume v3 is in vertical direction
+        // local horizon is vertical
+        // vp includes horizontal component from flight angle
+
+        this.lnp = body.LnAtTimeT(t);
+        let r = body.rAtLn(this.lnp);
+        this.vp = body.v(r);
+
+        this.fa = body.flightAngleAtTheta(this.lnp);
+
+        this.vpx = this.vp * Math.sin(this.fa);
+        this.vpy = this.vp * Math.cos(this.fa);
+
+        // relative velocity is difference in vertical components
+        // plus the horizontal component of the planet velocity
+
+        this.v2x = -this.vpx;
+        this.v2y = v3 - this.vpy;
+
+        this.v2 = Math.hypot(this.v2x, this.v2y);
+        this.v2Angle = Math.atan2(this.v2y, this.v2x);
+
+        //this.v2AngleDelta = Math.asin(this.v2x / this.v2);
+    }
+
+    getRotation(outbound, mirrored){
+
+        // inital coordinate system:
+        // planet at LN0, planet velocity roughly vertical (upwards) (off by flight angle)
+        // calling the left leg the inbound leg and right leg the outbound leg (assume CCW orbit)
+        // hyperbola opening upwards (pe at 270deg)
+        // rotate hyperbola to align vertical 
+
+        let theta;
 
         if(outbound){
-            ln = this.lnp - this.turnAngle;
+
+            // rotate right leg CCW by turn angle
+            // let r1 = -this.turnAngle + Math.PI/2;
+            // align to v2
+            // let r2 = this.v2Angle - Math.PI/2;
+
+            theta = this.v2Angle - this.turnAngle
+
         }else{
-            
-            ln = this.turnAngle + this.delta + this.lnp + Math.PI ;
-        
-            if (mirrored) ln =  this.lnp - this.turnAngle - this.delta;
+
+            // rotate left leg CW by turn angle
+            // let r1 = this.turnAngle - Math.PI/2
+            // align to v2
+            // let r2 = this.v2Angle + Math.PI/2;
+
+            theta = this.v2Angle + this.turnAngle;
         }
 
-        this.lnPe = ln;
-        return ln;
+        this.lnPe = modRev(this.lnp - Math.PI/2 + theta);
+
+        return theta;
+        
     }
 
     get TOF(){
@@ -437,16 +458,16 @@ function initializeCaptureOrbit(mirrored = false){
 function initializeEjectionOrbit(){
     
     console.log("initialize ejection orbit");
-    //console.log(fields["ejectPe"]);
 
     let originPlanet = txOrbit.originPlanet;
-    let vSOI = txOrbit.v_soi_o;
+    let t = txOrbit.tod;
+    let v3 = Math.abs(txOrbit.v3o);
 
     //let peAlt = fields["parkPe"].value * 1000;
     let peAlt = document.forms["parkOrbit"]["peAlt"].value * 1000;
     
     // create hyperbolic orbit
-    ejectionOrbit = new HyperbolicOrbit(originPlanet, txOrbit.Ln_o, peAlt, vSOI);
+    ejectionOrbit = new HyperbolicOrbit(originPlanet, t, peAlt, v3);
 
     initializeEjectionSVG(ejectionOrbit, false);
 

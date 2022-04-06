@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <planets>
-  <planet name="Moho" color="orange">
+  <planet name="Moho">
     <radius>250000</radius>
     <mu>168609378655</mu>
     <omega>0.00000519</omega>
@@ -19,13 +19,24 @@
       <period>2215754</period>
     </orbit>
   </planet>
-  <planet name="Eve" color="purple">
+  <planet name="Eve">
     <radius>700000</radius>
     <mu>8171730229211</mu>
     <omega>0.00007805</omega>
     <soi>85109365</soi>
     <m>122439800380140000000000</m>
     <g>1.700581</g>
+    <orbit>
+      <sma>9832684544</sma>
+      <ecc>0.0100</ecc>
+      <inc>2.1000</inc>
+      <lan>15</lan>
+      <argPe>0</argPe>
+      <mean0>3.1400</mean0>
+      <pe>9734357701</pe>
+      <ap>9931011387</ap>
+      <period>5657995</period>
+    </orbit>
     <atmosphere>
       <adiabaticIndex>1.2000</adiabaticIndex>
       <molarMass>0.0430</molarMass>
@@ -49,25 +60,46 @@
         <key>90000,250.000000,0.005895,0.000000</key>
       </temperatureCurve>
     </atmosphere>
-    <orbit>
-      <sma>9832684544</sma>
-      <ecc>0.0100</ecc>
-      <inc>2.1000</inc>
-      <lan>15</lan>
-      <argPe>0</argPe>
-      <mean0>3.1400</mean0>
-      <pe>9734357701</pe>
-      <ap>9931011387</ap>
-      <period>5657995</period>
-    </orbit>
+    <moons>
+      <moon name="Gilly">
+        <radius>13000</radius>
+        <mu>8289450</mu>
+        <omega>0.00022237</omega>
+        <soi>126123</soi>
+        <m>124203632781093000</m>
+        <g>0.005002</g>
+        <orbit>
+          <sma>31500000</sma>
+          <ecc>0.5500</ecc>
+          <inc>12.0000</inc>
+          <lan>80</lan>
+          <argPe>10</argPe>
+          <mean0>0.9000</mean0>
+          <pe>14175000</pe>
+          <ap>48825000</ap>
+          <period>388587</period>
+        </orbit>
+      </moon>
+    </moons>
   </planet>
-  <planet name="Kerbin" color="cyan">
+  <planet name="Kerbin">
     <radius>600000</radius>
     <mu>3531600000000</mu>
     <omega>0.00029157</omega>
     <soi>84159286</soi>
     <m>52915158343921500000000</m>
     <g>1.000342</g>
+    <orbit>
+      <sma>13599840256</sma>
+      <ecc>0.0000</ecc>
+      <inc>0.0000</inc>
+      <lan>0</lan>
+      <argPe>0</argPe>
+      <mean0>3.1400</mean0>
+      <pe>13599840256</pe>
+      <ap>13599840256</ap>
+      <period>9203545</period>
+    </orbit>
     <atmosphere>
       <adiabaticIndex>1.4000</adiabaticIndex>
       <molarMass>0.0290</molarMass>
@@ -106,25 +138,65 @@
         <key>70000,186.946000,0.000000,0.000000</key>
       </temperatureCurve>
     </atmosphere>
-    <orbit>
-      <sma>13599840256</sma>
-      <ecc>0.0000</ecc>
-      <inc>0.0000</inc>
-      <lan>0</lan>
-      <argPe>0</argPe>
-      <mean0>3.1400</mean0>
-      <pe>13599840256</pe>
-      <ap>13599840256</ap>
-      <period>9203545</period>
-    </orbit>
+    <moons>
+      <moon name="Mun">
+        <radius>200000</radius>
+        <mu>65138397521</mu>
+        <omega>0.00004521</omega>
+        <soi>2429559</soi>
+        <m>975990661196460000000</m>
+        <g>0.166057</g>
+        <orbit>
+          <sma>12000000</sma>
+          <ecc>0.0000</ecc>
+          <inc>0.0000</inc>
+          <lan>0</lan>
+          <argPe>0</argPe>
+          <mean0>1.7000</mean0>
+          <pe>12000000</pe>
+          <ap>12000000</ap>
+          <period>138984</period>
+        </orbit>
+      </moon>
+      <moon name="Minmus">
+        <radius>60000</radius>
+        <mu>1765800026</mu>
+        <omega>0.00015552</omega>
+        <soi>2247428</soi>
+        <m>26457579566209500000</m>
+        <g>0.050017</g>
+        <orbit>
+          <sma>47000000</sma>
+          <ecc>0.0000</ecc>
+          <inc>6.0000</inc>
+          <lan>78</lan>
+          <argPe>38</argPe>
+          <mean0>0.9000</mean0>
+          <pe>47000000</pe>
+          <ap>47000000</ap>
+          <period>1077311</period>
+        </orbit>
+      </moon>
+    </moons>
   </planet>
-  <planet name="Duna" color="red">
+  <planet name="Duna">
     <radius>320000</radius>
     <mu>301363211975</mu>
     <omega>0.00009590</omega>
     <soi>47921949</soi>
     <m>4515427024774920000000</m>
     <g>0.300102</g>
+    <orbit>
+      <sma>20726155264</sma>
+      <ecc>0.0510</ecc>
+      <inc>0.0600</inc>
+      <lan>135.5</lan>
+      <argPe>0</argPe>
+      <mean0>3.1400</mean0>
+      <pe>19669121365</pe>
+      <ap>21783189163</ap>
+      <period>17315400</period>
+    </orbit>
     <atmosphere>
       <adiabaticIndex>1.2000</adiabaticIndex>
       <molarMass>0.0430</molarMass>
@@ -144,19 +216,29 @@
         <key>50000,160.000000,0.003747,0.000000</key>
       </temperatureCurve>
     </atmosphere>
-    <orbit>
-      <sma>20726155264</sma>
-      <ecc>0.0510</ecc>
-      <inc>0.0600</inc>
-      <lan>135.5</lan>
-      <argPe>0</argPe>
-      <mean0>3.1400</mean0>
-      <pe>19669121365</pe>
-      <ap>21783189163</ap>
-      <period>17315400</period>
-    </orbit>
+    <moons>
+      <moon name="Ike">
+        <radius>130000</radius>
+        <mu>18568368573</mu>
+        <omega>0.00009590</omega>
+        <soi>1049599</soi>
+        <m>278216152235874000000</m>
+        <g>0.112038</g>
+        <orbit>
+          <sma>3200000</sma>
+          <ecc>0.0300</ecc>
+          <inc>0.2000</inc>
+          <lan>0</lan>
+          <argPe>0</argPe>
+          <mean0>1.7000</mean0>
+          <pe>3104000</pe>
+          <ap>3296000</ap>
+          <period>65518</period>
+        </orbit>
+      </moon>
+    </moons>
   </planet>
-  <planet name="Dres" color="brown">
+  <planet name="Dres">
     <radius>138000</radius>
     <mu>21484488600</mu>
     <omega>0.00018055</omega>
@@ -175,13 +257,24 @@
       <period>47893063</period>
     </orbit>
   </planet>
-  <planet name="Jool" color="green">
+  <planet name="Jool">
     <radius>6000000</radius>
     <mu>282528004209995</mu>
     <omega>0.00017453</omega>
     <soi>2455985185</soi>
     <m>4233212730593510000000000</m>
     <g>0.800273</g>
+    <orbit>
+      <sma>68773560320</sma>
+      <ecc>0.0500</ecc>
+      <inc>1.3040</inc>
+      <lan>52</lan>
+      <argPe>0</argPe>
+      <mean0>0.1000</mean0>
+      <pe>65334882253</pe>
+      <ap>72212238387</ap>
+      <period>104661432</period>
+    </orbit>
     <atmosphere>
       <adiabaticIndex>1.4300</adiabaticIndex>
       <molarMass>0.0022</molarMass>
@@ -204,19 +297,129 @@
         <key>200000,350.000000,0.087175,0.000000</key>
       </temperatureCurve>
     </atmosphere>
-    <orbit>
-      <sma>68773560320</sma>
-      <ecc>0.0500</ecc>
-      <inc>1.3040</inc>
-      <lan>52</lan>
-      <argPe>0</argPe>
-      <mean0>0.1000</mean0>
-      <pe>65334882253</pe>
-      <ap>72212238387</ap>
-      <period>104661432</period>
-    </orbit>
+    <moons>
+      <moon name="Laythe">
+        <radius>500000</radius>
+        <mu>1962000029236</mu>
+        <omega>0.00011859</omega>
+        <soi>3723646</soi>
+        <m>29397310629121600000000</m>
+        <g>0.800273</g>
+        <orbit>
+          <sma>27184000</sma>
+          <ecc>0.0000</ecc>
+          <inc>0.0000</inc>
+          <lan>0</lan>
+          <argPe>0</argPe>
+          <mean0>3.1400</mean0>
+          <pe>27184000</pe>
+          <ap>27184000</ap>
+          <period>52981</period>
+        </orbit>
+        <atmosphere>
+          <adiabaticIndex>1.4000</adiabaticIndex>
+          <molarMass>0.0290</molarMass>
+          <pressureCurve>
+            <key>0,60.795000,0.000000,-0.005216</key>
+            <key>5250,33.408980,-0.004253,-0.004253</key>
+            <key>10000,17.786050,-0.002408,-0.002408</key>
+            <key>17000,7.100577,-0.001092,-0.001092</key>
+            <key>22000,3.812421,-0.000468,-0.000468</key>
+            <key>31000,1.312482,-0.000196,-0.000196</key>
+            <key>38000,0.510406,-0.000079,-0.000079</key>
+            <key>50000,0.000000,0.000000,0.000000</key>
+          </pressureCurve>
+          <temperatureCurve>
+            <key>0,277.000000,0.000000,-0.009286</key>
+            <key>5250,206.000000,-0.009254,0.000000</key>
+            <key>10000,206.000000,0.000000,0.001420</key>
+            <key>17000,217.800000,0.001414,0.003960</key>
+            <key>22000,235.500000,0.003941,-0.000258</key>
+            <key>31000,203.000000,-0.003911,-0.000762</key>
+            <key>38000,199.000000,0.000000,0.001478</key>
+            <key>50000,214.000000,0.000000,0.000000</key>
+          </temperatureCurve>
+        </atmosphere>
+      </moon>
+      <moon name="Vall">
+        <radius>300000</radius>
+        <mu>207481499474</mu>
+        <omega>0.00005930</omega>
+        <soi>2406401</soi>
+        <m>3108765544820420000000</m>
+        <g>0.235080</g>
+        <orbit>
+          <sma>43152000</sma>
+          <ecc>0.0000</ecc>
+          <inc>0.0000</inc>
+          <lan>0</lan>
+          <argPe>0</argPe>
+          <mean0>0.9000</mean0>
+          <pe>43152000</pe>
+          <ap>43152000</ap>
+          <period>105962</period>
+        </orbit>
+      </moon>
+      <moon name="Tylo">
+        <radius>600000</radius>
+        <mu>2825280042100</mu>
+        <omega>0.00002965</omega>
+        <soi>10856518</soi>
+        <m>42332127305935100000000</m>
+        <g>0.800273</g>
+        <orbit>
+          <sma>68500000</sma>
+          <ecc>0.0000</ecc>
+          <inc>0.0250</inc>
+          <lan>0</lan>
+          <argPe>0</argPe>
+          <mean0>3.1400</mean0>
+          <pe>68500000</pe>
+          <ap>68500000</ap>
+          <period>211926</period>
+        </orbit>
+      </moon>
+      <moon name="Bop">
+        <radius>65000</radius>
+        <mu>2486834944</mu>
+        <omega>0.00001154</omega>
+        <soi>1221061</soi>
+        <m>37261089834327800000</m>
+        <g>0.060020</g>
+        <orbit>
+          <sma>128500000</sma>
+          <ecc>0.2350</ecc>
+          <inc>15.0000</inc>
+          <lan>10</lan>
+          <argPe>25</argPe>
+          <mean0>0.9000</mean0>
+          <pe>98302500</pe>
+          <ap>158697500</ap>
+          <period>544507</period>
+        </orbit>
+      </moon>
+      <moon name="Pol">
+        <radius>44000</radius>
+        <mu>721702080</mu>
+        <omega>0.00000697</omega>
+        <soi>1042139</soi>
+        <m>10813506580682300000</m>
+        <g>0.038013</g>
+        <orbit>
+          <sma>179890000</sma>
+          <ecc>0.1709</ecc>
+          <inc>4.2500</inc>
+          <lan>2</lan>
+          <argPe>15</argPe>
+          <mean0>0.9000</mean0>
+          <pe>149155794</pe>
+          <ap>210624207</ap>
+          <period>901903</period>
+        </orbit>
+      </moon>
+    </moons>
   </planet>
-  <planet name="Eeloo" color="gray">
+  <planet name="Eeloo">
     <radius>210000</radius>
     <mu>74410814527</mu>
     <omega>0.00032288</omega>
