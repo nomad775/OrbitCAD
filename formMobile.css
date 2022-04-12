@@ -1,0 +1,49 @@
+
+div#main{
+    width: 400px;
+    overflow-x: scroll;
+    white-space: nowrap;
+    scroll-snap-type: x mandatory;
+}
+
+div.card{
+    vertical-align: top;
+    display: inline-block;
+    
+    width: 80vw;
+    margin: 10vw 10vw;
+    scroll-snap-align: center;
+    scroll-margin-left: 10vw;
+    scroll-margin-right: 10vw;
+}
+
+#divMap{
+  width: 100vw;
+  margin: 0px;
+  scroll-margin: 0px 0px;
+}
+
+
+ /* !important is needed sometimes */
+ ::-webkit-scrollbar {
+    width: 12px !important;
+ }
+
+ /* Track */
+::-webkit-scrollbar-track {
+   -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3) !important;
+   -webkit-border-radius: 10px !important;
+   border-radius: 10px !important;
+ }
+
+ /* Handle */
+ ::-webkit-scrollbar-thumb {
+   -webkit-border-radius: 10px !important;
+   border-radius: 10px !important;
+   background: #41617D !important; 
+   -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5) !important; 
+
+ }
+ ::-webkit-scrollbar-thumb:window-inactive {
+   background: #41617D !important; 
+ }

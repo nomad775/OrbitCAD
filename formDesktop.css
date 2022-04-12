@@ -1,0 +1,107 @@
+#main{
+    display: grid;
+    grid-template-columns: 25 50 25;
+    grid-row: 30 30 30;
+}
+
+#form1{
+    width: 150px;
+    min-width: 150;
+    grid-column: 1;
+    grid-row: 1;
+}
+
+#form2{
+    width: 150px;
+    min-width: 150;
+    grid-column: 1;
+    grid-row: 2;
+}
+
+#form3{
+    width: 150px;
+    min-width: 150;
+    grid-column: 1;
+    grid-row: 3;
+}
+
+#divMap{
+    grid-column: 2;
+    grid-row: 1 / 4;
+
+    height: 600px;
+    width: 600px;
+    border: 1px  solid blue;
+    border-bottom: 2px solid black;
+    border-right: 2px solid black;
+    /* background-color: blueviolet; */
+}
+
+#divOutput{
+    grid-column:3;
+    grid-row: 1 / 4;
+    width: 300px;
+}
+
+#divStatusBar td{
+    width:200px;
+}
+
+
+.timeLabel{
+    display: inline-block;
+    width: 25px;
+    color: blue;
+}
+
+.timeInput{
+    width: 50px;
+}
+
+input:invalid{
+    color: red;
+}
+
+input[type="radio"]{
+    font-weight: bold;
+
+}
+
+:disabled + label{
+    color: #ddd;
+}
+
+svg * {
+    /* background-color: #131339;*/
+    vector-effect: non-scaling-stroke;
+}
+
+.planet.dimPlanet{
+    r: .5%;
+    opacity: .5;
+}
+
+.planet.highlight{
+    r: 2%;
+    opacity: 1;
+    stroke: red;
+    stroke-width: 1px;
+}
+
+.orbit.highlight{
+    opacity: .7;
+    stroke-dasharray: none;
+}
+
+.orbit{
+    opacity: .2;
+    stroke-dasharray: 5 5;
+}
+
+th{
+    padding-top: 20px;
+}
+
+td{
+    width: 130px;
+}
