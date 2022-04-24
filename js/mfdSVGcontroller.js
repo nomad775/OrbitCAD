@@ -588,22 +588,33 @@ function initializeCaptureSVG(captureOrbit, mirrored) {
     }
 }
 
-function updateHypSVG(peAlt){
+function updateHypSVG(){
+    
+    let peAlt = document.parkOrbit.peAlt.value * 1000;
+    let alignTo = document.options.align.value;
 
     hypOrbit.update(peAlt);
-
+    let io = hypOrbit.outbound ? 0 : Math.PI;
+    
     let svgPe = hypOrbit.rpScaled;
     let ln = hypOrbit.lnp;
     let fa = hypOrbit.fa;
+    let theta = 0;
+
+
+    switch(alignTo){
+        case "prograde":
+            theta = 0 + io;
+            break;
+        case "sun":
+            theta = fa + io;
+            break;
+        default:
+            theta=ln;
+    }
 
     document.getElementById("planetSystemPark").setAttribute("r", svgPe);
-
-
-    if (showAligned) {
-        document.getElementById("alignment").setAttribute("transform", `rotate(${-radToDeg(ln)})`);
-    } else {
-    }
-    document.getElementById("alignment").setAttribute("transform", `rotate(${-radToDeg(fa)})`);
+    document.getElementById("alignment").setAttribute("transform", `rotate(${-radToDeg(theta)})`);
 
     setNodeText();
 
@@ -651,9 +662,7 @@ function initializeEjectionSVG(bodyName, t, peAlt, v3, outbound){
 
     // set initial zoom (park orbit is half of screen)
     let w = park * 4;
-    zoomWindow(-w/2, -w/2, w, w);
-
-    
+    zoomWindow(-w/2, -w/2, w, w);    
 }
 
 

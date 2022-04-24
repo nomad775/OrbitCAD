@@ -36,7 +36,7 @@
                 font-size: 14pt;
             }
 
-            #destination{
+            .active{
                 font-size: 18;
                 font-weight: bold;
             }
@@ -137,13 +137,32 @@
                 let destinationPlanet = planets[destinationName];
 
                 let txOrbit = new TransferOrbit(originPlanet, destinationPlanet);
-                txOrbit.update(tod);
-                let v3 = txOrbit.v3o;
 
-                // document.forms["parkOrbit"]["toa"].value = Math.round(txOrbit.toa);
+                if(type=="capture"){
 
+                    planetName = destinationName;
+                    t = toa;
+                    txOrbit.update(t);
+                    v3 = txOrbit.v3d;
+                    outbound = false;
+
+                    document.getElementById("outOrigin").toggleAttribute("active");
+                    document.getElementById("outDestination").classList.add("active");
+
+                }else{
+                    
+                    planetName = originName;
+                    t=tod;
+                    txOrbit.update(t);
+                    v3 = txOrbit.v3o;
+                    outbound = true;
+
+                    document.getElementById("outOrigin").classList.add("active");
+                    // document.getElementById("outDestination").textContent = destinationName;
+                }
+                
                 let peAlt = 100000
-                initializeEjectionSVG(originName, tod, peAlt, v3, true);
+                initializeEjectionSVG(planetName, t, peAlt, v3, outbound);
                 peChange();
     
             }
@@ -220,9 +239,9 @@
                             <th>To</td>
                         </tr>
                         <tr>
-                            <td id="outCurrentTime">adsf</td>
-                            <td id="outOrigin">Kerbin</td>
-                            <td id="outDestination">Duna</td>
+                            <td id="outCurrentTime">time</td>
+                            <td id="outOrigin">Orign</td>
+                            <td id="outDestination">Destination</td>
                         </tr>
                     </table>
                 </div>
@@ -259,6 +278,8 @@
                             <line id="planetV"  stroke="blue"      stroke-width="3" style="marker-end: url(#arrowMarker)"/>
                             <line id="shipV"    stroke="darkGreen" stroke-width="3" style="marker-end: url(#arrowMarker); stroke-opacity: .5;"/>
                             <line id="shipRelV" stroke="red"       stroke-width="3" style="marker-end: url(#arrowMarker); stroke-opacity: .5;"/>
+                            <line id="planetVclose" x1="0" y1="0" x2="0" y2="-.7" stroke="blue" stroke-width="3"
+                                style="marker-end: url(#arrowMarker)" />
                         </g>
 
                     </g>
@@ -275,7 +296,7 @@
                         <text dx="0" dy=".45">dV: <tspan id="nodeDv"></tspan> m/s</text>
                     </g>
 
-                    <line id="planetVclose" x1="0" y1="0" x2="0" y2="-.7" stroke="blue" stroke-width="3" style="marker-end: url(#arrowMarker)"/>
+                    
 
                 </svg>
 
@@ -293,7 +314,7 @@
 
             <div id="divForm">
 
-                <form name="parkOrbit" onsubmit="return validate()" width="500px" action="form3.html">
+                <form name="parkOrbit" onsubmit="return validate()" width="500px" action="form2.html">
                     
                     <label for="peAlt">PE alt</label>
                     <input name="peAlt" type="range" value="100" min="50" step="10" max="1000" required oninput="peChange()"
@@ -311,25 +332,30 @@
             
                     <input name="tod" type="hidden" />
                     <input name="toa" type="hidden" />
-            
+                    <input name="orbit" type="hidden" value="capture"/>
+
                 </form>
             
                 <!-- <label for="showAligned">Show aligned</label> -->
                 <!-- <input type="checkbox" name="chkShowAligned" checked="false" -->
                 <!-- onchange="showAligned = this.checked; console.log(this.checked); initializeEjectionOrbit();">; -->
 
-                <p>Show aligned to</p>
-                <input type="radio" name="align" width="200px">
-                <lable style="padding-right:50px;">Prograde</lable>
-                
-                <input type="radio" name="align" width="200px">
-                <label style="margin-right: 50px;">Sun</label>
-                
-                <input type="radio" name="align" width="200px" id="optLn">
-                <label for="optLn">Longitude</label>
-                
+                <form name="options">
+
+                    <p>Show aligned to</p>
+                    <input type="radio" name="align" value="prograde" checked width="200px" onchange="updateHypSVG()">
+                    <lable style="padding-right:50px;">Prograde</lable>
+                    
+                    <input type="radio" name="align" value="sun" width="200px" onchange="updateHypSVG()">
+                    <label style="margin-right: 50px;">Sun</label>
+                    
+                    <input type="radio" name="align" value="ln" width="200px" onchange="updateHypSVG()">
+                    <label for="optLn">Longitude</label>
+                    
+                </form>
+                    
             </div>
-            
+                
             <div id="divOutput">
                 <table>
                     <tr>
