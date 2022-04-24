@@ -6,8 +6,9 @@
     <head>
 
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
         <link rel="preconnect" href="https://fonts.gstatic.com">
-        <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=VT323&display=swap" >
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
@@ -65,16 +66,15 @@
                 
                 <div id="tPePanelUnit" class="paramDisp">
                     T- PE<div class="LCDscreen">
-                        y:<input name="tPeY" type="text" value="01" style="width:18px">
-                        d:<input name="tPeD" type="text" value="001" style="width:20px">
-                        <input name="tPeH" type="text" value="0" style="width:10px">:<input name="tPeM" type="text" value="00"
-                            style="width:18px">
+                        y:<input name="tPeY" type="text" value="01" style="width:18px" min="1">
+                        d:<input name="tPeD" type="text" value="001" style="width:20px" min="1" max="426">
+                        <input name="tPeH" type="text" value="0" style="width:10px" min="0" max="5">:<input name="tPeM" type="text" value="00" style="width:18px" min="0" max="59">
                     </div>
                 </div>
 
                 <div id="utPanelUnit" class="paramDisp">
                     UT<div class="LCDscreen">
-                        y:<input name="utY" type="text" value="1" maxlength="3" style="width:18px">
+                        y:<input name="utY" type="text" value="1" maxlength="3" style="width:18px" min="1" max="999">
                         d:<input name="utD" type="text" value="1" style="width:20px">
                         <input name="utH" type="text" value="0" style="width:10px">:<input name="utM" type="text" value="00"
                             style="width:18px">
@@ -179,15 +179,10 @@
                     <!-- buttons -->
                     <defs>
                         <g id="button">
-                            <!-- transform="matrix(0.84697026,0,0,0.97850746,-6.4359154,0.08578277)" style="mix-blend-mode:normal" -->
                             <rect x="-30" y="-10"  width="60" height="20" rx="3" ry="3" fill="darkGrey"/>
                             <rect x="-29" y="-9"  width="58" height="18" rx="2" ry="2" fill="black"/>
                             <rect x="-20" y="-6"  width="40" height="12" rx="1" ry="1" fill="white"/>
                         </g>
-                        
-                        <!-- style="opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#272727;stroke-width:0.264583;stroke-opacity:1;filter:url(#filter9407)"/> -->
-                        <!-- style="opacity:1;fill:#333333;fill-opacity:1;fill-rule:evenodd;stroke:#272727;stroke-width:0.248149;stroke-opacity:1"/> -->
-                        <!-- style="opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#272727;stroke-width:0.264583;stroke-opacity:1"/> -->
                     </defs>
 
                     <!-- FRAME -->

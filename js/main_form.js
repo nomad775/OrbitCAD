@@ -67,8 +67,8 @@ function initialize() {
     initializeScreen();
     initializeSolarSystemSVG();
     setSolarSystemSVG();
-    initializeTransferOrbit();
-    initializeTransferSVG();
+    txOrbit = initializeTransferOrbit();
+    initializeTransferSVG(txOrbit);
 
     currentTimeChange();
 

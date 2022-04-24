@@ -99,10 +99,9 @@ class Planet{
         let theta = modRev(ln-this.LnPe);
         let fa = Math.atan(this.ecc * Math.sin(theta) / (1 + this.ecc * Math.cos(theta)))
 
-        console.log("theta", radToDeg(theta));
-        console.log("FA", radToDeg(fa));
+        //console.log("theta", radToDeg(theta));
+        //console.log("FA", radToDeg(fa));
 
-        //fa = theta > Math.PI ? fa : -fa;
         return fa;
     }
 }
@@ -292,9 +291,10 @@ class HyperbolicOrbit{
     
     constructor(body, t, peAlt, v3){
 
-        this._mu = body.mu;
-        this._eqR = body.eqR;
-        this._soi = body.soi;
+        this.body = planets[body];
+        this._mu = this.body.mu;
+        this._eqR = this.body.eqR;
+        this._soi = this.body.soi;
         
         this._t = t;
         this._v3 = v3;
@@ -305,7 +305,7 @@ class HyperbolicOrbit{
         // the required value for 'a' can be calucated by
         // v_r^2/mu = 2/r - 1/a => 2/r - v^2/mu = 1/a
 
-        this.getVelocitieds(body, t, v3);
+        this.getVelocitieds(this.body, t, v3);
 
         this._a = 1 / (2 / this._soi - this.v2 ** 2 / this._mu);
 
@@ -330,12 +330,16 @@ class HyperbolicOrbit{
 
     update(peAlt) {
 
+        this.peAlt = peAlt;
         this.rp = peAlt + this._eqR;
 
         // e = c / a;
         this.e = (-this._a + this.rp) / -this._a;
         this.p = this._a * (1 - this.e ** 2);
         this.b = Math.sqrt(-this._a * this.p);
+
+        this.c = (-this._a + this.rp);
+        //this.b = Math.sqrt(this.c ** 2 - this.a ** 2); - from SVG hyperbolic orbit
 
         this.turnAngle = Math.asin(1 / this.e);
         // this is the angle from horizontal (velocity direction at pe) to V_infinity
@@ -384,7 +388,7 @@ class HyperbolicOrbit{
         //this.v2AngleDelta = Math.asin(this.v2x / this.v2);
     }
 
-    getRotation(outbound, mirrored){
+    getRotation(outbound){
 
         // inital coordinate system:
         // planet at LN0, planet velocity roughly vertical (upwards) (off by flight angle)
@@ -455,45 +459,60 @@ function initializeCaptureOrbit(mirrored = false){
 
 }
 
-function initializeEjectionOrbit(){
+function initializeEjectionOrbit(theTxOrbit){
     
     console.log("initialize ejection orbit");
 
-    let originPlanet = txOrbit.originPlanet;
-    let t = txOrbit.tod;
-    let v3 = Math.abs(txOrbit.v3o);
+    let originPlanet = theTxOrbit.originPlanet;
+    let t = theTxOrbit.tod;
+    let v3 = Math.abs(theTxOrbit.v3o);
 
-    //let peAlt = fields["parkPe"].value * 1000;
-    let peAlt = document.forms["parkOrbit"]["peAlt"].value * 1000;
+    let isForm = location.toString().includes("form");
+    let peAlt;
+    if (isForm) {
+        peAlt = document.forms["parkOrbit"]["peAlt"].value * 1000;
+    }else{
+        peAlt = fields["parkPe"].value * 1000;
+    }
     
     // create hyperbolic orbit
     ejectionOrbit = new HyperbolicOrbit(originPlanet, t, peAlt, v3);
 
-    initializeEjectionSVG(ejectionOrbit, false);
+    initializeEjectionSVG(ejectionOrbit);
 
+    return ejectionOrbit;
 }
 
 function initializeTransferOrbit() {
 
     console.log("initialize transfer orbit");
 
-    //origin = fields["origin"].value;
-    //destination = fields["destination"].value;
-    
-    let originName = document.forms["origin-destination"]["origin"].value;
-    let destinationName = document.forms["origin-destination"]["destination"].value;
+    let isForm = location.toString().includes("form");
 
+    if(isForm){
+        originName = document.forms["origin-destination"]["origin"].value;
+        destinationName = document.forms["origin-destination"]["destination"].value;
+    }else{
+        originName = fields["origin"].value;
+        destinationName = fields["destination"].value;
+    }
+    
     let originPlanet = planets[originName];
     let destinationPlanet = planets[destinationName];
 
-    txOrbit = new TransferOrbit(originPlanet, destinationPlanet);
+    let txOrbit = new TransferOrbit(originPlanet, destinationPlanet);
     
-    //displayedTime=txOrbit.solveTForRdv(currentTime);
-    //date = convertSecondsToUT(displayedTime);
-    
-    //initializeTransferSVG();
+    if(!isForm){
 
-    //window.dispatchEvent(displayedTimeChangeEvent);
+        displayedTime=txOrbit.solveTForRdv(currentTime);
+        date = convertSecondsToUT(displayedTime);
+        
+        initializeTransferSVG(txOrbit);
+        
+        window.dispatchEvent(displayedTimeChangeEvent);
+    }
+
+    return txOrbit;
 }
 
 function createPlanetObjectsFromXML(data, callback){

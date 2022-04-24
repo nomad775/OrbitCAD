@@ -16,7 +16,10 @@ function initialize(){
     initializeScreen();
 
     getPlanetsXML( ()=>{
-        initializeSVG();
+        
+        initializeSolarSystemSVG();
+        setSolarSystemSVG();
+
         console.log("intialized");
         troubleShoot();
     });

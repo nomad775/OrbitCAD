@@ -65,6 +65,9 @@ function mouseMove(event){
 function mouseLeave(event){
     mouseX = null;
     mouseY = null;
+
+    zoomAnchorX=0;
+    zoomAnchorY=0;
 }
 
 function zoomWheel(event) {
@@ -79,30 +82,25 @@ function zoomWheel(event) {
 }
 
 function zoomPerCent(amount) {
-    
-    let p = 1 + amount;
 
     let w1 = viewBox.width;
     let h1 = viewBox.height;
+    let x1 = viewBox.x;
+    let y1 = viewBox.y;
 
+    let p = 1 + amount;
     let a = amount * w1;
 
-    w = w1 * p
+    w = w1 * p;
     h = h1 * p;
+    x = x1 - a * zoomAnchorX / mapWidth;
+    y = y1 - a * zoomAnchorY / mapHeight;
 
     zoom = Math.round(initialViewBoxWidth/ w * 100)/100;
 
     if(zoom < maxZoom && zoom > minZoom){
-
-        viewBox.width *= p;
-        viewBox.height *= p;
-        
-        viewBox.x += -a * zoomAnchorX / mapWidth;
-        viewBox.y += -a * zoomAnchorY / mapHeight;
-        
+        zoomWindow(x, y, w, h);
     }
-    
-    document.getElementById("zoom").textContent = ` zoom ${zoom}`;
 }
 
 function zoomWindow(x0,y0,w,h){
@@ -113,9 +111,27 @@ function zoomWindow(x0,y0,w,h){
     viewBox.height = h;
     viewBox.width = w;
 
-    document.getElementById("zoom").textContent = ` zoom ${Math.round(initialViewBoxWidth / viewBox.width * 100) / 100}`;
+    document.getElementById("zoom").textContent = `zoom ${Math.round(initialViewBoxWidth / viewBox.width * 100) / 100}`;
+
+    scaleText();
 }
 
+function scaleText(){
+   
+    let svg = document.getElementById("planetSystem");
+    let gnode = document.getElementById("gnode");
+
+    if(gnode==null) return;
+    
+    let w = viewBox.width;
+
+    let s1 = 18 * w / mapWidth * 10;
+    let M = svg.createSVGMatrix();
+    M = M.scale(s1);
+    let T = svg.createSVGTransformFromMatrix(M)
+    gnode.transform.baseVal.replaceItem(T, 1);
+
+}
 
 function zoomPlanetOrbit(planetName){
 
@@ -147,12 +163,12 @@ function zoomAll(event) {
     zoomPlanetOrbit("Eeloo");
 }
 
+
 function toggleMouseDown(event) {
     boolDown = !boolDown;
 }
 
 function mouseUp(event){
-
 }
 
 function touchDown(event) {
@@ -190,9 +206,18 @@ function setSolarSystemSVG() {
 
 }
 
-function setPlanetSystemSVG(thePlanet) {
+var svgSet;
+
+function setPlanetSystemSVG(eqR, soi) {
 
     console.log("set to planet system SVG");
+
+    if (svgSet){
+        let w = 200 / scaleFactor;
+        //zoomWindow(-w/2,-w/2,w,w)
+        return;
+    }
+    svgSet=true;
 
     // switch SVG's
     document.getElementById("solarSystem").setAttribute("display", "none");
@@ -207,19 +232,16 @@ function setPlanetSystemSVG(thePlanet) {
     mapWidth = svg.scrollWidth;
     mapHeight = svg.scrollHeight;
 
-    let soi = thePlanet.soi * scaleFactor;
-    let eqR = thePlanet.eqR * scaleFactor;
-
-    svg.viewBox.baseVal.x = -soi;
-    svg.viewBox.baseVal.y = -soi;
-    svg.viewBox.baseVal.width = soi * 2;
-    svg.viewBox.baseVal.height = soi * 2;
+    svg.viewBox.baseVal.x = -soi * scaleFactor;
+    svg.viewBox.baseVal.y = -soi * scaleFactor;
+    svg.viewBox.baseVal.width = soi * scaleFactor * 2;
+    svg.viewBox.baseVal.height = soi * scaleFactor * 2;
     
     viewBox = svg.viewBox.baseVal;
     initialViewBoxWidth = viewBox.width;
 
     minZoom = .5;
-    maxZoom = soi/eqR/2;
+    maxZoom = soi/eqR * 2;
 
 }
 
@@ -289,5 +311,5 @@ function initializeScreen(){
     var svg2 = document.getElementById("planetSystem");
     svg2.addEventListener("mousemove", mouseMove);
 
-    //setSolarSystemSVG();
+    setSolarSystemSVG();
 }

@@ -5,28 +5,30 @@
     "version": "0.2.0",
     "configurations": [
 
+
     {
-        "name": "Attach to Chrome",
+        "name": "SVG solar system",
         "port": 28154,
-        "request": "attach",
+        "request": "launch",
         "type": "pwa-chrome",
+        "url": "http://localhost:28154/svgSolarSystem.html",
         "webRoot": "${workspaceFolder}"
     },
 
         
     
     {
-        "name": "form 2",
+        "name": "form1",
         "request": "launch",
         "type": "pwa-chrome",
-        "url": "http://localhost:28154/formTest.html",
+        "url": "http://localhost:28154/form1.html",
         "webRoot": "${workspaceFolder}"
     },
         
         {
-            "name": "Launch Edge",
+            "name": "ejection angle",
             "request": "launch",
-            "type": "pwa-msedge",
+            "type": "pwa-chrome",
             "url": "http://localhost:28154/ejectionAngle.html",
             "webRoot": "${workspaceFolder}"
         },

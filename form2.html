@@ -3,29 +3,52 @@
 
         <style>
             #divMain {
-                display: flex;
-                flex-direction: row;
+                /* display: flex; */
+                /* flex-direction: row; */
             }
         
             #divForm {
-                width: 250px;
+                width: 500px;
                 min-width: 150;
-                order: 1;
             }
-        
+            
             #divMap {
-                order: 2;
-        
-                height: 500px;
+                order: 1;
+               
                 width:  500px;
+            }
+
+            #headingBar{
+                width: 500px;
+            }
+
+            #headingBar table{
+                width: 100%;
+            }
+
+            #headingBar th{
+                text-align: left;
+                font-size: 8pt;
+            }
+
+            #headingBar td{              
+                /* width: 33%; */
+                font-size: 14pt;
+            }
+
+            #destination{
+                font-size: 18;
+                font-weight: bold;
+            }
+
+            #planetSystem{
                 border: 1px solid blue;
                 border-bottom: 2px solid black;
                 border-right: 2px solid black;
-                /* background-color: blueviolet; */
             }
-        
+
             #divOutput {
-                order: 3;
+                display: none;
                 width: 300px;
             }
         
@@ -46,6 +69,7 @@
             input:invalid {
                 color: red;
             }
+
             svg * {
                 /* background-color: #131339;*/
                 vector-effect: non-scaling-stroke;
@@ -65,7 +89,7 @@
 
             var planets = {};
             var txOrbit;
-            var ejectionOrbit;
+            //var ejectionOrbit;
 
             function fromPrev(){
                
@@ -73,10 +97,12 @@
 
                 let params = new URLSearchParams(location.search);
 
+                let type = params.get("orbit");
                 let originName = params.get("origin");
                 let destinationName = params.get("destination");
                 let tod = Number(params.get("tod"));
-                
+                let toa = Number(params.get("toa"));
+
                 let y = params.get("utY");
                 let d = params.get("utD");
                 let h = params.get("utH");
@@ -99,22 +125,25 @@
                 document.forms["parkOrbit"]["utM"].value = m;
 
                 document.forms["parkOrbit"]["tod"].value = Math.round(tod);
+                document.forms["parkOrbit"]["toa"].value = Math.round(toa);
                 
+                var svg = document.getElementById("planetSystem");
+                svg.addEventListener("mousemove", mouseMove);
+
                 planetsData = window.localStorage.getItem("planetsXML");
-               
                 createPlanetObjectsFromXML(planetsData, ()=>{} );
 
                 let originPlanet = planets[originName];
                 let destinationPlanet = planets[destinationName];
 
-                txOrbit = new TransferOrbit(originPlanet, destinationPlanet);
+                let txOrbit = new TransferOrbit(originPlanet, destinationPlanet);
                 txOrbit.update(tod);
+                let v3 = txOrbit.v3o;
 
-                var svg2 = document.getElementById("planetSystem");
-                svg2.addEventListener("mousemove", mouseMove);
+                // document.forms["parkOrbit"]["toa"].value = Math.round(txOrbit.toa);
 
-                document.forms["parkOrbit"]["toa"].value = Math.round(txOrbit.toa);
-
+                let peAlt = 100000
+                initializeEjectionSVG(originName, tod, peAlt, v3, true);
                 peChange();
     
             }
@@ -122,38 +151,40 @@
             function peChange(){
                 
                 let form = document.forms["parkOrbit"];
-                let circular = form["circular"];
-                let peAlt = form["peAlt"];
-                let apAlt = form["apAlt"];
+                let peAlt = form["peAlt"].value * 1000;
+                
+                updateHypSVG(peAlt)
 
-                if(circular.checked) apAlt.value = peAlt.value;
+                let theOrbit = hypOrbit;
 
-                initializeEjectionOrbit();
-                updateOutput();
-            }
+                let pe = theOrbit.peAlt/1000;
+                let lnPe = theOrbit.lnPe;
+                let dv = theOrbit.deltaV;
+                let tof = theOrbit.TOF;
 
-            function updateOutput(){
-
-                let lnPe = ejectionOrbit.lnPe;
-                let dv = ejectionOrbit.deltaV;
-                let tof = ejectionOrbit.TOF;
                 let params = new URLSearchParams(location.search);
                 let todTx = Number(params.get("tod"));
                 let tod = todTx-tof;
 
+                document.getElementById("outPe").textContent = pe;
                 document.getElementById("outLnPe").textContent = radToDeg(lnPe, 1);
                 document.getElementById("outDv").textContent = dv.toFixed(2);
                 document.getElementById("outTod").textContent = convertSecondsToDateObj(tod).toString();
                 
-                document.getElementById("outTurnAngle").textContent = radToDeg(ejectionOrbit.turnAngle,2);
-                document.getElementById("outV2Angle").textContent = radToDeg(ejectionOrbit.v2Angle, 2);
-                document.getElementById("outV2AngleDelta").textContent = radToDeg(ejectionOrbit.v2AngleDelta, 2);
-                document.getElementById("outEjectionAngle").textContent = 90 + radToDeg(ejectionOrbit.turnAngle);
+                document.getElementById("outTurnAngle").textContent = radToDeg(theOrbit.turnAngle,2);
+                document.getElementById("outV2Angle").textContent = radToDeg(theOrbit.v2Angle, 2);
+                document.getElementById("outV2AngleDelta").textContent = radToDeg(theOrbit.v2AngleDelta, 2);
+                document.getElementById("outEjectionAngle").textContent = 90 + radToDeg(theOrbit.turnAngle);
                 
-                document.getElementById("outA").textContent = ejectionOrbit.a.toFixed(0);
-                document.getElementById("outE").textContent = ejectionOrbit.e.toFixed(4);
+                document.getElementById("outA").textContent = theOrbit.a.toFixed(0);
+                document.getElementById("outE").textContent = theOrbit.e.toFixed(4);
                 document.getElementById("outTof").textContent = convertSecondsToDateObj(tof).toString();
 
+                document.getElementById("nodeLn").textContent= radToDeg(lnPe,1);
+                document.getElementById("nodeDv").textContent = dv.toFixed(2);
+                document.getElementById("nodeTod").textContent = convertSecondsToDateObj(tod).toString();
+
+                scaleText();
             }
 
             function validate(){
@@ -179,51 +210,32 @@
         
         <div id="divMain">
 
-            <div id="divForm">
-
-                <p>Ejection</p>
-
-                <form name="parkOrbit" onsubmit="return validate()" width="200px" action="form3.html">
-
-                    <label for="peAlt">PE alt</label>
-                    <input name="peAlt" type="number" value="100" min="50" step="50" required onchange="peChange()" style="width:100px;"> km<br>
-
-                    <label for="circular">Circular orbit</label>
-                    <input name="circular" type="checkbox" value="circular" checked onchange="apAlt.disabled=circular.checked;if(circular.checked){apAlt.value=pe.value};" > <br>
-                    
-                    <label for="apAlt">AP alt</label>
-                    <input name="apAlt" type="number" value="100" required disabled style="width:100px;">km<br>
-                    
-                    <input type="submit" >
-                    
-                    <input name="origin" type="hidden" />
-                    <input name="destination" type="hidden" />
-
-                    <input name="utY" type="hidden"/>
-                    <input name="utD" type="hidden"/>
-                    <input name="utH" type="hidden"/>
-                    <input name="utM" type="hidden"/>
-
-                    <input name="tod" type="hidden"/>
-                    <input name="toa" type="hidden"/>
-
-                </form>
-
-                <label for="showAligned">Show aligned</label>
-                <input type="checkbox" name="chkShowAligned" checked="true" onchange="showAligned = this.checked; console.log(this.checked); initializeEjectionOrbit();">;
-
-            </div>
-
             <div id="divMap">
+
+                <div id="headingBar">
+                    <table>
+                        <tr>
+                            <th>Current Time</td>
+                            <th>From</td>
+                            <th>To</td>
+                        </tr>
+                        <tr>
+                            <td id="outCurrentTime">adsf</td>
+                            <td id="outOrigin">Kerbin</td>
+                            <td id="outDestination">Duna</td>
+                        </tr>
+                    </table>
+                </div>
+
                 <svg id="solarSystem">
                 </svg>
-
+                
                 <svg id="planetSystem" class="svgMap" height="500" width="500" viewBox="-250 -250 500 500"
                     onwheel="zoomWheel(event)" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 
                     <defs>
-                        <marker id="arrowMarker" markerHeight="3" markerWidth="6" refx="6" refy="1.5" orient="auto">
-                            <path d="M 0,0 L 0,3 6,1.5 0,0" stroke="none"/>
+                        <marker id="arrowMarker" markerHeight="3" markerWidth="6" refx="3" refy="1.5" orient="auto" transform="scale(3)">
+                            <path d="M 0,0 L 0,3 6,1.5 0,0" stroke="none" fill="inherit"/>
                             <!-- <circle cx="2.5" cy="2.5" r="2.5"/> -->
                         </marker>
                     </defs>
@@ -236,16 +248,17 @@
 
                         <g id="hyperbolaGroup">
                             <path id="hyperbola" d="M 93.01 0 L 92.30 -7.25   90.14 -14.72 86.49 -22.64" stroke="grey" stroke-width="2.5" fill="none"/>
-                            <line id="axis"      x1="0"    y1="0" x2=".05"   y2="0"       stroke="grey" stroke-dashArray="3 2 3" />
+                            <line id="axis"      x1="0"    y1="0" x2=".05"   y2="0"       stroke="grey" stroke-dashArray="3 2 3" stroke-opacity=".3"/>
                             <line id="asymptote" x1="1.40" y1="0" x2=".4650" y2="-1.3153" stroke="gray" stroke-dashArray="3 2 3" stroke-opacity=".3" stroke-width="1"  />
+                            <circle id="peMarker" cx="0" cy="0" r=".01" fill="red"/>
                         </g>
                         
                         <!-- <line x1="0" y1="0" x2="10" y2="0" stroke="black" stroke-width="3" style="marker-end: url(#arrowMarker);"/> -->
                         
                         <g id="velocities">
                             <line id="planetV"  stroke="blue"      stroke-width="3" style="marker-end: url(#arrowMarker)"/>
-                            <line id="shipV"    stroke="darkGreen" stroke-width="3" style="marker-end: url(#arrowMarker)"/>
-                            <line id="shipRelV" stroke="red"       stroke-width="3" style="marker-end: url(#arrowMarker)"/>
+                            <line id="shipV"    stroke="darkGreen" stroke-width="3" style="marker-end: url(#arrowMarker); stroke-opacity: .5;"/>
+                            <line id="shipRelV" stroke="red"       stroke-width="3" style="marker-end: url(#arrowMarker); stroke-opacity: .5;"/>
                         </g>
 
                     </g>
@@ -254,6 +267,15 @@
                         stroke-opacity=".5" />
                     <circle id="planetSystemPark" cx="0" cy="0" r="6" stroke="gray" fill="none" />
                     <circle id="planetSystemPlanet" cx="0" cy="0" r="7" stroke="blue" fill="cyan" />
+
+                    <g id="gnode" font-family="arial" font-size=".1">
+                        <text x="0"  y="0">PE: <tspan id="outPe">xxx</tspan> km</text>
+                        <text dx="0" dy=".15" >LN: <tspan id="nodeLn"></tspan></text>
+                        <text dx="0" dy=".3">UT:  <tspan id="nodeTod"></tspan></text>
+                        <text dx="0" dy=".45">dV: <tspan id="nodeDv"></tspan> m/s</text>
+                    </g>
+
+                    <line id="planetVclose" x1="0" y1="0" x2="0" y2="-.7" stroke="blue" stroke-width="3" style="marker-end: url(#arrowMarker)"/>
 
                 </svg>
 
@@ -266,13 +288,53 @@
                         </tr>
                     </table>
                 </div>
+
             </div>
+
+            <div id="divForm">
+
+                <form name="parkOrbit" onsubmit="return validate()" width="500px" action="form3.html">
+                    
+                    <label for="peAlt">PE alt</label>
+                    <input name="peAlt" type="range" value="100" min="50" step="10" max="1000" required oninput="peChange()"
+                        style="width:400px;"> km<br>
+
+                    <input type="submit" style="display: block; width: 100px; margin: 20px auto ;">
+            
+                    <input name="origin" type="hidden" />
+                    <input name="destination" type="hidden" />
+            
+                    <input name="utY" type="hidden" />
+                    <input name="utD" type="hidden" />
+                    <input name="utH" type="hidden" />
+                    <input name="utM" type="hidden" />
+            
+                    <input name="tod" type="hidden" />
+                    <input name="toa" type="hidden" />
+            
+                </form>
+            
+                <!-- <label for="showAligned">Show aligned</label> -->
+                <!-- <input type="checkbox" name="chkShowAligned" checked="false" -->
+                <!-- onchange="showAligned = this.checked; console.log(this.checked); initializeEjectionOrbit();">; -->
+
+                <p>Show aligned to</p>
+                <input type="radio" name="align" width="200px">
+                <lable style="padding-right:50px;">Prograde</lable>
                 
+                <input type="radio" name="align" width="200px">
+                <label style="margin-right: 50px;">Sun</label>
+                
+                <input type="radio" name="align" width="200px" id="optLn">
+                <label for="optLn">Longitude</label>
+                
+            </div>
+            
             <div id="divOutput">
                 <table>
                     <tr>
                         <td>Current Time</td>
-                        <td id="outCurrentTime"></td>
+                        <td id="z_outCurrentTime"></td>
                     </tr>
                     <tr>
                         <td>Origin</td>
