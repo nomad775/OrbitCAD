@@ -107,31 +107,48 @@ function displayedTimeChange(event) {
 
     //console.log("time change caught : display time " + displayedTime);
 
-    document.getElementById("outDisplayedTime").textContent = convertSecondsToDateObj(displayedTime).toString();
+    //document.getElementById("outDisplayedTime").textContent = convertSecondsToDateObj(displayedTime).toString();
     document.forms["origin-destination"]["tod"].value = Math.round(displayedTime);
     document.forms["origin-destination"]["toa"].value = Math.round(txOrbit.toa);
 
     updateOutput();
 }
 
+function alignmentChange(e) {
+
+    if (e.target.checked) {
+        alignSolarSystem(-txOrbit.Ln_o);
+        console.log("align ", -radToDeg(txOrbit.Ln_o))
+    } else {
+        alignSolarSystem(0);
+        console.log("align ", 0)
+    }
+}
+
 function updateOutput() {
 
     document.getElementById("outOrigin").textContent = txOrbit.originPlanet.name;
     document.getElementById("outDestination").textContent = txOrbit.destinationPlanet.name;
+    
     document.getElementById("outEtd").textContent = convertSecondsToDateObj(displayedTime).toString();
     document.getElementById("outOriginLnEtd").textContent = radToDeg(txOrbit.Ln_o);
     document.getElementById("outDestinationLnEtd").textContent = radToDeg(txOrbit.Ln_d);
     document.getElementById("outPhaeAngleEtd").textContent = radToDeg(txOrbit.phaseAngle);
+    document.getElementById("outEjectDv").textContent = txOrbit.ejectDv.toFixed(2);
 
     document.getElementById("outEta").textContent = convertSecondsToDateObj(txOrbit.toa).toString();
     document.getElementById("outOriginLnEta").textContent = radToDeg(txOrbit.Ln_o);
     document.getElementById("outDestinationLnEta").textContent = radToDeg(txOrbit.Ln_da);
+    document.getElementById("outCaptureDv").textContent = txOrbit.captureDv.toFixed(2);
+    document.getElementById("outPlaneChangeDv").textContent = txOrbit.planeChangeDv().toFixed(2);
 
     document.getElementById("outTxA").textContent = txOrbit.a.toFixed(0);
     document.getElementById("outTxE").textContent = txOrbit.e.toFixed(4);
     document.getElementById("outTxI").textContent = 0;
     document.getElementById("outTxArgPe").textContent = radToDeg(txOrbit.Ln_pe);
     document.getElementById("outTxLan").textContent = 0;
+
+    document.getElementById("outMeanEstimate").textContent = convertSecondsToDateObj(txOrbit.getMeanEstimate(0), false).toString();
 
 }
 

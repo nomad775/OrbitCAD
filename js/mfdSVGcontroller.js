@@ -252,10 +252,17 @@ class SVGtransfer{
                 break;
 
             case "change":
-                if(event.target.name == "origin") {
-                    this.originChange();
-                }else
-                { this.destinationChange();}
+
+                switch (event.target.name){
+                    case "origin":
+                        this.originChange();
+                    case "destination":
+                        this.destinationChange();
+                    case "chkAlign":
+                        this.alignToLn = event.target.checked;
+                        console.log("align: ", this.alignToLn);
+                        this.setAlignment();
+                }
                 
             default:
 
@@ -291,7 +298,6 @@ class SVGtransfer{
 
         this.svgDestination.toggleHighlight();
         this.svgDestinationOrbit.toggleHighlight();
-
 
     }
 
@@ -337,9 +343,21 @@ class SVGtransfer{
         var cx = cr * Math.cos(Ln_t);
         var cy = -cr * Math.sin(Ln_t);
 
-    
+        this.setAlignment();
+        
     }
 
+    setAlignment(){
+
+        if (document.getElementById("chkAlign").checked) {
+            let ln = radToDeg(this.txOrbit.Ln_o)
+            console.log(ln);
+            document.getElementById("gSolarSystemAign").setAttribute("transform", `rotate(${ln})`);
+        } else {
+            console.log(0);
+            document.getElementById("gSolarSystemAign").setAttribute("transform", "");
+        }
+    }
 }
 
 class SVGhyperbolicOrbit extends HyperbolicOrbit{
@@ -398,6 +416,9 @@ class SVGhyperbolicOrbit extends HyperbolicOrbit{
         let vpx1 = soi * Math.sin(fa);
         let vpy1 = -soi;
 
+        let vpcx2 = 2 * this.eqR * scaleFactor * Math.sin(fa);
+        let vpcy2 = -2 * this.eqR * scaleFactor * Math.cos(fa);
+
         let vsx2 = 0;
         let vsy2 = -v3 * vscale;
         
@@ -408,6 +429,11 @@ class SVGhyperbolicOrbit extends HyperbolicOrbit{
         document.getElementById("planetV").setAttribute("y1", vpy1);
         document.getElementById("planetV").setAttribute("x2", vpx2);
         document.getElementById("planetV").setAttribute("y2", vpy2);
+
+        document.getElementById("planetVclose").setAttribute("x1", 0);
+        document.getElementById("planetVclose").setAttribute("y1", 0);
+        document.getElementById("planetVclose").setAttribute("x2", vpcx2);
+        document.getElementById("planetVclose").setAttribute("y2", vpcy2);
 
         document.getElementById("shipV").setAttribute("x1", vsx1);
         document.getElementById("shipV").setAttribute("y1", vsy1);
@@ -511,7 +537,6 @@ class SVGhyperbolicOrbit extends HyperbolicOrbit{
     }
 }
 
-
 function setNodeText(){
 
     let svg = document.getElementById("planetSystem");
@@ -595,19 +620,18 @@ function updateHypSVG(){
 
     hypOrbit.update(peAlt);
     let io = hypOrbit.outbound ? 0 : Math.PI;
-    
+
     let svgPe = hypOrbit.rpScaled;
     let ln = hypOrbit.lnp;
     let fa = hypOrbit.fa;
     let theta = 0;
 
-
     switch(alignTo){
         case "prograde":
-            theta = 0 + io;
+            theta = fa + io;
             break;
         case "sun":
-            theta = fa + io;
+            theta = 0 + io;
             break;
         default:
             theta=ln;

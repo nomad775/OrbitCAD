@@ -6,6 +6,7 @@ var txOrbit;
 var currentTime = 0;
 var displayedTime = 0;
 
+
 function initializeFromQueryString(){
 
     let params = new URLSearchParams(location.search);
@@ -62,7 +63,9 @@ function initialize() {
     destOpt.addEventListener("click", destinationChange)
     destOpt.addEventListener("change", (e) => svgTxOrbit.eventHandler(e));
     destOpt.value = destinationName;
-
+    
+    let alignCheck = document.getElementById("chkAlign");
+    alignCheck.addEventListener("change", (e) => svgTxOrbit.eventHandler(e));
 
     initializeScreen();
     initializeSolarSystemSVG();
@@ -81,3 +84,6 @@ function initialize() {
 
     });
 }
+
+
+

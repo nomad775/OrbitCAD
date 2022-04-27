@@ -122,7 +122,7 @@ class TransferOrbit{
         //this.update(0);
     }
 
-    meanEstimate(t) {
+    getMeanEstimate(t) {
 
         let r1 = this.originPlanet.sma;
         let P1 = this.originPlanet.period;
@@ -146,6 +146,9 @@ class TransferOrbit{
         let epsilon = modRev(dir * (phix - phi));
         let deltaT = dir * epsilon / relAngVel;
 
+        this.meanEstimate = t + deltaT;
+
+        console.log(convertSecondsToUT(deltaT, false));
         return t + deltaT;
     }
 
@@ -184,12 +187,18 @@ class TransferOrbit{
         this.vo = this.originPlanet.v(this.ro);
         this.v3o = Math.sqrt(mu_sun * (2 / this.ro - 1 / this.a));
         
-        //this.v_soi_o = this.v_depart - this.vo;
-        
+        let eject = new HyperbolicOrbit(this.originPlanet.name, t, 100000, this.v3o);
+        this.ejectDv = eject.deltaV;
+        console.log(this.ejectDv)
+
         // velocity at destination
         this.vd = this.destinationPlanet.v(this.rd)
         this.v3d = Math.sqrt(mu_sun * (2 / this.rd - 1 / this.a));
         
+        let capture = new HyperbolicOrbit(this.destinationPlanet.name, this.toa, 100000, this.v3d);
+        this.captureDv = capture.deltaV;
+
+
         // this.fad = this.destinationPlanet.flightAngleAtTheta(this.Ln_da - this.destinationPlanet.LnPe);
 
         // this.vdx = this.vd * Math.cos(this.fad); // tangent
@@ -213,7 +222,7 @@ class TransferOrbit{
 
         let mu = mu_sun;
 
-        let t = this.meanEstimate(startTime);
+        let t = this.getMeanEstimate(startTime);
         
         this.update(t);
 
