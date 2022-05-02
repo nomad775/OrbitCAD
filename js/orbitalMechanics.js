@@ -368,7 +368,7 @@ class TransferOrbit {
 
         let capture = new HyperbolicOrbit(this.destinationPlanet.name, this.toa, 100000, this.v3d);
         this.captureDv = capture.deltaV;
-
+        
     }
 
     solveTForRdv(startTime) {

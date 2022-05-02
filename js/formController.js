@@ -112,6 +112,11 @@ function alignmentChange(e) {
 
 function updateOutput() {
 
+    let eject = Number(transferOrbit.ejectDv);
+    let inc = Number(transferOrbit.planeChangeDv());
+    let capture = Number(transferOrbit.captureDv);
+    let total = eject + inc + capture;
+
     document.getElementById("outOrigin").textContent = transferOrbit.originPlanet.name;
     document.getElementById("outDestination").textContent = transferOrbit.destinationPlanet.name;
     
@@ -119,13 +124,16 @@ function updateOutput() {
     document.getElementById("outOriginLnEtd").textContent = radToDeg(transferOrbit.Ln_o);
     document.getElementById("outDestinationLnEtd").textContent = radToDeg(transferOrbit.Ln_d);
     document.getElementById("outPhaeAngleEtd").textContent = radToDeg(transferOrbit.phaseAngle);
-    document.getElementById("outEjectDv").textContent = transferOrbit.ejectDv.toFixed(2);
+    document.getElementById("outEjectDv").textContent = eject.toFixed(2);
+
+    document.getElementById("outPlaneChangeDv").textContent = inc.toFixed(2);
 
     document.getElementById("outEta").textContent = convertSecondsToDateObj(transferOrbit.toa).toString();
     document.getElementById("outOriginLnEta").textContent = radToDeg(transferOrbit.Ln_o);
     document.getElementById("outDestinationLnEta").textContent = radToDeg(transferOrbit.Ln_da);
-    document.getElementById("outCaptureDv").textContent = transferOrbit.captureDv.toFixed(2);
-    document.getElementById("outPlaneChangeDv").textContent = transferOrbit.planeChangeDv().toFixed(2);
+    document.getElementById("outCaptureDv").textContent = capture.toFixed(2);
+    
+    document.getElementById("outTotalDv").textContent = total.toFixed(2);
 
     document.getElementById("outTxA").textContent = transferOrbit.a.toFixed(0);
     document.getElementById("outTxE").textContent = transferOrbit.e.toFixed(4);
