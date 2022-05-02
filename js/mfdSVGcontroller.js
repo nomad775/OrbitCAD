@@ -1,11 +1,8 @@
 const svgOrbits = [];
 const svgPlanets = [];
 
-var svgTxOrbit = {};
+var transferOrbit = {};
 var hypOrbit = {};
-var svgCaptureOrbit = {};
-
-const displayedTimeChangeEvent = new Event('displayedTimeChange');
 
 var scaleFactor  = 1/1e8;
 var unitFactor = 1/1e9;
@@ -13,11 +10,11 @@ var showAligned = true;
 
 var r = 10;
 
-const Direction = {CCW: 1, CW: -1}
-
-class SVGplanet {
+class SVGplanet extends Planet{
 
     constructor(planet) {
+
+        super();
 
         this.planet = planet;
 
@@ -82,11 +79,7 @@ class SVGellipiticalOrbit{
     constructor(elementId, object1, t){
         
         this.element = document.getElementById(elementId);
-        
-        //console.log("elliptical orbit for : " + elementId);
-        //console.log(this.element);
-
-        //this.jqOrbit = $("#" + elementId);
+       
         this.definingObject = object1;
         this.update(t);
 
@@ -110,10 +103,10 @@ class SVGellipiticalOrbit{
             
             var Ln = Ln1;
             
-        }else if( this.definingObject instanceof TransferOrbit)
+        }else if( this.definingObject instanceof SVGTransfer)
         {
             
-            this.definingObject.update(t);
+            //this.definingObject.update(t);
             
             var theTxOrbit = this.definingObject
             
@@ -137,7 +130,6 @@ class SVGellipiticalOrbit{
         var data = `M ${this.ox} ${this.oy} A ${this.a} ${this.b} ${this.ang} 0 0 ${this.dx} ${this.dy} A ${this.a} ${this.b} ${this.ang} 0 0 ${this.ox} ${this.oy}`
         
         this.element.setAttributeNS(null, "d", data);
-        //this.jqOrbit.attr("d", data);
     }
 }
 
@@ -193,13 +185,7 @@ class svgPartialArc{
     }
 }
 
-class SVGtransfer{
-    
-    txOrbit;
-
-    tod = 0;
-    toa = 0;
-    tof = 0;
+class SVGTransfer extends TransferOrbit{
 
     svgEllipse = {};
 
@@ -209,18 +195,19 @@ class SVGtransfer{
     svgDestinationArc;
     svgTxArc;
 
-    constructor(theTxOrbit){
+    constructor(originName, destinationName){
 
-        //console.log("txOrbit in svg constructor");
-        //console.log(txOrbit);
+        let originPlanet = planets[originName];
+        let destinationPlanet = planets[destinationName];
 
-        this.txOrbit = theTxOrbit;
+        super(originPlanet, destinationPlanet)
 
-        this.originName = this.txOrbit.originPlanet.name;
-        this.destinationName = this.txOrbit.destinationPlanet.name;
+        this.originName = originName;
+        this.destinationName = destinationName;
 
-        this.svgEllipse = new SVGellipiticalOrbit("txOrbit", this.txOrbit, 0)
-
+        //this.svgEllipse = new SVGellipiticalOrbit("txOrbit", this.txOrbit, 0)
+        this.svgEllipse = new SVGellipiticalOrbit("txOrbit", this, 0)
+        
         this.svgOrigin = svgPlanets[this.originName];
         this.svgDestination = svgPlanets[this.destinationName];
         this.svgDestinationFuture = document.getElementById("planet_destination_future");
@@ -235,10 +222,12 @@ class SVGtransfer{
         this.svgOrigin.element.setAttribute("r", 16);
         this.svgDestination.element.setAttribute("r", 16);
 
-        this.update(displayedTime);
-        //this.svgDestinationArc.update();
-        //this.svgTxArc.update();
+        this.svgOrigin.toggleHighlight();
+        this.svgOriginOrbit.toggleHighlight();
 
+        this.svgDestination.toggleHighlight();
+        this.svgDestinationOrbit.toggleHighlight();
+       
         let that = this;
         window.addEventListener("displayedTimeChange", (e) => { that.eventHandler(e) });
     }
@@ -255,9 +244,11 @@ class SVGtransfer{
 
                 switch (event.target.name){
                     case "origin":
-                        this.originChange();
+                        this.originChange(event.target.value);
+                        break;
                     case "destination":
-                        this.destinationChange();
+                        this.destinationChange(event.target.value);
+                        break;
                     case "chkAlign":
                         this.alignToLn = event.target.checked;
                         console.log("align: ", this.alignToLn);
@@ -271,26 +262,39 @@ class SVGtransfer{
 
     }
 
-    originChange(){
+    originChange(name){
+
+        this.originName = name;
+        this.originPlanet = planets[name];
 
         this.svgOrigin.toggleHighlight();
         this.svgOriginOrbit.toggleHighlight();
 
-        this.svgOrigin = svgPlanets[originName];
-        this.svgOriginOrbit = svgOrbits[originName];
+        this.svgOrigin = svgPlanets[name];
+        this.svgOriginOrbit = svgOrbits[name];
 
         this.svgOrigin.toggleHighlight();
         this.svgOriginOrbit. toggleHighlight();
         
+        displayedTime = this.solveTForRdv(currentTime);
+        window.dispatchEvent(displayedTimeChangeEvent);
+
+        zoomTxOrbit();
     }
 
-    destinationChange(){
+    destinationChange(name){
+
+        this.destinationName = name;
+        this.destinationPlanet = planets[name];
+
+        displayedTime = this.solveTForRdv(currentTime);
+        window.dispatchEvent(displayedTimeChangeEvent);
 
         this.svgDestination.toggleHighlight();
         this.svgDestinationOrbit.toggleHighlight();
 
-        this.svgDestination = svgPlanets[destinationName];
-        this.svgDestinationOrbit = svgOrbits[destinationName];
+        this.svgDestination = svgPlanets[name];
+        this.svgDestinationOrbit = svgOrbits[name];
 
         this.svgDestinationArc.startObj = this.svgDestination.element;
         this.svgDestinationArc.orbit = this.svgDestinationOrbit;
@@ -299,10 +303,14 @@ class SVGtransfer{
         this.svgDestination.toggleHighlight();
         this.svgDestinationOrbit.toggleHighlight();
 
+        zoomTxOrbit();
     }
 
     update(t){
 
+        console.log("transfer update");
+
+        super.update(t);
         this.svgEllipse.update(t);
 
         let ox = this.svgEllipse.ox;
@@ -325,10 +333,10 @@ class SVGtransfer{
         this.svgTxArc.updatePoints(ox, oy, dx, dy);
 
         // destination planet- future
-        var toa = t + this.txOrbit.tof;
+        var toa = t + this.tof; //super
 
-        var Ln_f = this.txOrbit.destinationPlanet.LnAtTimeT(toa);
-        var r_f =  this.txOrbit.destinationPlanet.rAtLn(Ln_f) * scaleFactor;
+        var Ln_f = this.destinationPlanet.LnAtTimeT(toa); //super
+        var r_f =  this.destinationPlanet.rAtLn(Ln_f) * scaleFactor; //super
 
         var fx = r_f * Math.cos(Ln_f);
         var fy = -r_f * Math.sin(Ln_f);
@@ -338,25 +346,28 @@ class SVGtransfer{
 
         this.svgDestinationArc.update(t);
 
-        var Ln_t = this.txOrbit.destinationPlanet.LnAtTimeT(displayedTime);
-        var cr =   this.txOrbit.destinationPlanet.rAtLn(Ln_t) * scaleFactor;
-        var cx = cr * Math.cos(Ln_t);
-        var cy = -cr * Math.sin(Ln_t);
+        // var Ln_t = this.destinationPlanet.LnAtTimeT(displayedTime); //super
+        // var cr =   this.destinationPlanet.rAtLn(Ln_t) * scaleFactor; //super
+        // var cx = cr * Math.cos(Ln_t);
+        // var cy = -cr * Math.sin(Ln_t);
 
         this.setAlignment();
-        
+
+        //zoomTxOrbit();
     }
 
     setAlignment(){
 
         if (document.getElementById("chkAlign").checked) {
-            let ln = radToDeg(this.txOrbit.Ln_o)
-            console.log(ln);
+            let ln = radToDeg(this.Ln_o) //super
+            //console.log(ln);
             document.getElementById("gSolarSystemAign").setAttribute("transform", `rotate(${ln})`);
         } else {
-            console.log(0);
+            //console.log(0);
             document.getElementById("gSolarSystemAign").setAttribute("transform", "");
         }
+
+        zoomTxOrbit();
     }
 }
 
@@ -537,6 +548,7 @@ class SVGhyperbolicOrbit extends HyperbolicOrbit{
     }
 }
 
+
 function setNodeText(){
 
     let svg = document.getElementById("planetSystem");
@@ -569,49 +581,49 @@ function setNodeText(){
     node.setAttribute("transform", `translate(${pt.x + .1}, ${pt.y + .1}), scale(1)`);    
 }
 
-function initializeCaptureSVG(captureOrbit, mirrored) {
+// function initializeCaptureSVG(captureOrbit, mirrored) {
 
-    console.log("initialize capture SVG");
+//     console.log("initialize capture SVG");
     
-    setPlanetSystemSVG(txOrbit.destinationPlanet);
+//     setPlanetSystemSVG(txOrbit.destinationPlanet);
 
-    // adjust planet features
-    let eqR = captureOrbit.eqR * scaleFactor;
-    let soi = captureOrbit.soi * scaleFactor;
-    let park = captureOrbit.rp * scaleFactor;
+//     // adjust planet features
+//     let eqR = captureOrbit.eqR * scaleFactor;
+//     let soi = captureOrbit.soi * scaleFactor;
+//     let park = captureOrbit.rp * scaleFactor;
 
-    let ln = txOrbit.Ln_da;
+//     let ln = txOrbit.Ln_da;
     
-    let fa = captureOrbit.fa;
+//     let fa = captureOrbit.fa;
 
-    let x = soi * Math.sin(fa);
-    let y = -soi * Math.cos(fa);
+//     let x = soi * Math.sin(fa);
+//     let y = -soi * Math.cos(fa);
 
-    document.getElementById("planetSystemPlanet").setAttribute("r", eqR);
-    document.getElementById("planetSystemSOI").setAttribute("r", soi);
-    document.getElementById("planetSystemPark").setAttribute("r", park);
+//     document.getElementById("planetSystemPlanet").setAttribute("r", eqR);
+//     document.getElementById("planetSystemSOI").setAttribute("r", soi);
+//     document.getElementById("planetSystemPark").setAttribute("r", park);
 
-    document.getElementById("sunDir").setAttribute("x2", -soi);
-    document.getElementById("sunDir").setAttribute("y2", 0);
+//     document.getElementById("sunDir").setAttribute("x2", -soi);
+//     document.getElementById("sunDir").setAttribute("y2", 0);
 
-    document.getElementById("shipOrbit").setAttribute("x1", 0);
-    document.getElementById("shipOrbit").setAttribute("y1", soi);
-    document.getElementById("shipOrbit").setAttribute("x2", 0);
-    document.getElementById("shipOrbit").setAttribute("y2", -soi);
+//     document.getElementById("shipOrbit").setAttribute("x1", 0);
+//     document.getElementById("shipOrbit").setAttribute("y1", soi);
+//     document.getElementById("shipOrbit").setAttribute("x2", 0);
+//     document.getElementById("shipOrbit").setAttribute("y2", -soi);
 
-    document.getElementById("planetOrbit").setAttribute("x1", x);
-    document.getElementById("planetOrbit").setAttribute("y1", y);
-    document.getElementById("planetOrbit").setAttribute("x2", -x);
-    document.getElementById("planetOrbit").setAttribute("y2", -y);
+//     document.getElementById("planetOrbit").setAttribute("x1", x);
+//     document.getElementById("planetOrbit").setAttribute("y1", y);
+//     document.getElementById("planetOrbit").setAttribute("x2", -x);
+//     document.getElementById("planetOrbit").setAttribute("y2", -y);
 
-    svgCaptureOrbit = new SVGhyperbolicOrbit(captureOrbit, false, mirrored);
+//     svgCaptureOrbit = new SVGhyperbolicOrbit(captureOrbit, false, mirrored);
 
-    if (!showAligned) {
-        document.getElementById("alignment").setAttribute("transform", "rotate(180)");
-    } else {
-        document.getElementById("alignment").setAttribute("transform", `rotate(${-radToDeg(ln)})`);
-    }
-}
+//     if (!showAligned) {
+//         document.getElementById("alignment").setAttribute("transform", "rotate(180)");
+//     } else {
+//         document.getElementById("alignment").setAttribute("transform", `rotate(${-radToDeg(ln)})`);
+//     }
+// }
 
 function updateHypSVG(){
     
@@ -690,24 +702,46 @@ function initializeEjectionSVG(bodyName, t, peAlt, v3, outbound){
 }
 
 
-function initializeTransferSVG(theTxOrbit) {
+function dimPlanets() {
 
-    console.log("initialize transfer SVG");
+    //console.log("initialize transfer SVG");
 
     // dim other planets
     for (let planet in svgPlanets) {
         svgPlanets[planet].element.classList.add("dimPlanet");
     };
 
-    svgPlanets[originName].toggleHighlight();
-    svgOrbits[originName].toggleHighlight();
+}
 
-    svgPlanets[destinationName].toggleHighlight();
-    svgOrbits[destinationName].toggleHighlight();
 
-    //    INITIALIZE SVG
-    svgTxOrbit = new SVGtransfer(theTxOrbit);
+// copied from orbital mechanics
+function initializeTransferOrbit() {
 
+    console.log("initialize transfer orbit");
+
+    // let isForm = location.toString().includes("form");
+
+    // if (isForm) {
+    //     originName = document.forms["origin-destination"]["origin"].value;
+    //     destinationName = document.forms["origin-destination"]["destination"].value;
+    // } else {
+    //     originName = fields["origin"].value;
+    //     destinationName = fields["destination"].value;
+    // }
+
+    transferOrbit = new SVGTransfer(originName, destinationName);
+
+    // if (!isForm) {
+
+    //     displayedTime = transferOrbit.solveTForRdv(currentTime);
+    //     date = convertSecondsToUT(displayedTime);
+
+    //     initializeTransferSVG(transferOrbit);
+
+    //     window.dispatchEvent(displayedTimeChangeEvent);
+    // }
+
+    //return txOrbit;
 }
 
 
@@ -729,4 +763,10 @@ function initializeSolarSystemSVG() {
 
     }
 
+    dimPlanets();
+
 }
+
+
+
+

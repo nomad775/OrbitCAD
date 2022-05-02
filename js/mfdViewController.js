@@ -70,6 +70,7 @@ function mouseLeave(event){
     zoomAnchorY=0;
 }
 
+// ===== ZOOM =====
 function zoomWheel(event) {
 
     var v = event.deltaY;
@@ -116,37 +117,34 @@ function zoomWindow(x0,y0,w,h){
     scaleText();
 }
 
-function scaleText(){
-   
-    let svg = document.getElementById("planetSystem");
-    let gnode = document.getElementById("gnode");
-
-    if(gnode==null) return;
-    
-    let w = viewBox.width;
-
-    let s1 = 18 * w / mapWidth * 10;
-    let M = svg.createSVGMatrix();
-    M = M.scale(s1);
-    let T = svg.createSVGTransformFromMatrix(M)
-    gnode.transform.baseVal.replaceItem(T, 1);
-
-}
-
 function zoomPlanetOrbit(planetName){
 
-    let element = document.getElementById(planetName + "Orbit");
-    
-    let boundingBox = element.getBBox();
+    let orbit = svgOrbits[planetName];
 
-    zoomWindow(boundingBox.x*1.1, boundingBox.y*1.1, boundingBox.width * 1.1, boundingBox.height*1.1);
+    let x = (orbit.ox + orbit.dx) / 2;
+    let y = (orbit.oy + orbit.dy) / 2;
+    let a = orbit.a;
+
+    let o = new DOMPoint(x, y);
+
+    let transformList = document.getElementById(planetName + "Orbit").parentElement.transform.baseVal;
+
+    if(transformList.length==1){
+        
+        var angle = transformList[0].angle;
+
+        o = o.matrixTransform(new DOMMatrix().rotate(angle))
+        
+    }
+    
+    zoomWindow( (o.x - a) * 1.1, (o.y - a) * 1.1, 2 * a * 1.1, 2 * a * 1.1);
 
 }
 
 function zoomTxOrbit() { //planet1, planet2){
 
-    var planet1 = txOrbit.originPlanet;
-    var planet2 = txOrbit.destinationPlanet;
+    var planet1 = transferOrbit.originPlanet;
+    var planet2 = transferOrbit.destinationPlanet;
 
     var planetO;
 
@@ -164,6 +162,22 @@ function zoomAll(event) {
 }
 
 
+function scaleText() {
+
+    let svg = document.getElementById("planetSystem");
+    let gnode = document.getElementById("gnode");
+
+    if (gnode == null) return;
+
+    let w = viewBox.width;
+
+    let s1 = 18 * w / mapWidth * 10;
+    let M = svg.createSVGMatrix();
+    M = M.scale(s1);
+    let T = svg.createSVGTransformFromMatrix(M)
+    gnode.transform.baseVal.replaceItem(T, 1);
+
+}
 function toggleMouseDown(event) {
     boolDown = !boolDown;
 }
@@ -248,7 +262,7 @@ function setPlanetSystemSVG(eqR, soi) {
 
 function startAnimation(theDir, callback) {
     dir = Math.sign(theDir);
-    errDir = txOrbit.err;
+    errDir = transferOrbit.err;
     window.requestAnimationFrame(animationStep);
 }
 
@@ -267,7 +281,7 @@ function animationStep(timestamp) {
 
         var lastErrDir = err;
 
-        err = txOrbit.err;
+        err = transferOrbit.err;
 
         var sign = Math.sign(err * lastErrDir);
 
@@ -282,7 +296,7 @@ function animationStep(timestamp) {
         }
 
 
-        if (Math.abs(txOrbit.err) < .0001 || elapsed > 1000 * 6 * 1) {
+        if (Math.abs(transferOrbit.err) < .0001 || elapsed > 1000 * 6 * 1) {
 
             animationDone = true;
             start = undefined;

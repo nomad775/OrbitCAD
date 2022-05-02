@@ -1,4 +1,5 @@
 <html>
+
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
@@ -183,6 +184,8 @@
                         <circle id="planet_destination_future" r="10" fill="red" fill-opacity=".4" />
 
                     </g>
+
+
                 </svg>
         
                 <svg id="planetSystem" class="svgMap" display="none" height="440" width="450" viewBox="-200 -250 500 500"
@@ -263,8 +266,15 @@
                         <td id="outPhaeAngleEtd"></td>
                     </tr>
                     <tr>
-                        <td>dV (est.)</td>
+                        <td>Eject dV (est.)</td>
                         <td id="outEjectDv"></td>
+                    </tr>
+
+                    
+                    
+                    <tr>
+                        <td>Plane change dV (est.)</td>
+                        <td id="outPlaneChangeDv"></td>
                     </tr>
 
                     <tr>
@@ -283,15 +293,10 @@
                         <td id="outDestinationLnEta"></td>
                     </tr>
                     <tr>
-                        <td>dV (est.)</td>
+                        <td>Capture dV (est.)</td>
                         <td id="outCaptureDv"></td>
                     </tr>
 
-                    <tr>
-                        <td>dV (est.)</td>
-                        <td id="outPlaneChangeDv"></td>
-                    </tr>
-                    
                     <tr>
                         <th colspan="2">Transfer Orbit</td>
                     </tr>

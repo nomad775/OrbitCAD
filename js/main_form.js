@@ -1,11 +1,16 @@
 
 const planets = { };
 
-var txOrbit;
+let originName = "Kerbin";
+let destinationName = "Duna";
+let disabledDestName = "Kerbin";
+
+var transferOrbit;
 
 var currentTime = 0;
 var displayedTime = 0;
 
+const displayedTimeChangeEvent = new Event('displayedTimeChange');
 
 function initializeFromQueryString(){
 
@@ -18,9 +23,7 @@ function initializeFromQueryString(){
     }
 
     console.log("from history");
-    console.log(params.get("origin"));
-    console.log(params.get("destination"));
-
+    
     originName = params.get("origin");
     destinationName = params.get("destination");
     disabledDestName = originName;
@@ -40,47 +43,49 @@ function initializeFromQueryString(){
     document.forms["origin-destination"]["origin"].value = originName;
     document.forms["origin-destination"]["destination"].value = destinationName;
 
-    console.log("initialized from history");
+    console.log("origin-destination from history");
 
     return true;
 }
 
-function initialize() {
+function initializeForm(){
 
-    getPlanetsXML(() => {
-
-    initializeFromQueryString();
+    let originOpt = document.getElementById("originSet")
+    originOpt.addEventListener("click", originChange)
+    originOpt.addEventListener("change", (e) => transferOrbit.eventHandler(e));
+    
+    let destOpt = document.getElementById("destinationSet")
+    destOpt.addEventListener("click", destinationChange)
+    destOpt.addEventListener("change", (e) => transferOrbit.eventHandler(e));
+    
+    let alignCheck = document.getElementById("chkAlign");
+    alignCheck.addEventListener("change", (e) => transferOrbit.eventHandler(e));
 
     window.addEventListener("displayedTimeChange", displayedTimeChange);
 
-    let originOpt = document.getElementById("originSet")
-
-    originOpt.addEventListener("click", originChange)
-    originOpt.addEventListener("change", (e) => svgTxOrbit.eventHandler(e));
-    originOpt.value = originName;
-
-    let destOpt = document.getElementById("destinationSet")
-    destOpt.addEventListener("click", destinationChange)
-    destOpt.addEventListener("change", (e) => svgTxOrbit.eventHandler(e));
-    destOpt.value = destinationName;
+    document.forms["origin-destination"]["origin"].value = originName;
+    document.forms["origin-destination"]["destination"].value = destinationName;
     
-    let alignCheck = document.getElementById("chkAlign");
-    alignCheck.addEventListener("change", (e) => svgTxOrbit.eventHandler(e));
+    originChange();
+    destinationChange();
+}
 
-    initializeScreen();
-    initializeSolarSystemSVG();
-    setSolarSystemSVG();
-    txOrbit = initializeTransferOrbit();
-    initializeTransferSVG(txOrbit);
+function initialize() {
 
-    currentTimeChange();
+    getPlanetsXML( () => {
 
-    //displayedTime=txOrbit.solveTForRdv(currentTime);
-    //window.dispatchEvent(displayedTimeChangeEvent);
+        initializeFromQueryString();
+        initializeScreen();
+        initializeSolarSystemSVG();
+        initializeTransferOrbit();
+        initializeForm();
 
-    zoomTxOrbit();
+        currentTimeChange();
 
-    console.log("intialized");
+        zoomTxOrbit();
+
+
+        console.log("initialized");
 
     });
 }
