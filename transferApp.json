@@ -52,7 +52,7 @@
                     {
                         "id": "b0",
                         "label": "SET UT",
-                        "fn": "setActiveField('utY')"
+                        "fn": "document.getElementById('timeEntry').showModal()"
                     },
                     {
                         "id": "b1",

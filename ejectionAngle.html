@@ -109,6 +109,30 @@
             
             </div>
 
+            <dialog id="timeEntry"  class="paramDisp" style="width:100px;">
+                <form method="dialog">
+
+                    <label for="utY">Y:</label>
+                    <input name="utY" type="number" min="1" max="100" value="1" required style="width: 50px;">
+                    <br>
+
+                    <label for="utD">D:</label>
+                    <input name="utD" type="number" min="1" max="426" value="1" required style="width: 50px;">
+
+                    <p>Optional:</p>
+
+                    <label for="utH">H:</label>
+                    <input name="utH" type="number" min="0" max="5" value="0" required style="width: 50px;">
+                    <br>
+
+                    <label for="utM">M:</label>
+                    <input name="utM" type="number" min="0" max="59" value="0" required style="width: 50px;">
+                    <br>
+                    <input type="button" value="Cancel">
+                    <input type="submit">
+                </form>
+            </dialog>
+
             <div>
                 <p>Temp screen text holder</p>
                 <p><span id="originName">origin</span>, <span id="destinationName">destination</span></p>
