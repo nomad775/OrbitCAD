@@ -35,10 +35,10 @@ function initializeFromQueryString(){
 
     currentTime = (y - 1) * secondsPerYear + (d - 1) * secondsPerDay + h * secondsPerHour + m * secondsPerMinute;
 
-    document.forms["origin-destination"]["utY"].value = y;
-    document.forms["origin-destination"]["utD"].value = d;
-    document.forms["origin-destination"]["utH"].value = h;
-    document.forms["origin-destination"]["utM"].value = m;
+    document.forms["dateTime"]["utY"].value = y;
+    document.forms["dateTime"]["utD"].value = d;
+    document.forms["dateTime"]["utH"].value = h;
+    document.forms["dateTime"]["utM"].value = m;
 
     document.forms["origin-destination"]["origin"].value = originName;
     document.forms["origin-destination"]["destination"].value = destinationName;
@@ -88,6 +88,8 @@ function initialize() {
         console.log("initialized");
 
     });
+
+   
 }
 
 

@@ -22,20 +22,12 @@
             <p>Set time, origin and destination</p>
         </div>
 
-        <form name="origin-destination" autocomplete="off" onsubmit="onSubmit(event)" action="form2.html">
-        <!-- <form name="origin-destination" width="200px" autocomplete="off" onsubmit="return onSubmit();" action="form2.html"> -->
-        <!-- action="file.php" -->
-        <!-- target="_self" -->
-        <!-- method="GET" -->
-            <input id="tod" type="hidden" name="tod" value="0" />
-            <input id="toa" type="hidden" name="toa" value="0" />
 
-        <div id="main">
-                 
-            <div id="form1" class="card">
+        <dialog id="dialogDateTime">
+        
+            <form name="dateTime" method="dialog">
                 <fieldset oninput="currentTimeChange()">
                     <legend>Current Game Date</legend>
-        
                     <label for="utY" class="timeLabel">Y:</label>
                     <input name="utY" class="timeInput" type="number" min="1" max="999" step="1" value="1" required="true" />
                     <br />
@@ -48,304 +40,323 @@
                     <label for="utM" class="timeLabel">M:</label>
                     <input name="utM" class="timeInput" type="number" min="0" max="59" step="1" value="0" required="true" />
                     <br />
-        
                     <label for="utSeconds">UT (seconds)</label>
                     <output name="utSeconds" for="year day hour min" value="1">0</output>
-        
                 </fieldset>
-            <!-- </div> -->
-
-            <!-- <div id="form2" class="card"> -->
-                <fieldset id="originSet">
-                    <legend>Origin</legend>
-                    <ul>
-                        <li>
-                            <input type="radio" id="originMoho" name="origin" value="Moho" required="true" />
-                            <!-- <label for="originMoho">Moho</label> -->
-                            Moho
-                        </li>
-                        <li>
-                            <input type="radio" id="originEve" name="origin" value="Eve" />
-                            <label for="originEve">Eve</label>
-                        </li>
-                        <li>
-                            <input type="radio" id="originKerbin" name="origin" value="Kerbin"/>
-                            <label for="originKerbin">Kerbin</label>
-                        </li>
-                        <li>
-                            <input type="radio" id="originDuna" name="origin" value="Duna" />
-                            <label for="originDuna">Duna</label>
-                        </li>
-                        <li>
-                            <input type="radio" id="originDres" name="origin" value="Dres" />
-                            <label for="originDres">Dres</label>
-                        </li>
-                        <li>
-                            <input type="radio" id="originJool" name="origin" value="Jool" />
-                            <label for="originJool">Jool</label>
-                        </li>
-                        <li>
-                            <input type="radio" id="originEeloo" name="origin" value="Eeloo" />
-                            <label for="originEeloo">Eeloo</label>
-                        </li>
-                    </ul>
-                </fieldset>
-            </div>
-
-            <div id="form3" class="card">
-                <fieldset id="destinationSet">
-                    <legend>Destination</legend>
-                    <ul>
-                        <li>
-                            <input type="radio" id="optDestMoho" name="destination" value="Moho" required="true" />
-                            <label for="moho">Moho</label>
-                        </li>
-                        <li>
-                            <input type="radio" id="optDestEve" name="destination" value="Eve" />
-                            <label for="eve">Eve</label>
-                        </li>
-                        <li>
-                            <input type="radio" id="optDestKerbin" name="destination" value="Kerbin"/>
-                            <label for="kerbin">Kerbin</label>
-                        </li>
-                        <li>
-                            <input type="radio" id="optDestDuna" name="destination" value="Duna"/>
-                            <label for="duna">Duna</label>
-                        </li>
-                        <li>
-                            <input type="radio" id="optDestDres" name="destination" value="Dres" />
-                            <label for="dres">Dres</label>
-                        </li>
-                        <li>
-                            <input type="radio" id="optDestJool" name="destination" value="Jool" />
-                            <label for="jool">Jool</label>
-                        </li>
-                        <li>
-                            <input type="radio" id="optDestEeloo" name="destination" value="Eeloo" />
-                            <label for="eeloo">Eeloo</label>
-                        </li>
-                    </ul>
-                </fieldset>
-            </div>
-
-            <div id="divMap" class="card">
-                    
-                <svg id="solarSystem" class="svgMap" viewbox="-1200 -1200 2000 2000" onwheel="zoomWheel(event)">
-
-                    <circle class="planet" id="Sun" cx="0" cy="0" r="4" fill="yellow" stroke="orange" />
-                    
-                    <g id="gSolarSystemAign">
-
-                        <path class="orbit" id="MohoOrbit" stroke="peachpuff" fill="none"
-                        d="M   -5.50   62.92 A 52.63   51.57  -265    0 0    3.67  -41.95 A 52.63   51.57  -265    0 0   -5.50   62.92 " />
-                        <path class="orbit" id="EveOrbit" stroke="purple" fill="none"
-                        d="M  -95.93   25.70 A 98.33   98.32  -195    0 0   94.02  -25.19 A 98.33   98.32  -195    0 0  -95.93   25.7  " />
-                        <path class="orbit" id="KerbinOrbit" stroke="cyan" fill="none"
-                        d="M -136.00    0    A 136.00 136.00  -180    0 0  136.00    0    A 136.00 136.00  -180    0 0 -136.00    0    " />
-                        <path class="orbit" id="DunaOrbit" stroke="red" fill="none"
-                        d="M  155.37  152.68 A 207.26 207.00  -315.5  0 0 -140.30 -137.87 A 207.26 207.00  -315.5  0 0  155.37  152.68 " />
-                        <path class="orbit" id="DresOrbit" stroke="chocolate" fill="none"
-                        d="M -460.51   81.20 A 408.39 404.08  -190    0 0  343.88  -60.63 A 408.39 404.08  -190    0 0 -460.51   81.2  " />
-                        <path class="orbit" id="JoolOrbit" stroke="green" fill="none"
-                        d="M  348.91 -552.57 A 687.74 686.87   -232   0 0 -444.58  569.04 A 687.74 686.87   -232    1 0  348.91 -552.57" />
-                        <path class="orbit" id="EelooOrbit" stroke="gray" fill="none"
-                        d="M -729.89 -869.84 A 901.19 870.20  -130    0 0 428.66 510.86   A 901.19 870.20  -130    0 0 -729.89 -869.84 " />
-                        
-                        <circle class="planet" id="Moho" cx="-5.50" cy="62.92" r="18" fill="peachpuff" />
-                        <circle class="planet" id="Eve" cx="-95.93" cy="25.70" r="18" fill="purple" />
-                        <circle class="planet" id="Kerbin" cx="-136.00" cy="0" r="18" fill="cyan" />
-                        <circle class="planet" id="Duna" cx="155.37" cy="152.68" r="18" fill="crimson" />
-                        <circle class="planet" id="Dres" cx="-460.51" cy="81.20" r="18" fill="#a44128" />
-                        <circle class="planet" id="Jool" cx="348.92" cy="-552.57" r="18" fill="green" />
-                        <circle class="planet" id="Eeloo" cx="-729.89" cy="-869.84" r="18" fill="gray" />
-                        
-                        
-                        <path id="txOrbit" stroke="gray" fill="none"
-                        d="M -729.89 -869.84 A 901.19 870.20  -130    0 0 428.66 510.86   A 901.19 870.20  -130    0 0 -729.89 -869.84 " />
-                        
-                        <g id="txMarker" transform="translate(10,10)" stroke-width="2" stroke="greenYellow">
-                            
-                            <circle id="txMarker" cx="0" cy="0" r="12" fill="none" stroke-opacity="100" />
-                            
-                            <line x1="10" y1="0" x2="18" y2="0" />
-                            <line x1="0" y1="10" x2="0" y2="18" />
-                            <line x1="-10" y1="0" x2="-18" y2="0" />
-                            <line x1="0" y1="-10" x2="0" y2="-18" />
-                            
-                            <circle cx="0" cy="0" r="1" storke="green" fill="green" />
-                            
-                        </g>
-                        
-                        <line id="line1" x1="0" y1="0" x2="110" y2="120" stroke="lightblue" stroke-dashArray="15 5 5 5 1 5 5 5 10 5" />
-                        
-                        <path id="destTOF" stroke="yellow" stroke-width="3" fill="none" stroke-opacity="30" />
-                        <path id="txTOF" stroke="lightgreen" stroke-width="3" fill="none" stroke-opacity="30" />
-                        
-                        <circle id="planet_destination_future" r="10" fill="red" fill-opacity=".4" />
-
-                    </g>
-
-
-                </svg>
         
-                <svg id="planetSystem" class="svgMap" display="none" height="440" width="450" viewBox="-200 -250 500 500"
-                    onwheel="zoomWheel(event)" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                <input type="submit">
         
-                    <line id="sunDir" x1="0" y1="0" x2="-3" y2="0" stroke="yellow" stroke-width="1" />
-                    
-                    <line id="prograde" x1="0" y1="0" x2="0" y2="-3" stroke="green" stroke-width="2.5" stroke-opacity=".4"
-                    stroke-dashArray="10 15 10" />
-                    
-                    <g id="hyperbolaGroup">
-                        <path id="hyperbola" stroke="white" stroke-width="2.5" fill="none"
-                        d="M 93.01 0 L 92.30 -7.25   90.14 -14.72 86.49 -22.64" />
-                        <line id="axis" x1="0" y1="0" x2=".05" y2="0" stroke="grey" stroke-dashArray="3 2 3" />
-                        <line id="asymptote" x1="1.40" y1="0" x2=".4650" y2="-1.3153" stroke="gray" stroke-width="1"
-                        stroke-dashArray="3 2 3" stroke-opacity=".3" />
-                        
-                        <!-- <circle id="peMarker" cx="0" cy="0" r="5" stroke="red" fill="none" /> -->
-                        <!-- <circle id="soiMarker" cx="0" cy="0" r=".1" stroke="yellow" fill="none" stroke-dashArray="3 2 3" /> -->
-                    </g>
-                        
-                    <circle id="planetSystemSOI" cx="0" cy="0" r="1" stroke="white" fill="none" stroke-dashArray="20 50 20" stroke-opacity=".5" />
-                    <circle id="planetSystemPark" cx="0" cy="0" r=".20" stroke="gray" fill="none" />
-                    <circle id="planetSystemPlanet" cx="0" cy="0" r=".10" stroke="blue" fill="cyan" />
-                    
-                </svg>
+            </form>
+        </dialog>
 
-                <div id="divStatusBar">
-                    <table>
-                        <tr>
-                            <td id="xyCoordinates"></td>
-                            <td id="polarCoordinates"></td>
-                            <td id="zoom"></td>
-                        </tr>
-                    </table>
+
+        <form name="origin-destination" autocomplete="off" onsubmit="onSubmit(event)" action="form2.html">
+        
+            <div id="main">
+
+                <div id="form1" class="card">
+                    <p>form1</p>
+                    <input type="button" name="show" id="show" value="set time" onclick="document.getElementById('dialogDateTime').showModal();" >
+                    <!-- <label for="show">Show dialog</label> -->
                 </div>
 
-            </div>
+                <!-- <div id="form1" class="card">
+                    
+                    <input id="tod" type="hidden" name="tod" value="0" />
+                    <input id="toa" type="hidden" name="toa" value="0" />
+
+                </div> -->
+
+                <div id="form2" class="card">
+                    <fieldset id="originSet">
+                        <legend>Origin</legend>
+                        <ul>
+                            <li>
+                                <input type="radio" id="originMoho" name="origin" value="Moho" required="true" />
+                                <!-- <label for="originMoho">Moho</label> -->
+                                Moho
+                            </li>
+                            <li>
+                                <input type="radio" id="originEve" name="origin" value="Eve" />
+                                <label for="originEve">Eve</label>
+                            </li>
+                            <li>
+                                <input type="radio" id="originKerbin" name="origin" value="Kerbin"/>
+                                <label for="originKerbin">Kerbin</label>
+                            </li>
+                            <li>
+                                <input type="radio" id="originDuna" name="origin" value="Duna" />
+                                <label for="originDuna">Duna</label>
+                            </li>
+                            <li>
+                                <input type="radio" id="originDres" name="origin" value="Dres" />
+                                <label for="originDres">Dres</label>
+                            </li>
+                            <li>
+                                <input type="radio" id="originJool" name="origin" value="Jool" />
+                                <label for="originJool">Jool</label>
+                            </li>
+                            <li>
+                                <input type="radio" id="originEeloo" name="origin" value="Eeloo" />
+                                <label for="originEeloo">Eeloo</label>
+                            </li>
+                        </ul>
+                    </fieldset>
+                </div>
+
+                <div id="form3" class="card">
+                    <fieldset id="destinationSet">
+                        <legend>Destination</legend>
+                        <ul>
+                            <li>
+                                <input type="radio" id="optDestMoho" name="destination" value="Moho" required="true" />
+                                <label for="moho">Moho</label>
+                            </li>
+                            <li>
+                                <input type="radio" id="optDestEve" name="destination" value="Eve" />
+                                <label for="eve">Eve</label>
+                            </li>
+                            <li>
+                                <input type="radio" id="optDestKerbin" name="destination" value="Kerbin"/>
+                                <label for="kerbin">Kerbin</label>
+                            </li>
+                            <li>
+                                <input type="radio" id="optDestDuna" name="destination" value="Duna"/>
+                                <label for="duna">Duna</label>
+                            </li>
+                            <li>
+                                <input type="radio" id="optDestDres" name="destination" value="Dres" />
+                                <label for="dres">Dres</label>
+                            </li>
+                            <li>
+                                <input type="radio" id="optDestJool" name="destination" value="Jool" />
+                                <label for="jool">Jool</label>
+                            </li>
+                            <li>
+                                <input type="radio" id="optDestEeloo" name="destination" value="Eeloo" />
+                                <label for="eeloo">Eeloo</label>
+                            </li>
+                        </ul>
+                    </fieldset>
+                </div>
+
+                <div id="divMap" class="card">
+                        
+                    <svg id="solarSystem" class="svgMap" viewbox="-1200 -1200 2000 2000" onwheel="zoomWheel(event)">
+
+                        <circle class="planet" id="Sun" cx="0" cy="0" r="4" fill="yellow" stroke="orange" />
+                        
+                        <g id="gSolarSystemAign">
+
+                            <path class="orbit" id="MohoOrbit" stroke="peachpuff" fill="none"
+                            d="M   -5.50   62.92 A 52.63   51.57  -265    0 0    3.67  -41.95 A 52.63   51.57  -265    0 0   -5.50   62.92 " />
+                            <path class="orbit" id="EveOrbit" stroke="purple" fill="none"
+                            d="M  -95.93   25.70 A 98.33   98.32  -195    0 0   94.02  -25.19 A 98.33   98.32  -195    0 0  -95.93   25.7  " />
+                            <path class="orbit" id="KerbinOrbit" stroke="cyan" fill="none"
+                            d="M -136.00    0    A 136.00 136.00  -180    0 0  136.00    0    A 136.00 136.00  -180    0 0 -136.00    0    " />
+                            <path class="orbit" id="DunaOrbit" stroke="red" fill="none"
+                            d="M  155.37  152.68 A 207.26 207.00  -315.5  0 0 -140.30 -137.87 A 207.26 207.00  -315.5  0 0  155.37  152.68 " />
+                            <path class="orbit" id="DresOrbit" stroke="chocolate" fill="none"
+                            d="M -460.51   81.20 A 408.39 404.08  -190    0 0  343.88  -60.63 A 408.39 404.08  -190    0 0 -460.51   81.2  " />
+                            <path class="orbit" id="JoolOrbit" stroke="green" fill="none"
+                            d="M  348.91 -552.57 A 687.74 686.87   -232   0 0 -444.58  569.04 A 687.74 686.87   -232    1 0  348.91 -552.57" />
+                            <path class="orbit" id="EelooOrbit" stroke="gray" fill="none"
+                            d="M -729.89 -869.84 A 901.19 870.20  -130    0 0 428.66 510.86   A 901.19 870.20  -130    0 0 -729.89 -869.84 " />
+                            
+                            <circle class="planet" id="Moho" cx="-5.50" cy="62.92" r="18" fill="peachpuff" />
+                            <circle class="planet" id="Eve" cx="-95.93" cy="25.70" r="18" fill="purple" />
+                            <circle class="planet" id="Kerbin" cx="-136.00" cy="0" r="18" fill="cyan" />
+                            <circle class="planet" id="Duna" cx="155.37" cy="152.68" r="18" fill="crimson" />
+                            <circle class="planet" id="Dres" cx="-460.51" cy="81.20" r="18" fill="#a44128" />
+                            <circle class="planet" id="Jool" cx="348.92" cy="-552.57" r="18" fill="green" />
+                            <circle class="planet" id="Eeloo" cx="-729.89" cy="-869.84" r="18" fill="gray" />
+                            
+                            
+                            <path id="txOrbit" stroke="gray" fill="none"
+                            d="M -729.89 -869.84 A 901.19 870.20  -130    0 0 428.66 510.86   A 901.19 870.20  -130    0 0 -729.89 -869.84 " />
+                            
+                            <g id="txMarker" transform="translate(10,10)" stroke-width="2" stroke="greenYellow">
+                                
+                                <circle id="txMarker" cx="0" cy="0" r="12" fill="none" stroke-opacity="100" />
+                                
+                                <line x1="10" y1="0" x2="18" y2="0" />
+                                <line x1="0" y1="10" x2="0" y2="18" />
+                                <line x1="-10" y1="0" x2="-18" y2="0" />
+                                <line x1="0" y1="-10" x2="0" y2="-18" />
+                                
+                                <circle cx="0" cy="0" r="1" storke="green" fill="green" />
+                                
+                            </g>
+                            
+                            <line id="line1" x1="0" y1="0" x2="110" y2="120" stroke="lightblue" stroke-dashArray="15 5 5 5 1 5 5 5 10 5" />
+                            
+                            <path id="destTOF" stroke="yellow" stroke-width="3" fill="none" stroke-opacity="30" />
+                            <path id="txTOF" stroke="lightgreen" stroke-width="3" fill="none" stroke-opacity="30" />
+                            
+                            <circle id="planet_destination_future" r="10" fill="red" fill-opacity=".4" />
+
+                        </g>
+
+
+                    </svg>
             
-            <div id="divOutput" class="card">
-                <table>
-                    <th colspan="2">Transfer</th>
-                    <tr>
-                        <td>Current Time</td>
-                        <td id="outCurrentTime"></td>
-                    </tr>
-                    <!-- <tr>
-                        <td>Displayed Time</td>
-                        <td id="outDisplayedTime"></td>
-                    </tr> -->
-                    <tr>
-                        <td>Origin</td>
-                        <td id="outOrigin">?</td>
-                    </tr> 
-                    <tr>
-                        <td>Destination</td>
-                        <td id="outDestination"></td>
-                    </tr>
+                    <svg id="planetSystem" class="svgMap" display="none" height="440" width="450" viewBox="-200 -250 500 500"
+                        onwheel="zoomWheel(event)" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+            
+                        <line id="sunDir" x1="0" y1="0" x2="-3" y2="0" stroke="yellow" stroke-width="1" />
+                        
+                        <line id="prograde" x1="0" y1="0" x2="0" y2="-3" stroke="green" stroke-width="2.5" stroke-opacity=".4"
+                        stroke-dashArray="10 15 10" />
+                        
+                        <g id="hyperbolaGroup">
+                            <path id="hyperbola" stroke="white" stroke-width="2.5" fill="none"
+                            d="M 93.01 0 L 92.30 -7.25   90.14 -14.72 86.49 -22.64" />
+                            <line id="axis" x1="0" y1="0" x2=".05" y2="0" stroke="grey" stroke-dashArray="3 2 3" />
+                            <line id="asymptote" x1="1.40" y1="0" x2=".4650" y2="-1.3153" stroke="gray" stroke-width="1"
+                            stroke-dashArray="3 2 3" stroke-opacity=".3" />
+                            
+                            <!-- <circle id="peMarker" cx="0" cy="0" r="5" stroke="red" fill="none" /> -->
+                            <!-- <circle id="soiMarker" cx="0" cy="0" r=".1" stroke="yellow" fill="none" stroke-dashArray="3 2 3" /> -->
+                        </g>
+                            
+                        <circle id="planetSystemSOI" cx="0" cy="0" r="1" stroke="white" fill="none" stroke-dashArray="20 50 20" stroke-opacity=".5" />
+                        <circle id="planetSystemPark" cx="0" cy="0" r=".20" stroke="gray" fill="none" />
+                        <circle id="planetSystemPlanet" cx="0" cy="0" r=".10" stroke="blue" fill="cyan" />
+                        
+                    </svg>
+
+                    <div id="divStatusBar">
+                        <table>
+                            <tr>
+                                <td id="xyCoordinates"></td>
+                                <td id="polarCoordinates"></td>
+                                <td id="zoom"></td>
+                            </tr>
+                        </table>
+                    </div>
+
                     
-                    <tr>
-                        <th colspan="2">Departure</td>
-                    </tr>
-
-                    <tr>
-                        <td>ETD</td>
-                        <td id="outEtd"></td>
-                    </tr>
-                    <tr>
-                        <td>Origin LN</td>
-                        <td id="outOriginLnEtd"></td>
-                    </tr>
-                    <tr>
-                        <td>Destination LN</td>
-                        <td id="outDestinationLnEtd"></td>
-                    </tr>
-                    <tr>
-                        <td>Phase Angle</td>
-                        <td id="outPhaeAngleEtd"></td>
-                    </tr>
-                    <tr>
-                        <td>Eject dV (est.)</td>
-                        <td id="outEjectDv"></td>
-                    </tr>
-                    
-                    <tr style="height: 50px;">
-                        <td>Inclination dV (est.)</td>
-                        <td id="outPlaneChangeDv"></td>
-                    </tr>
-
-                    <tr>
-                        <th colspan="2">Arrival</td>
-                    </tr>
-                    <tr>
-                        <td>ETA</td>
-                        <td id="outEta"></td>
-                    </tr>
-                    <tr>
-                        <td>Origin LN</td>
-                        <td id="outOriginLnEta"></td>
-                    </tr>
-                    <tr>
-                        <td>Destination LN</td>
-                        <td id="outDestinationLnEta"></td>
-                    </tr>
-                    <tr>
-                        <td>Capture dV (est.)</td>
-                        <td id="outCaptureDv"></td>
-                    </tr>
-
-                    <tr style="height:60px;">
-                        <td>Total dV</td>
-                        <td id="outTotalDv"></td>
-                    </tr>
-
-
-                    <tr>
-                        <th colspan="2">Transfer Orbit</td>
-                    </tr>
-
-                    <tr>
-                        <td>a</td>
-                        <td id="outTxA"></td>
-                    </tr>
-                    <tr>
-                        <td>e</td>
-                        <td id="outTxE"></td>
-                    </tr>
-                    <tr>
-                        <td>i</td>
-                        <td id="outTxI"></td>
-                    </tr>
-                    <tr>
-                        <td>arg Pe</td>
-                        <td id="outTxArgPe"></td>
-                    </tr>
-                    <tr>
-                        <td>LAN</td>
-                        <td id="outTxLan"></td>
-                    </tr>
-
-                    <tr>
-                        <td>Mean Estimate (ref)</td>
-                        <td id="outMeanEstimate"></td>
-                    </tr>
-                </table>
+                </div>
+                
+                <input type="submit" />
 
                 
-            </div>
-            
-           
-
-        </div>
-
-        <input type="submit" />
-        
-        </form>
-    
-
-        <input type="checkBox" name="chkAlign" id="chkAlign">
-        <label for="chkAlign">Align to Origin Ln</label>
-
-    </body>
+                <div id="divOutput" class="card">
+                    <table>
+                        <th colspan="2">Transfer</th>
+                        <tr>
+                            <td>Current Time</td>
+                            <td id="outCurrentTime"></td>
+                        </tr>
+                        <!-- <tr>
+                            <td>Displayed Time</td>
+                            <td id="outDisplayedTime"></td>
+                        </tr> -->
+                        <tr>
+                            <td>Origin</td>
+                            <td id="outOrigin">?</td>
+                        </tr> 
+                        <tr>
+                            <td>Destination</td>
+                            <td id="outDestination"></td>
+                        </tr>
+                        
+                        <tr>
+                            <th colspan="2">Departure</td>
+                            </tr>
+                            
+                            <tr>
+                                <td>ETD</td>
+                                <td id="outEtd"></td>
+                            </tr>
+                            <tr>
+                                <td>Origin LN</td>
+                                <td id="outOriginLnEtd"></td>
+                            </tr>
+                            <tr>
+                                <td>Destination LN</td>
+                                <td id="outDestinationLnEtd"></td>
+                            </tr>
+                            <tr>
+                                <td>Phase Angle</td>
+                                <td id="outPhaeAngleEtd"></td>
+                            </tr>
+                            <tr>
+                                <td>Eject dV (est.)</td>
+                                <td id="outEjectDv"></td>
+                            </tr>
+                            
+                            <tr style="height: 50px;">
+                                <td>Inclination dV (est.)</td>
+                                <td id="outPlaneChangeDv"></td>
+                            </tr>
+                            
+                            <tr>
+                                <th colspan="2">Arrival</td>
+                                </tr>
+                                <tr>
+                                    <td>ETA</td>
+                                    <td id="outEta"></td>
+                                </tr>
+                                <tr>
+                                    <td>Origin LN</td>
+                                    <td id="outOriginLnEta"></td>
+                                </tr>
+                                <tr>
+                                    <td>Destination LN</td>
+                                    <td id="outDestinationLnEta"></td>
+                                </tr>
+                                <tr>
+                                    <td>Capture dV (est.)</td>
+                                    <td id="outCaptureDv"></td>
+                                </tr>
+                                
+                                <tr style="height:60px;">
+                                    <td>Total dV</td>
+                                    <td id="outTotalDv"></td>
+                                </tr>
+                                
+                                
+                                <tr>
+                                    <th colspan="2">Transfer Orbit</td>
+                                    </tr>
+                                    
+                                    <tr>
+                                        <td>a</td>
+                                        <td id="outTxA"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>e</td>
+                                        <td id="outTxE"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>i</td>
+                                        <td id="outTxI"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>arg Pe</td>
+                                        <td id="outTxArgPe"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>LAN</td>
+                                        <td id="outTxLan"></td>
+                                    </tr>
+                                    
+                                    <tr>
+                                        <td>Mean Estimate (ref)</td>
+                                        <td id="outMeanEstimate"></td>
+                                    </tr>
+                                </table>
+                                
+                                
+                            </div>
+                            
+                        </div>
+                    
+                    </form>
+                        
+                        <input type="checkBox" name="chkAlign" id="chkAlign">
+                        <label for="chkAlign">Align to Origin Ln</label>
+                        
+                    </body>
 </html>

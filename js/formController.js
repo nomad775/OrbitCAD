@@ -72,17 +72,20 @@ function currentTimeChange() {
 
     console.log('current time changed')
 
-    let y = document.forms["origin-destination"]["utY"].value;
-    let d = document.forms["origin-destination"]["utD"].value;
-    let h = document.forms["origin-destination"]["utH"].value;
-    let m = document.forms["origin-destination"]["utM"].value;
+    let y = document.forms["dateTime"]["utY"].value;
+    let d = document.forms["dateTime"]["utD"].value;
+    let h = document.forms["dateTime"]["utH"].value;
+    let m = document.forms["dateTime"]["utM"].value;
 
     currentTime = (y - 1) * secondsPerYear + (d - 1) * secondsPerDay + h * secondsPerHour + m * secondsPerMinute;
 
-    displayedTime = transferOrbit.solveTForRdv(currentTime);
-    window.dispatchEvent(displayedTimeChangeEvent);
+    document.forms["dateTime"]["utSeconds"].value = currentTime;
 
-    document.forms["origin-destination"]["utSeconds"].value = currentTime;
+    if(transferOrbit!=undefined){
+        displayedTime = transferOrbit.solveTForRdv(currentTime);
+        window.dispatchEvent(displayedTimeChangeEvent);
+    }
+
     document.getElementById("outCurrentTime").textContent = convertSecondsToDateObj(currentTime).toString();
 
     updateQueryString();
