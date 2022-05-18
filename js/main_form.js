@@ -1,9 +1,9 @@
 
 const planets = { };
 
-let originName = "Kerbin";
-let destinationName = "Duna";
-let disabledDestName = "Kerbin";
+var originName = "Kerbin";
+var destinationName = "Duna";
+var disabledDestName = "Kerbin";
 
 var transferOrbit;
 
@@ -24,8 +24,9 @@ function initializeFromQueryString(){
 
     console.log("from history");
     
-    originName = params.get("origin");
-    destinationName = params.get("destination");
+
+    originName = params.get("origin") == null ? originName : params.get("origin");
+    destinationName = params.get("destination") == null ? destinationName : params.get("destination");
     disabledDestName = originName;
 
     let y = params.get("utY");

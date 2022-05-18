@@ -581,50 +581,6 @@ function setNodeText(){
     node.setAttribute("transform", `translate(${pt.x + .1}, ${pt.y + .1}), scale(1)`);    
 }
 
-// function initializeCaptureSVG(captureOrbit, mirrored) {
-
-//     console.log("initialize capture SVG");
-    
-//     setPlanetSystemSVG(txOrbit.destinationPlanet);
-
-//     // adjust planet features
-//     let eqR = captureOrbit.eqR * scaleFactor;
-//     let soi = captureOrbit.soi * scaleFactor;
-//     let park = captureOrbit.rp * scaleFactor;
-
-//     let ln = txOrbit.Ln_da;
-    
-//     let fa = captureOrbit.fa;
-
-//     let x = soi * Math.sin(fa);
-//     let y = -soi * Math.cos(fa);
-
-//     document.getElementById("planetSystemPlanet").setAttribute("r", eqR);
-//     document.getElementById("planetSystemSOI").setAttribute("r", soi);
-//     document.getElementById("planetSystemPark").setAttribute("r", park);
-
-//     document.getElementById("sunDir").setAttribute("x2", -soi);
-//     document.getElementById("sunDir").setAttribute("y2", 0);
-
-//     document.getElementById("shipOrbit").setAttribute("x1", 0);
-//     document.getElementById("shipOrbit").setAttribute("y1", soi);
-//     document.getElementById("shipOrbit").setAttribute("x2", 0);
-//     document.getElementById("shipOrbit").setAttribute("y2", -soi);
-
-//     document.getElementById("planetOrbit").setAttribute("x1", x);
-//     document.getElementById("planetOrbit").setAttribute("y1", y);
-//     document.getElementById("planetOrbit").setAttribute("x2", -x);
-//     document.getElementById("planetOrbit").setAttribute("y2", -y);
-
-//     svgCaptureOrbit = new SVGhyperbolicOrbit(captureOrbit, false, mirrored);
-
-//     if (!showAligned) {
-//         document.getElementById("alignment").setAttribute("transform", "rotate(180)");
-//     } else {
-//         document.getElementById("alignment").setAttribute("transform", `rotate(${-radToDeg(ln)})`);
-//     }
-// }
-
 function updateHypSVG(){
     
     let peAlt = document.parkOrbit.peAlt.value * 1000;
@@ -719,29 +675,10 @@ function initializeTransferOrbit() {
 
     console.log("initialize transfer orbit");
 
-    // let isForm = location.toString().includes("form");
-
-    // if (isForm) {
-    //     originName = document.forms["origin-destination"]["origin"].value;
-    //     destinationName = document.forms["origin-destination"]["destination"].value;
-    // } else {
-    //     originName = fields["origin"].value;
-    //     destinationName = fields["destination"].value;
-    // }
+    let isForm = location.toString().includes("form");
 
     transferOrbit = new SVGTransfer(originName, destinationName);
 
-    // if (!isForm) {
-
-    //     displayedTime = transferOrbit.solveTForRdv(currentTime);
-    //     date = convertSecondsToUT(displayedTime);
-
-    //     initializeTransferSVG(transferOrbit);
-
-    //     window.dispatchEvent(displayedTimeChangeEvent);
-    // }
-
-    //return txOrbit;
 }
 
 
