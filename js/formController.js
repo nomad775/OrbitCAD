@@ -72,21 +72,22 @@ function currentTimeChange() {
 
     console.log('current time changed')
 
-    let y = document.forms["dateTime"]["utY"].value;
-    let d = document.forms["dateTime"]["utD"].value;
-    let h = document.forms["dateTime"]["utH"].value;
-    let m = document.forms["dateTime"]["utM"].value;
+    //let y = document.forms["dateTime"]["utY"].value;
+    //let d = document.forms["dateTime"]["utD"].value;
+    //let h = document.forms["dateTime"]["utH"].value;
+    //let m = document.forms["dateTime"]["utM"].value;
 
-    currentTime = (y - 1) * secondsPerYear + (d - 1) * secondsPerDay + h * secondsPerHour + m * secondsPerMinute;
-
-    document.forms["dateTime"]["utSeconds"].value = currentTime;
-
+    //currentTime = (y - 1) * secondsPerYear + (d - 1) * secondsPerDay + h * secondsPerHour + m * secondsPerMinute;
+    
+    currentTime = parseInt(document.forms["dateTime"]["utSeconds"].value);
+    document.forms["origin-destination"]["utNow"].value = currentTime;
     if(transferOrbit!=undefined){
         displayedTime = transferOrbit.solveTForRdv(currentTime);
         window.dispatchEvent(displayedTimeChangeEvent);
     }
 
     document.getElementById("outCurrentTime").textContent = convertSecondsToDateObj(currentTime).toString();
+    document.getElementById("outCurrentTime1").textContent= convertSecondsToDateObj(currentTime).toString();
 
     updateQueryString();
 }
@@ -154,6 +155,8 @@ function updateQueryString() {
     let frmData = new FormData(frmElement);
 
     let params = new URLSearchParams(frmData);
+
+    console.log(frmData.getAll(3));
 
     let url = window.location.pathname;
     url += "?" + params.toString();

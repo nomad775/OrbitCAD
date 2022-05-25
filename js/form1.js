@@ -34,13 +34,17 @@ function initializeFromQueryString(){
     let h = params.get("utH");
     let m = params.get("utM");
 
-    currentTime = (y - 1) * secondsPerYear + (d - 1) * secondsPerDay + h * secondsPerHour + m * secondsPerMinute;
+    let utNow = params.get("utNow");
+    currentTime = utNow;
+
+    //currentTime = (y - 1) * secondsPerYear + (d - 1) * secondsPerDay + h * secondsPerHour + m * secondsPerMinute;
 
     document.forms["dateTime"]["utY"].value = y;
     document.forms["dateTime"]["utD"].value = d;
     document.forms["dateTime"]["utH"].value = h;
     document.forms["dateTime"]["utM"].value = m;
 
+    document.forms["origin-destination"]["utNow"].value = currentTime;
     document.forms["origin-destination"]["origin"].value = originName;
     document.forms["origin-destination"]["destination"].value = destinationName;
 
