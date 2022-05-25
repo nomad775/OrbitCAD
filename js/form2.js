@@ -21,9 +21,10 @@ function fromPrev() {
     // let m = params.get("utM");
     //let utNow = `y${y} d${d} ${h}:${m}`
 
+    document.getElementById("outCurrentTime").textContent = convertSecondsToDateObj(utNow).toString();
     document.getElementById("outOrigin").textContent = originName;
     document.getElementById("outDestination").textContent = destinationName;
-    document.getElementById("outCurrentTime").textContent = utNow;
+    
     document.getElementById("outTxTod").textContent = convertSecondsToDateObj(tod).toString();
 
     // input to pass on to next
@@ -34,6 +35,8 @@ function fromPrev() {
     //document.forms["parkOrbit"]["utD"].value = d;
     //document.forms["parkOrbit"]["utH"].value = h;
     //document.forms["parkOrbit"]["utM"].value = m;
+    
+    document.forms["parkOrbit"]["utNow"].value = utNow;
 
     document.forms["parkOrbit"]["tod"].value = Math.round(tod);
     document.forms["parkOrbit"]["toa"].value = Math.round(toa);
