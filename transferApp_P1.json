@@ -1,0 +1,89 @@
+{
+    "app": "transfer",
+    "pageFunctions": [
+        {
+            "id": "t0",
+            "label": "FN",
+            "fn": ""
+        },
+
+        {
+            "id": "t1",
+            "label": "INIT",
+            "fn": "setActivePage('t1')"
+        },
+
+        {
+            "id": "t2",
+            "label": "EJECT",
+            "fn": ""
+        },
+
+        {
+            "id": "t3",
+            "label": "INC",
+            "fn": ""
+        },
+
+        {
+            "id": "t4",
+            "label": "CAPTURE",
+            "fn": ""
+        },
+
+        {
+            "id": "t5",
+            "label": "",
+            "fn": ""
+        },
+    
+        {
+            "id": "b0",
+            "label": "SET UT",
+            "fn": "setTime('utNow')"
+        },
+
+        {
+            "id": "b1",
+            "label": "ORIGIN",
+            "fn": "setActiveField('origin')"
+        },
+
+        {
+            "id": "b2",
+            "label": "DEST",
+            "fn": "setActiveField('destination')"
+        },
+        {
+            "id": "b3",
+            "label": "",
+            "fn": ""
+        },
+
+        {
+            "id": "b4",
+            "label": "",
+            "fn": ""
+        },
+
+        {
+            "id": "b5",
+            "label": "NEXT",
+            "fn": "activePage.setInactive(); initializeTransferOrbit(); setActivePage('t2')"
+        }
+    ],
+
+    "inputFields": [
+        "utNow",
+        "origin",
+        "destination"
+    ],
+    "outputFields": [
+        "tod",
+        "toa"
+    ],
+
+    "activePanels": [
+        "#utPanelUnit"
+    ]
+}

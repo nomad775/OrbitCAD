@@ -10,7 +10,7 @@
         <link rel="preconnect" href="https://fonts.gstatic.com">
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=VT323&display=swap" >
 
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> -->
 
         <link rel="stylesheet" href="multiFunctionDisplay.css">
 
@@ -26,6 +26,75 @@
 
     <body>
 
+        <dialog id="timeEntry" class="paramDisp" style="width:100px;">
+            <form id="frmTimeEntry" method="dialog" oninput="let s = convertDateToSeconds(utY.value, utD.value, utH.value, utM.value, true); utS.value=s" onsubmit="getTime()">
+                
+                <input type="hidden" name="field">
+
+                <label for="utY">Y:</label>
+                <input name="utY" type="number" min="1" max="100" value="1" required style="width: 50px;">
+                <br>
+        
+                <label for="utD">D:</label>
+                <input name="utD" type="number" min="1" max="426" value="1" required style="width: 50px;">
+        
+                <p>Optional:</p>
+        
+                <label for="utH">H:</label>
+                <input name="utH" type="number" min="0" max="5" value="0" required style="width: 50px;">
+                <br>
+        
+                <label for="utM">M:</label>
+                <input name="utM" type="number" min="0" max="59" value="0" required style="width: 50px;">
+                <br>
+
+                UT(seconds)<output it="utS" name="utS"></output>
+
+                <input type="button" value="Cancel">
+                <input name="submit" type="submit" value="Submit">
+            </form>
+        </dialog>
+
+        <dialog id="altEntry" show>
+            <form name="frmAltEntry" method="dialog">
+            
+                <label for="alt">alt:</label>
+                <input name="lat" type="number" min="1" max="1000" value="1" required style="width: 50px;">
+                <select name="units">
+                    <option>Km</option>
+                    <option>Mm</option>
+                    <option>Gm</option>
+                </select>
+                <br>
+
+                <br>
+                <input type="button" value="Cancel">
+                <input type="submit">
+            </form>
+        </dialog>
+
+        <form name="initializeTransfer">
+            <input name="utNow" type="number" value="0"/>
+            <select name="origin">
+                <option>Moho</option>
+                <option>Eve</option>
+                <option>Kerbin</option>
+                <option>Duna</option>
+                <option>Dres</option>
+                <option>Jool</option>
+                <option>Eeloo</option>
+            </select>
+            <select name="destination">
+                <option>Moho</option>
+                <option>Eve</option>
+                <option>Kerbin</option>
+                <option>Duna</option>
+                <option>Dres</option>
+                <option>Jool</option>
+                <option>Eeloo</option>
+            </select>
+        </form>
+
         <div id="mfd">
 
             <div id="displayContainer" style="pointer-events: none;">
@@ -33,7 +102,7 @@
                 <div id="pePanelUnit" class="paramDisp">
                     PERIAPSIS
                     <div class="LCDscreen">
-                        <input disabled name="pe" type="text" value="000" style="width:100px">
+                        <output name="pe" type="text" value="000" style="width:100px">0000</output>
                         km
                     </div>
                 </div>
@@ -41,7 +110,7 @@
                 <div id="apPanelUnit" class="paramDisp">
                     APOAPSIS<br>
                     <div class="LCDscreen">
-                        <input name="ap" type="text" value="000" style="width:100px">
+                        <output name="ap" type="text" style="width:100px">000</output>
                         km
                     </div>
                 </div>
@@ -74,10 +143,12 @@
 
                 <div id="utPanelUnit" class="paramDisp">
                     UT<div class="LCDscreen">
-                        y:<input name="utY" type="text" value="1" maxlength="3" style="width:18px" min="1" max="999">
+                        <output name="utNow">Y1, D001, 0:00</output>
+
+                        <!-- y:<input name="utY" type="text" value="1" maxlength="3" style="width:18px" min="1" max="999">
                         d:<input name="utD" type="text" value="1" style="width:20px">
                         <input name="utH" type="text" value="0" style="width:10px">:<input name="utM" type="text" value="00"
-                            style="width:18px">
+                            style="width:18px"> -->
                     </div>
                 </div>
 
@@ -109,31 +180,7 @@
             
             </div>
 
-            <dialog id="timeEntry"  class="paramDisp" style="width:100px;">
-                <form method="dialog">
-
-                    <label for="utY">Y:</label>
-                    <input name="utY" type="number" min="1" max="100" value="1" required style="width: 50px;">
-                    <br>
-
-                    <label for="utD">D:</label>
-                    <input name="utD" type="number" min="1" max="426" value="1" required style="width: 50px;">
-
-                    <p>Optional:</p>
-
-                    <label for="utH">H:</label>
-                    <input name="utH" type="number" min="0" max="5" value="0" required style="width: 50px;">
-                    <br>
-
-                    <label for="utM">M:</label>
-                    <input name="utM" type="number" min="0" max="59" value="0" required style="width: 50px;">
-                    <br>
-                    <input type="button" value="Cancel">
-                    <input type="submit">
-                </form>
-            </dialog>
-
-            <div>
+            <div style="display:none;">
                 <p>Temp screen text holder</p>
                 <p><span id="originName">origin</span>, <span id="destinationName">destination</span></p>
                 <p><span id="xyCoordinates" style="width: 7em; display: inline-block; background-color: #5a2727;">
@@ -393,7 +440,7 @@
             </div>
         </div>
 
-        <div id="keyboard">
+        <div id="keyboard" style="display:none;">
             <button id="key1" onclick="keyPress(event,1)">1</button>
             <button id="key2" onclick="keyPress(event,2)">2</button>
             <button id="key3" onclick="keyPress(event,3)">3</button>
@@ -410,8 +457,10 @@
             <button id="keyE" onclick="keyPress(event,'E')">E</button>
         </div>
 
-        
-        
     </body>
+
+    <script>
+        onDocumentReady()
+    </script>
 
 </html>

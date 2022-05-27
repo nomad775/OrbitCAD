@@ -4,11 +4,8 @@ var txOrbit;
 var ejectOrbit;
 var captureOrbit;
 
-
 let currentTime = 1;
 let displayedTime = 0;
-
-
 
 function initialize(){
     
@@ -32,11 +29,10 @@ function troubleShoot(){
 }
 
 
-$(document).ready(function () {
-    
-    console.log("document loaded");    
+function onDocumentReady(){
+    console.log("document loaded");
 
     initialize();
+}
 
-})
 

@@ -16,29 +16,24 @@ class Button {
 
     constructor(idStr, btnElementStr, labelElementStr) {
 
-        console.log(idStr);
-
         this.btnGroup = document.getElementById(idStr);
-        console.log(this.btnGroup);
-
-        //this.buttonElement = $(btnElementStr);
-        
         this.labelElement = this.btnGroup.getElementsByTagName("text").item(0);
         
-        console.log(this.labelElement);
+        //console.log(idStr);
+        //console.log(this.btnGroup);
+        //console.log(this.labelElement);
     
     }
 
     setActive(toggle) {
 
         this._isActive = true;
-        //this.labelElement.parent.addClass("btnLabel-active");
-
         
-        let jqElement = $(this.btnGroup)
+        let jqElement = this.btnGroup
         
-        jqElement.addClass("btnLabel-active").removeClass("btnLabel");
-        jqElement.removeClass("btnLabel-disabled");
+        jqElement.classList.add("btnLabel-active")
+        jqElement.classList.remove("btnLabel");
+        jqElement.classList.remove("btnLabel-disabled");
 
         console.log(jqElement);
 
@@ -49,8 +44,8 @@ class Button {
     setInactive() {
 
         this._isActive = false;
-        $(this.btnGroup).removeClass("btnLabel-active")
-        $(this.btnGroup).addClass("btnLabel");
+        this.btnGroup.classList.remove("btnLabel-active")
+        this.btnGroup.classList.add("btnLabel");
         
     }
 
@@ -136,33 +131,34 @@ function setActiveField(id) {
     //console.log("active field", activeField);
 }
 
-function setActivePage(id) {
+function setActivePage(dataObj) {
 
     //console.log(activeButton);
-    if(activeButton != undefined) activeButton.setInactive();
-
-    dataObj = pages[id];
+   // if(activeButton != undefined) activeButton.setInactive();
 
     let buttonData = dataObj["pageFunctions"];
     let inputFields = dataObj["inputFields"];
     let outputFields = dataObj["outputFields"];
     let activePanels = dataObj["activePanels"];
 
-    if(activePage != undefined) activePage.setInactive();
-    activePage = buttons[id];
-    activePage.setActive();
+    // if(activePage != undefined) activePage.setInactive();
+    // activePage = buttons[id];
+    // activePage.setActive();
 
     // set buttons
-    buttonData.forEach(element => {
+    buttonData.forEach( (element) => {
 
         let id = element.id;
         let label = element.label
-        let fn = eval(element.fn);
+        let fn = Function(element.fn);
 
         buttons[id].label = label;
         buttons[id].fn = fn;
 
+        // console.log(id, fn);
     });
+
+    return;
 
     // update input fields
     if(inputFields.length>0){
@@ -256,6 +252,30 @@ function planetClickAsInput(event, planetId){
 
 }
 
+function setTime(name){
+
+    let dialog = document.getElementById('timeEntry');
+    let form = document.getElementById("frmTimeEntry");
+    form["field"].value = name;
+    dialog.showModal();    
+}
+
+function getTime(){
+    
+    var form = document.getElementById('frmTimeEntry');
+    
+    if(form.returnValue = "Submit"){
+        console.log("SET")
+        let name = form.field.value;
+        let uts = form.utS.value;
+
+        document.forms["initializeTransfer"]["utNow"].value = uts;
+        displayedTime = s;
+        window.dispatchEvent(timeChangeEvent);
+    }
+    
+}
+
 function processTimeFields(yField, dField, hField, mField, outField, isUT) {
 
     y = fields[yField].value;
@@ -296,10 +316,10 @@ function initializeMFD() {
 
     console.log("initalize MFD");
 
-    initGlobalFields();
+    // initGlobalFields();
     initializeButtonElements();
 
-    fetch("transferApp.json").then(response => response.json()).then(data => setAppData(data));
+    fetch("transferApp_P1.json").then(response => response.json()).then(data => setActivePage(data));
     
     buttons["t1"].setActive();
     
