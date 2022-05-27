@@ -1,0 +1,133 @@
+{
+    "app": "originDestination",
+    "pages": [
+        {
+            "id": "t0",
+            "label": "FN",
+            "fn": "()=> setActivePage('t0')",
+            "pageData": {
+                "pageFunctions": [
+                    {
+                        "id": "b0",
+                        "label": "",
+                        "fn": ""
+                    },
+                    {
+                        "id": "b1",
+                        "label": "",
+                        "fn": ""
+                    },
+                    {
+                        "id": "b2",
+                        "label": "",
+                        "fn": null
+                    },
+                    {
+                        "id": "b3",
+                        "label": "",
+                        "fn": null
+                    },
+                    {
+                        "id": "b4",
+                        "label": "",
+                        "fn": null
+                    },
+                    {
+                        "id": "b5",
+                        "label": "",
+                        "fn": null
+                    }
+                ],
+                "inputFields":  [],
+                "outputFields": [],
+                "activePanels": []
+            }
+        },
+        {
+            "id": "t1",
+            "label": "ORGN-DEST",
+            "fn": "() => setActivePage('t1')",
+            "pageData": {
+                "pageFunctions": [
+                    {
+                        "id": "b0",
+                        "label": "SET UT",
+                        "fn": "() => setActiveField('utY')"
+                    },
+                    {
+                        "id": "b1",
+                        "label": "ORIGIN",
+                        "fn": "() => setActiveField('origin')"
+                    },
+                    {
+                        "id": "b2",
+                        "label": "DEST",
+                        "fn": "() => setActiveField('destination')"
+                    },
+                    {
+                        "id": "b3",
+                        "label": "",
+                        "fn": null
+                    },
+                    {
+                        "id": "b4",
+                        "label": "",
+                        "fn": null
+                    },
+                    {
+                        "id": "b5",
+                        "label": "",
+                        "fn": null
+                    }
+                ],
+                "inputFields":  ["origin", "destination"],
+                "outputFields": ["utMean"],
+                "activePanels": ["#utPanelUnit"]
+            }
+        },
+        {
+            "id": "t2",
+            "label": "",
+            "fn": "() => setActivePage('t1')",
+            "pageData": {
+                "pageFunctions": [],
+                "inputFields": [],
+                "outputFields": [],
+                "activePanels": []
+            }
+        },
+        {
+            "id": "t3",
+            "label": "",
+            "fn": null,
+            "pageData": {
+                "pageFunctions": [],
+                "inputFields": [],
+                "outputFields": [],
+                "activePanels": []
+            }
+        },
+        {
+            "id": "t4",
+            "label": "",
+            "fn": null,
+            "pageData": {
+                "pageFunctions": [],
+                "inputFields": [],
+                "outputFields": [],
+                "activePanels": []
+            }
+        },
+        {
+            "id": "t5",
+            "label": "NEXT",
+            "fn": null,
+            "pageData": {
+                "pageFunctions": [],
+                "inputFields": [],
+                "outputFields": [],
+                "activePanels": []
+            }
+        }
+    ]
+}
