@@ -487,32 +487,3 @@ function getPlanetsXML(callback) {
         createPlanetObjectsFromXML(data, callback)
     });
 }
-
-
-
-
-
-
-function z_initializeEjectionOrbit(theTxOrbit) {
-
-    console.log("initialize ejection orbit");
-
-    let originPlanet = theTxOrbit.originPlanet;
-    let t = theTxOrbit.tod;
-    let v3 = Math.abs(theTxOrbit.v3o);
-
-    let isForm = location.toString().includes("form");
-    let peAlt;
-    if (isForm) {
-        peAlt = document.forms["parkOrbit"]["peAlt"].value * 1000;
-    } else {
-        peAlt = fields["parkPe"].value * 1000;
-    }
-
-    // create hyperbolic orbit
-    ejectionOrbit = new HyperbolicOrbit(originPlanet, t, peAlt, v3);
-
-    initializeEjectionSVG(ejectionOrbit);
-
-    return ejectionOrbit;
-}

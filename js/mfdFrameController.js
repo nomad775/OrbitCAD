@@ -25,7 +25,7 @@ class Button {
     
     }
 
-    setActive(toggle) {
+    setActive(toggle=true) {
 
         this._isActive = true;
         
@@ -37,7 +37,7 @@ class Button {
 
         console.log(jqElement);
 
-        if(toggle) activeButton.setInactive();
+        if(toggle)activeButton.setInactive();
         activeButton = this;
     }
 
@@ -133,8 +133,8 @@ function setActiveField(id) {
 
 function setActivePage(dataObj) {
 
-    //console.log(activeButton);
-   // if(activeButton != undefined) activeButton.setInactive();
+    console.log(activeButton);
+    //if(activeButton != undefined) activeButton.setInactive();
 
     let buttonData = dataObj["pageFunctions"];
     let inputFields = dataObj["inputFields"];
@@ -158,6 +158,7 @@ function setActivePage(dataObj) {
         // console.log(id, fn);
     });
 
+    buttons["b0"].setActive();
     return;
 
     // update input fields
@@ -270,29 +271,13 @@ function getTime(){
         let uts = form.utS.value;
 
         document.forms["initializeTransfer"]["utNow"].value = uts;
-        displayedTime = s;
+        displayedTime = uts;
         window.dispatchEvent(timeChangeEvent);
     }
-    
+
+    activeButton.setInactive();
+
 }
-
-function processTimeFields(yField, dField, hField, mField, outField, isUT) {
-
-    y = fields[yField].value;
-    d = fields[dField].value;
-    h = fields[hField].value;
-    m = fields[mField].value;
-
-    s = convertDateToSeconds(y, d, h, m, isUT);
-
-    fields[outField].value = s;
-
-    fields[outField].callback();
-
-    displayedTime = s;
-    window.dispatchEvent(timeChangeEvent);
-}
-
 
 function initializeButtonElements() {
 
@@ -321,8 +306,8 @@ function initializeMFD() {
 
     fetch("transferApp_P1.json").then(response => response.json()).then(data => setActivePage(data));
     
-    buttons["t1"].setActive();
-    
+    buttons["t1"].setActive(false);
+   
 }
 
 

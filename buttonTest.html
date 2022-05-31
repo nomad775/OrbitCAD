@@ -1,0 +1,582 @@
+<!DOCTYPE HTML>
+
+<html lang="en">
+
+    <head>
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <!-- <link rel="stylesheet" href="multiFunctionDisplay.css"> -->
+
+        <script src="js/orbitalMechanics.js" type="text/javascript"></script>
+        <script src="js/utility.js" type="text/javascript"></script>
+        <!-- <script src="js/mfdFrameController.js" type="text/javascript"></script> -->
+        <script src="js/mfdViewController.js" type="text/javascript"></script>
+        <script src="js/mfdSVGcontroller.js" type="text/javascript"></script>
+        <script src="js/mfdOutputcontroller.js" type="text/javascript"></script>
+        <script src="js/mfdMain.js" type="text/javascript"></script>
+
+        <style>
+
+            body{
+                margin: auto;
+                padding-top:50px;
+                width: 50%;
+            }
+            
+            #divMFD{
+                min-width: 600px;
+                min-height: 600px;
+                border: 1px lightblue solid;
+                background-color: gray;
+                border-radius: 10px;
+                display: grid;
+                grid-template-columns: 80px auto auto 90px 80px;
+                grid-template-rows: 40px 20px auto 20px 40px;
+            }
+
+            #divScreen{
+                grid-row: 3/4;
+                grid-column: 2/5;
+                background-color: black;
+            }
+
+            #divTopButtonGroup, #divTopLabelGroup, #divBottomButtonGroup, #divBottomLabelGroup{
+                min-width: 360px;
+                display: flex;
+                flex-direction: row;
+                justify-items: center;
+                justify-content: space-between;
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+
+            #divTopButtonGroup, #divBottomButtonGroup{
+                grid-column: 2/5;
+                height: 20px;
+                padding-top:10px;
+                padding-bottom:10px;
+                background-color: gray;
+            }
+
+            #divTopButtonGroup{
+                grid-row:1;
+            }
+
+            #divBottomButtonGroup{
+                grid-row:5;
+            }
+
+            #divTopLabelGroup, #divBottomLabelGroup{
+                grid-column: 2/5;
+                height: 20px;
+                background-color: black;
+            }
+
+            #divTopLabelGroup{
+                grid-row:2;
+                border-radius: 4px 4px 0 0;
+            }
+
+            #divBottomLabelGroup{
+                grid-row:4;
+                border-radius: 0 0 4px 4px;
+            }
+
+            #divLeftButtonGroup, #divLeftLabelGroup, #divRightButtonGroup, #divRightLabelGroup{
+                grid-row: 3/4;
+
+                margin-top: 40px;
+                margin-bottom: 40px;
+
+                display: flex;
+                flex-direction: column;
+                justify-items: center;
+                justify-content: space-between;
+                /* align-items: center; */
+                /* align-content: center; */
+            }
+
+            #divLeftButtonGroup, #divRightButtonGroup{
+                align-items: center;
+            }
+
+            #divLeftButtonGroup{
+                grid-column: 1;
+            }
+
+            #divLeftLabelGroup{
+                grid-column: 2;
+                margin-left: 10px;
+                justify-items: left;
+            }
+
+            #divRightButtonGroup{
+                grid-column: 5;
+            }
+
+            #divRightLabelGroup{
+                grid-column: 4;
+                margin-right: 10px;
+                text-align: right;
+            }
+
+            #divTopLabelGroup Label, #divBottomLabelGroup Label{
+                width: 60px;
+                text-align: center;
+            }
+
+            #divLeftButtonGroup Label, #divRightButtonGroup Label{
+                width: 60px;
+                background-color: gray;
+                position:relative;
+                top: 2px;
+            }
+
+            label{
+                background-color: black;
+                color: rgb(154, 205, 50);
+            }
+
+            input:checked + label {
+                background-color: greenyellow;
+                color: black;
+            }
+
+            input:disabled + label {
+                color: rgba(154, 205, 50, .5);
+            }
+
+            input[type="radio"]{
+                display: none;
+                appearance: none;
+            }
+            
+        </style>
+
+    </head>
+
+    <body onload="initialize()">
+
+        <dialog id="timeEntry" class="paramDisp" style="width:100px;">
+            <form id="frmTimeEntry" method="dialog"
+                oninput="let s = convertDateToSeconds(utY.value, utD.value, utH.value, utM.value, true); utS.value=s"
+                onsubmit="getTime()">
+        
+                <input type="hidden" name="field">
+        
+                <label for="utY">Y:</label>
+                <input name="utY" type="number" min="1" max="100" value="1" required style="width: 50px;">
+                <br>
+        
+                <label for="utD">D:</label>
+                <input name="utD" type="number" min="1" max="426" value="1" required style="width: 50px;">
+        
+                <p>Optional:</p>
+        
+                <label for="utH">H:</label>
+                <input name="utH" type="number" min="0" max="5" value="0" required style="width: 50px;">
+                <br>
+        
+                <label for="utM">M:</label>
+                <input name="utM" type="number" min="0" max="59" value="0" required style="width: 50px;">
+                <br>
+        
+                UT(seconds)<output it="utS" name="utS"></output>
+        
+                <input type="button" value="Cancel">
+                <input name="submit" type="submit" value="Submit">
+            </form>
+        </dialog>
+        
+        <dialog id="altEntry" show>
+            <form name="frmAltEntry" method="dialog">
+        
+                <label for="alt">alt:</label>
+                <input name="lat" type="number" min="1" max="1000" value="1" required style="width: 50px;">
+                <select name="units">
+                    <option>Km</option>
+                    <option>Mm</option>
+                    <option>Gm</option>
+                </select>
+                <br>
+        
+                <br>
+                <input type="button" value="Cancel">
+                <input type="submit">
+            </form>
+        </dialog>
+        
+        <form name="initializeTransfer">
+            <input name="utNow" type="number" value="0" />
+            <select name="origin">
+                <option>Moho</option>
+                <option>Eve</option>
+                <option>Kerbin</option>
+                <option>Duna</option>
+                <option>Dres</option>
+                <option>Jool</option>
+                <option>Eeloo</option>
+            </select>
+            <select name="destination">
+                <option>Moho</option>
+                <option>Eve</option>
+                <option>Kerbin</option>
+                <option>Duna</option>
+                <option>Dres</option>
+                <option>Jool</option>
+                <option>Eeloo</option>
+            </select>
+        </form>
+
+        <svg id="svgButton" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg"
+            xmlns:xlink="http://www.w3.org/1999/xlink" version="1.2" display="none">
+        
+            <defs>
+                <symbol id="button" width="60" height="20">
+                    <rect x="0" y="0" width="60" height="20" rx="3" ry="3" fill="darkGrey" />
+                    <rect x="1" y="1" width="58" height="18" rx="2" ry="2" fill="black" />
+                    <rect x="10" y="4" width="40" height="12" rx="1" ry="1" fill="white" />
+                </symbol>
+            </defs>
+        </svg>
+
+        <div id="divMFD">
+
+            <div id="divScreen">
+                
+                <div id="screenHtml"></div>
+
+                <svg id="solarSystem" class="svgMap" viewbox="-1150 -1150 2000 1900"
+                    onwheel="zoomWheel(event)">
+                
+                    <circle class="planet" id="Sun" cx="0" cy="0" r="4" fill="yellow" stroke="orange" />
+                
+                    <path class="orbit" id="MohoOrbit" stroke="peachpuff" fill="none"
+                        d="M   -5.50   62.92 A 52.63   51.57  -265    0 0    3.67  -41.95 A 52.63   51.57  -265    0 0   -5.50   62.92 " />
+                    <path class="orbit" id="EveOrbit" stroke="purple" fill="none"
+                        d="M  -95.93   25.70 A 98.33   98.32  -195    0 0   94.02  -25.19 A 98.33   98.32  -195    0 0  -95.93   25.7  " />
+                    <path class="orbit" id="KerbinOrbit" stroke="cyan" fill="none"
+                        d="M -136.00    0    A 136.00 136.00  -180    0 0  136.00    0    A 136.00 136.00  -180    0 0 -136.00    0    " />
+                    <path class="orbit" id="DunaOrbit" stroke="red" fill="none"
+                        d="M  155.37  152.68 A 207.26 207.00  -315.5  0 0 -140.30 -137.87 A 207.26 207.00  -315.5  0 0  155.37  152.68 " />
+                    <path class="orbit" id="DresOrbit" stroke="chocolate" fill="none"
+                        d="M -460.51   81.20 A 408.39 404.08  -190    0 0  343.88  -60.63 A 408.39 404.08  -190    0 0 -460.51   81.2  " />
+                    <path class="orbit" id="JoolOrbit" stroke="green" fill="none"
+                        d="M  348.91 -552.57 A 687.74 686.87   -232   0 0 -444.58  569.04 A 687.74 686.87   -232    1 0  348.91 -552.57" />
+                    <path class="orbit" id="EelooOrbit" stroke="gray" fill="none"
+                        d="M -729.89 -869.84 A 901.19 870.20  -130    0 0 428.66 510.86   A 901.19 870.20  -130    0 0 -729.89 -869.84 " />
+                
+                
+                
+                    <circle class="planet" id="Moho" cx="-5.50" cy="62.92" r="18" fill="peachpuff" />
+                    <circle class="planet" id="Eve" cx="-95.93" cy="25.70" r="18" fill="purple" />
+                    <circle class="planet" id="Kerbin" cx="-136.00" cy="0" r="18" fill="cyan" />
+                    <circle class="planet" id="Duna" cx="155.37" cy="152.68" r="18" fill="crimson" />
+                    <circle class="planet" id="Dres" cx="-460.51" cy="81.20" r="18" fill="#a44128" />
+                    <circle class="planet" id="Jool" cx="348.92" cy="-552.57" r="18" fill="green" />
+                    <circle class="planet" id="Eeloo" cx="-729.89" cy="-869.84" r="18" fill="gray" />
+                
+                
+                    <path class="orbit" id="txOrbit" stroke="gray" fill="none"
+                        d="M -729.89 -869.84 A 901.19 870.20  -130    0 0 428.66 510.86   A 901.19 870.20  -130    0 0 -729.89 -869.84 " />
+                
+                    <g id="txMarker" transform="translate(10,10)" stroke-width="2" stroke="greenYellow">
+                
+                        <circle id="txMarker" cx="0" cy="0" r="12" fill="none" stroke-opacity="100" />
+                
+                        <line x1="10" y1="0" x2="18" y2="0" />
+                        <line x1="0" y1="10" x2="0" y2="18" />
+                        <line x1="-10" y1="0" x2="-18" y2="0" />
+                        <line x1="0" y1="-10" x2="0" y2="-18" />
+                
+                        <circle cx="0" cy="0" r="1" storke="green" fill="green" />
+                
+                    </g>
+                
+                    <line id="line1" x1="0" y1="0" x2="110" y2="120" stroke="lightblue" stroke-dashArray="15 5 5 5 1 5 5 5 10 5" />
+                
+                    <path id="destTOF" stroke="yellow" stroke-width=3 fill="none" stroke-opacity="30%" />
+                    <path id="txTOF" stroke="lightgreen" stroke-width=3 fill="none" stroke-opacity="30%" />
+                
+                    <circle id="planet_destination_future" r="10" fill="red" fill-opacity=".4" />
+                
+                </svg>
+
+                <svg id="planetSystem" class="svgMap" class="mfd" height="440" width="450" viewBox="-200 -250 500 500"
+                    onwheel="zoomWheel(event)" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                
+                    <line id="sunDir" x1=0 y1=0 x2=-3 y2=0 stroke="yellow" stroke-width="1" />
+                
+                    <line id="prograde" x1="0" y1="0" x2="0" y2="-3" stroke="green" stroke-width="2.5" stroke-opacity=".4"
+                        stroke-dashArray="10 15 10" />
+                
+                    <g id="hyperbolaGroup">
+                        <path id="hyperbola" stroke="white" stroke-width="2.5" fill="none"
+                            d="M 93.01 0 L 92.30 -7.25   90.14 -14.72 86.49 -22.64" />
+                        <line id="axis" x1=0 y1=0 x2=.05 y2=0 stroke="grey" stroke-dashArray="3 2 3" />
+                        <line id="asymptote" x1="1.40" y1="0" x2=".4650" y2="-1.3153" stroke="gray" stroke-width="1"
+                            stroke-dashArray="3 2 3" stroke-opacity=".3" />
+                
+                        <!-- <circle id="peMarker" cx="0" cy="0" r="5" stroke="red" fill="none" /> -->
+                        <!-- <circle id="soiMarker" cx="0" cy="0" r=".1" stroke="yellow" fill="none" stroke-dashArray="3 2 3" /> -->
+                    </g>
+                
+                    <circle id="planetSystemSOI" cx="0" cy="0" r="1" stroke="white" fill="none" stroke-dashArray="20 50 20"
+                        stroke-opacity=".5" />
+                    <circle id="planetSystemPark" cx="0" cy="0" r=".20" stroke="gray" fill="none" />
+                    <circle id="planetSystemPlanet" cx="0" cy="0" r=".10" stroke="blue" fill="cyan" />
+                
+                </svg>
+
+            </div>
+
+            <div id="divTopButtonGroup">
+
+                <label for="optT0">
+                    <svg width="60" height="20">
+                        <use href="#button"></use>
+                    </svg>
+                </label>
+                
+                <label for="optT1">
+                    <svg width="60" height="20">
+                        <use href="#button"></use>
+                    </svg>
+                </label>
+                
+                <label for="optT2">
+                    <svg width="60" height="20">
+                        <use href="#button"></use>
+                    </svg>
+                </label>
+                
+                <label for="optT3">
+                    <svg width="60" height="20">
+                        <use href="#button"></use>
+                    </svg>
+                </label>
+                
+                <label for="optT4">
+                    <svg width="60" height="20">
+                        <use href="#button"></use>
+                    </svg>
+                </label>
+                
+                <label for="optT5">
+                    <svg width="60" height="20">
+                        <use href="#button"></use>
+                    </svg>
+                </label>
+
+            </div>
+
+            <div id="divTopLabelGroup">
+                    <input id="optT0" name="top" type="radio">
+                    <label id="lblT0" for="optT0">opt T0</label>
+                    
+                    <input id="optT1" name="top" type="radio">
+                    <label id="lblT1" for="optT1">opt T1</label>
+                    
+                    <input id="optT2" name="top" type="radio">
+                    <label id="lblT2" for="optT2">opt T2</label>
+                    
+                    <input id="optT3" name="top" type="radio">
+                    <label id="lblT3" for="optT3">opt T3</label>
+                    
+                    <input id="optT4" name="top" type="radio">
+                    <label id="lblT4" for="optT4">opt T4</label>
+                    
+                    <input id="optT5" name="top" type="radio">
+                    <label id="lblT5" for="optT5">opt T5</label>
+            </div>
+
+            <div id="divLeftButtonGroup">
+                <label for="optL0">
+                    <svg width="60" height="20">
+                        <use href="#button"></use>
+                    </svg>
+                </label>
+                
+                <label for="optL1">
+                    <svg width="60" height="20">
+                        <use href="#button"></use>
+                    </svg>
+                </label>
+                
+                <label for="optL2">
+                    <svg width="60" height="20">
+                        <use href="#button"></use>
+                    </svg>
+                </label>
+                
+                <label for="optL3">
+                    <svg width="60" height="20">
+                        <use href="#button"></use>
+                    </svg>
+                </label>
+                
+                <label for="optL4">
+                    <svg width="60" height="20">
+                        <use href="#button"></use>
+                    </svg>
+                </label>
+                
+                <label for="optL5">
+                    <svg width="60" height="20">
+                        <use href="#button"></use>
+                    </svg>
+                </label>
+            </div>
+
+            <div id="divLeftLabelGroup">
+                <input id="optL0" name="left" type="radio">
+                <label id="lblL0" for="optL0"></label>
+            
+                <input id="optL1" name="left" type="radio">
+                <label id="lblL1" for="optL1"></label>
+            
+                <input id="optL2" name="left" type="radio">
+                <label id="lblL2" for="optL2"></label>
+            
+                <input id="optL3" name="left" type="radio">
+                <label id="lblL3" for="optL3"></label>
+            
+                <input id="optL4" name="left" type="radio">
+                <label id="lblL4" for="optL4"></label>
+            
+                <input id="optL5" name="left" type="radio">
+                <label id="lblL5" for="optL5"></label>
+            </div>
+
+            <div id="divRightButtonGroup">
+                <label for="optR0">
+                    <svg width="60" height="20">
+                        <use href="#button"></use>
+                    </svg>
+                </label>
+            
+                <label for="optR1">
+                    <svg width="60" height="20">
+                        <use href="#button"></use>
+                    </svg>
+                </label>
+            
+                <label for="optR2">
+                    <svg width="60" height="20">
+                        <use href="#button"></use>
+                    </svg>
+                </label>
+            
+                <label for="optR3">
+                    <svg width="60" height="20">
+                        <use href="#button"></use>
+                    </svg>
+                </label>
+            
+                <label for="optR4">
+                    <svg width="60" height="20">
+                        <use href="#button"></use>
+                    </svg>
+                </label>
+            
+                <label for="optR5">
+                    <svg width="60" height="20">
+                        <use href="#button"></use>
+                    </svg>
+                </label>
+            </div>
+            
+            <div id="divRightLabelGroup">
+                <input id="optR0" name="right" type="radio">
+                <label id="lblR0" for="optR0"></label>
+            
+                <input id="optR1" name="right" type="radio">
+                <label id="lblR1" for="optR1"></label>
+            
+                <input id="optR2" name="right" type="radio">
+                <label id="lblR2" for="optR2"></label>
+            
+                <input id="optR3" name="right" type="radio">
+                <label id="lblR3" for="optR3"></label>
+            
+                <input id="optR4" name="right" type="radio">
+                <label id="lblR4" for="optR4"></label>
+            
+                <input id="optR5" name="top" type="radio">
+                <label id="lblR5" for="optR5"></label>
+            </div>
+
+            <div id="divBottomButtonGroup">
+            
+                <label for="optB0">
+                    <svg width="60" height="20">
+                        <use href="#button"></use>
+                    </svg>
+                </label>
+            
+                <label for="optB1">
+                    <svg width="60" height="20">
+                        <use href="#button"></use>
+                    </svg>
+                </label>
+            
+                <label for="optB2">
+                    <svg width="60" height="20">
+                        <use href="#button"></use>
+                    </svg>
+                </label>
+            
+                <label for="optB3">
+                    <svg width="60" height="20">
+                        <use href="#button"></use>
+                    </svg>
+                </label>
+            
+                <label for="optB4">
+                    <svg width="60" height="20">
+                        <use href="#button"></use>
+                    </svg>
+                </label>
+            
+                <label for="optB5">
+                    <svg width="60" height="20">
+                        <use href="#button"></use>
+                    </svg>
+                </label>
+            
+            </div>
+            
+            
+            <div id="divBottomLabelGroup">
+                
+                <input id="optB0" name="bottom" form="frmBottom" type="radio" value="0" onclick="setTime()">
+                <label id="lblB0" for="optB0">opt B0</label>
+            
+                <input id="optB1" name="bottom" form="frmBottom" type="radio" value="1">
+                <label id="lblB1" for="optB1">opt B1</label>
+            
+                <input id="optB2" name="bottom" form="frmBottom" type="radio" value="2">
+                <label id="lblB2" for="optB2">opt B2</label>
+            
+                <input id="optB3" name="bottom" form="frmBottom" type="radio" value="3">
+                <label id="lblB3" for="optB3">opt B3</label>
+            
+                <input id="optB4" name="bottom" form="frmBottom" type="radio" value="4">
+                <label id="lblB4" for="optB4">opt B4</label>
+            
+                <input id="optB5" name="bottom" form="frmBottom" type="radio" value="5">
+                <label id="lblB5" for="optB5">opt B5</label>
+
+            </div>
+        
+
+            <form id="frmBottom" onformchange="bottomRadioButtonChanged()" style="appearance:none;">     
+                <output name="outBottom"></output>
+                <input type="submit">
+            </form>
+
+        </div>
+    </body>
+
+</html>

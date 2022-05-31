@@ -56,8 +56,8 @@ function mouseMove(event){
         zoomAnchorX = mouseX;
         zoomAnchorY = mouseY;
         
-        document.getElementById("xyCoordinates").textContent = (`${dx.toFixed(2)}, ${dy.toFixed(2)}`);
-        document.getElementById("polarCoordinates").textContent = (`${r.toFixed(2)} <  ${theta.toFixed(2)}deg`);
+        // document.getElementById("xyCoordinates").textContent = (`${dx.toFixed(2)}, ${dy.toFixed(2)}`);
+        // document.getElementById("polarCoordinates").textContent = (`${r.toFixed(2)} <  ${theta.toFixed(2)}deg`);
     }
         
 }
@@ -112,7 +112,7 @@ function zoomWindow(x0,y0,w,h){
     viewBox.height = h;
     viewBox.width = w;
 
-    document.getElementById("zoom").textContent = `zoom ${Math.round(initialViewBoxWidth / viewBox.width * 100) / 100}`;
+    //document.getElementById("zoom").textContent = `zoom ${Math.round(initialViewBoxWidth / viewBox.width * 100) / 100}`;
 
     scaleText();
 }

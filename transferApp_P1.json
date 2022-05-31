@@ -16,25 +16,29 @@
         {
             "id": "t2",
             "label": "EJECT",
-            "fn": ""
+            "fn": "",
+            "disabled": "true"
         },
 
         {
             "id": "t3",
             "label": "INC",
-            "fn": ""
+            "fn": "",
+            "disabled": "disabled"
         },
 
         {
             "id": "t4",
             "label": "CAPTURE",
-            "fn": ""
+            "fn": "",
+            "disabled": "disabled"
         },
 
         {
             "id": "t5",
             "label": "",
-            "fn": ""
+            "fn": "",
+            "disabled": "disabled"
         },
     
         {
@@ -69,7 +73,9 @@
         {
             "id": "b5",
             "label": "NEXT",
-            "fn": "activePage.setInactive(); initializeTransferOrbit(); setActivePage('t2')"
+            "fn": "activePage.setInactive(); initializeTransferOrbit(); setActivePage('t2')",
+            "disabled": "disabled"
+
         }
     ],
 

@@ -62,7 +62,6 @@ class SVGplanet extends Planet{
                 break;
 
             case "click":
-                console.log("Planet clicked");
                 planetClickAsInput(event, this.planet.name)
 
             default:
