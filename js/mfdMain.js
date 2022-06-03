@@ -3,6 +3,8 @@ const planets = {};
 let currentTime = 1;
 let displayedTime = 0;
 
+const timeChangeEvent = new Event('timeChange');
+const displayedTimeChangeEvent = new Event('displayedTimeChange');
 
 // ---------- page 1 ----------
 var txOrbit;
@@ -15,6 +17,9 @@ function setTime(name) {
     let form = document.getElementById("frmTimeEntry");
     form["field"].value = name;
     dialog.showModal();
+
+    let optButton = document.getElementById("optB0");
+    optButton.checked = false;
 }
 
 function getTime() {
@@ -28,22 +33,18 @@ function getTime() {
 
         document.forms["initializeTransfer"]["utNow"].value = uts;
         displayedTime = uts;
+
         window.dispatchEvent(timeChangeEvent);
     }
 
-    activeButton.setInactive();
-
 }
 
-function bottomRadioButtonChanged(){
-    console.log("bottom radio button changed");
-}
+function planetClickAsInput(event, planetName){
 
-function planetClickAsInput(event, planetId){
-
-    console.log(planetId + " clicked");
+    console.log(planetName + " clicked");
 
     let inputField = document.forms["frmBottom"]["bottom"].value;
+
     var fieldName;
 
     switch (Number(inputField)){
@@ -52,9 +53,11 @@ function planetClickAsInput(event, planetId){
             break;
         case 1:
             fieldName="origin";
+            document.forms["initializeTransfer"]["origin"].value = planetName;
             break;
         case 2:
             fieldName="destination";
+            document.forms["initializeTransfer"]["destination"].value = planetName;
             break;
     }
 
@@ -62,39 +65,26 @@ function planetClickAsInput(event, planetId){
     optButton.checked=false;
 
     console.log(fieldName);
+    let origin = document.forms["initializeTransfer"]["origin"].value;
+    let destination = document.forms["initializeTransfer"]["destination"].value;
 
-    
-    //activeField.value = planetId;
-    //updateDisplay(activeField.id);
+    let mainForm = document.forms["initializeTransfer"];
+    let isValid = mainForm.checkValidity() && (origin != destination);
 
-    //activeField.callback();
+    document.getElementById("optB5").disabled= !isValid;
 
 }
 
-function setTime(name){
+function next(){
+    console.log("next");
 
-    let dialog = document.getElementById('timeEntry');
-    let form = document.getElementById("frmTimeEntry");
-    form["field"].value = name;
-    dialog.showModal();    
-}
+    document.forms["initializeTransfer"].submit();
 
-function getTime(){
-    
-    var form = document.getElementById('frmTimeEntry');
-    
-    if(form.returnValue = "Submit"){
-        console.log("SET")
-        let name = form.field.value;
-        let uts = form.utS.value;
-
-        document.forms["initializeTransfer"]["utNow"].value = uts;
-        displayedTime = uts;
-        window.dispatchEvent(timeChangeEvent);
-    }
-
-    activeButton.setInactive();
-
+    //let originName = document.forms["initializeTransfer"]["origin"].value;
+    //let destinationName = document.forms["initializeTransfer"]["destination"].value;;
+    //transferOrbit = new SVGTransfer(originName, destinationName);
+    //displayedTime = transferOrbit.solveTForRdv(currentTime);
+    //window.dispatchEvent(displayedTimeChangeEvent);
 }
 
 // ---------- end page 1 ----------
@@ -185,7 +175,7 @@ function initialize() {
         setSolarSystemSVG();
 
         console.log("intialized");
-        troubleShoot();
+        // troubleShoot();
     });
 
 }

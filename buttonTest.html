@@ -189,6 +189,13 @@
             </form>
         </dialog>
         
+        <form name="initializeTransfer">
+            <input name="page" type="number" value="2">
+            <input name="utNow" type="number" value="0">
+            <input name="origin" type="text" required>
+            <input name="destination" type="text" required>
+        </form>
+
         <dialog id="altEntry" show>
             <form name="frmAltEntry" method="dialog">
         
@@ -206,28 +213,6 @@
                 <input type="submit">
             </form>
         </dialog>
-        
-        <form name="initializeTransfer">
-            <input name="utNow" type="number" value="0" />
-            <select name="origin">
-                <option>Moho</option>
-                <option>Eve</option>
-                <option>Kerbin</option>
-                <option>Duna</option>
-                <option>Dres</option>
-                <option>Jool</option>
-                <option>Eeloo</option>
-            </select>
-            <select name="destination">
-                <option>Moho</option>
-                <option>Eve</option>
-                <option>Kerbin</option>
-                <option>Duna</option>
-                <option>Dres</option>
-                <option>Jool</option>
-                <option>Eeloo</option>
-            </select>
-        </form>
 
         <svg id="svgButton" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg"
             xmlns:xlink="http://www.w3.org/1999/xlink" version="1.2" display="none">
@@ -251,7 +236,8 @@
                     onwheel="zoomWheel(event)">
                 
                     <circle class="planet" id="Sun" cx="0" cy="0" r="4" fill="yellow" stroke="orange" />
-                
+
+                    <g id="gSolarSystemAlign">
                     <path class="orbit" id="MohoOrbit" stroke="peachpuff" fill="none"
                         d="M   -5.50   62.92 A 52.63   51.57  -265    0 0    3.67  -41.95 A 52.63   51.57  -265    0 0   -5.50   62.92 " />
                     <path class="orbit" id="EveOrbit" stroke="purple" fill="none"
@@ -300,11 +286,11 @@
                     <path id="txTOF" stroke="lightgreen" stroke-width=3 fill="none" stroke-opacity="30%" />
                 
                     <circle id="planet_destination_future" r="10" fill="red" fill-opacity=".4" />
-                
+                </g>
                 </svg>
 
                 <svg id="planetSystem" class="svgMap" class="mfd" height="440" width="450" viewBox="-200 -250 500 500"
-                    onwheel="zoomWheel(event)" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                    onwheel="zoomWheel(event)" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" display="none">
                 
                     <line id="sunDir" x1=0 y1=0 x2=-3 y2=0 stroke="yellow" stroke-width="1" />
                 
@@ -565,7 +551,7 @@
                 <input id="optB4" name="bottom" form="frmBottom" type="radio" value="4">
                 <label id="lblB4" for="optB4">opt B4</label>
             
-                <input id="optB5" name="bottom" form="frmBottom" type="radio" value="5">
+                <input id="optB5" name="bottom" form="frmBottom" type="radio" value="5" onclick="next()">
                 <label id="lblB5" for="optB5">opt B5</label>
 
             </div>
@@ -573,7 +559,7 @@
 
             <form id="frmBottom" onformchange="bottomRadioButtonChanged()" style="appearance:none;">     
                 <output name="outBottom"></output>
-                <input type="submit">
+                
             </form>
 
         </div>

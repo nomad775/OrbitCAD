@@ -357,14 +357,14 @@ class SVGTransfer extends TransferOrbit{
 
     setAlignment(){
 
-        if (document.getElementById("chkAlign").checked) {
-            let ln = radToDeg(this.Ln_o) //super
+        //if (document.getElementById("chkAlign").checked) {
+            //let ln = radToDeg(this.Ln_o) //super
             //console.log(ln);
-            document.getElementById("gSolarSystemAign").setAttribute("transform", `rotate(${ln})`);
-        } else {
+            //document.getElementById("gSolarSystemAlign").setAttribute("transform", `rotate(${ln})`);
+        //} else {
             //console.log(0);
-            document.getElementById("gSolarSystemAign").setAttribute("transform", "");
-        }
+        //    document.getElementById("gSolarSystemAign").setAttribute("transform", "");
+        //}
 
         zoomTxOrbit();
     }
@@ -548,6 +548,17 @@ class SVGhyperbolicOrbit extends HyperbolicOrbit{
 }
 
 
+function dimPlanets() {
+
+    //console.log("initialize transfer SVG");
+
+    // dim other planets
+    for (let planet in svgPlanets) {
+        svgPlanets[planet].element.classList.add("dimPlanet");
+    };
+
+}
+
 function setNodeText(){
 
     let svg = document.getElementById("planetSystem");
@@ -657,19 +668,6 @@ function initializeEjectionSVG(bodyName, t, peAlt, v3, outbound){
 }
 
 
-function dimPlanets() {
-
-    //console.log("initialize transfer SVG");
-
-    // dim other planets
-    for (let planet in svgPlanets) {
-        svgPlanets[planet].element.classList.add("dimPlanet");
-    };
-
-}
-
-
-// copied from orbital mechanics
 function initializeTransferOrbit() {
 
     console.log("initialize transfer orbit");

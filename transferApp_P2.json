@@ -9,7 +9,7 @@
 
         {
             "id": "t1",
-            "label": "INIT",
+            "label": "TRNFER",
             "fn": "setActivePage('t1')"
         },
 
@@ -43,20 +43,20 @@
     
         {
             "id": "b0",
-            "label": "SET UT",
+            "label": "SET PE",
             "fn": "setTime('utNow')"
         },
 
         {
             "id": "b1",
-            "label": "ORIGIN",
-            "fn": "setActiveField('origin')"
+            "label": "",
+            "fn": ""
         },
 
         {
             "id": "b2",
-            "label": "DEST",
-            "fn": "setActiveField('destination')"
+            "label": "",
+            "fn": ""
         },
         {
             "id": "b3",
@@ -73,8 +73,8 @@
         {
             "id": "b5",
             "label": "NEXT",
-            "fn": "activePage.setInactive(); initializeTransferOrbit(); setActivePage('t2')",
-            "disabled": "disabled"
+            "fn": "",
+            "disabled": ""
 
         }
     ],
