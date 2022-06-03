@@ -10,7 +10,7 @@
         {
             "id": "t1",
             "label": "INIT",
-            "fn": "setActivePage('t1')"
+            "fn": ""
         },
 
         {
@@ -50,13 +50,13 @@
         {
             "id": "b1",
             "label": "ORIGIN",
-            "fn": "setActiveField('origin')"
+            "fn": ""
         },
 
         {
             "id": "b2",
             "label": "DEST",
-            "fn": "setActiveField('destination')"
+            "fn": ""
         },
         {
             "id": "b3",
@@ -73,7 +73,7 @@
         {
             "id": "b5",
             "label": "NEXT",
-            "fn": "activePage.setInactive(); initializeTransferOrbit(); setActivePage('t2')",
+            "fn": "next()",
             "disabled": "disabled"
 
         }

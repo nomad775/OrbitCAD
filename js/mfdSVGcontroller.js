@@ -660,7 +660,7 @@ function initializeEjectionSVG(bodyName, t, peAlt, v3, outbound){
 
     setNodeText();
 
-    updateHypSVG(park);
+    //updateHypSVG(park);
 
     // set initial zoom (park orbit is half of screen)
     let w = park * 4;

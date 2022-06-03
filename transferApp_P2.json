@@ -10,28 +10,28 @@
         {
             "id": "t1",
             "label": "TRNFER",
-            "fn": "setActivePage('t1')"
+            "fn": ""
         },
 
         {
             "id": "t2",
             "label": "EJECT",
             "fn": "",
-            "disabled": "true"
+            "disabled": ""
         },
 
         {
             "id": "t3",
             "label": "INC",
             "fn": "",
-            "disabled": "disabled"
+            "disabled": ""
         },
 
         {
             "id": "t4",
             "label": "CAPTURE",
             "fn": "",
-            "disabled": "disabled"
+            "disabled": ""
         },
 
         {
@@ -44,7 +44,7 @@
         {
             "id": "b0",
             "label": "SET PE",
-            "fn": "setTime('utNow')"
+            "fn": "setAlt()"
         },
 
         {
@@ -74,7 +74,7 @@
             "id": "b5",
             "label": "NEXT",
             "fn": "",
-            "disabled": ""
+            "disabled": "disabled"
 
         }
     ],

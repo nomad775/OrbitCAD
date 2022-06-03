@@ -158,7 +158,7 @@
 
     <body onload="initialize()">
 
-        <dialog id="timeEntry" class="paramDisp" style="width:100px;">
+        <dialog id="timeEntry" class="paramDisp" style="width:200px;">
             <form id="frmTimeEntry" method="dialog"
                 oninput="let s = convertDateToSeconds(utY.value, utD.value, utH.value, utM.value, true); utS.value=s"
                 onsubmit="getTime()">
@@ -188,15 +188,8 @@
                 <input name="submit" type="submit" value="Submit">
             </form>
         </dialog>
-        
-        <form name="initializeTransfer">
-            <input name="page" type="number" value="2">
-            <input name="utNow" type="number" value="0">
-            <input name="origin" type="text" required>
-            <input name="destination" type="text" required>
-        </form>
 
-        <dialog id="altEntry" show>
+        <dialog id="altEntry">
             <form name="frmAltEntry" method="dialog">
         
                 <label for="alt">alt:</label>
@@ -214,6 +207,14 @@
             </form>
         </dialog>
 
+        <form name="initializeTransfer">
+            <input name="page" type="number" value="2">
+            <input name="utNow" type="number" value="0">
+            <input name="origin" type="text" required>
+            <input name="destination" type="text" required>
+        </form>
+
+        
         <svg id="svgButton" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg"
             xmlns:xlink="http://www.w3.org/1999/xlink" version="1.2" display="none">
         
@@ -289,32 +290,62 @@
                 </g>
                 </svg>
 
-                <svg id="planetSystem" class="svgMap" class="mfd" height="440" width="450" viewBox="-200 -250 500 500"
-                    onwheel="zoomWheel(event)" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" display="none">
+                <svg id="planetSystem" class="svgMap" height="500" width="500" viewBox="-250 -250 500 500" onwheel="zoomWheel(event)"
+                    xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                 
-                    <line id="sunDir" x1=0 y1=0 x2=-3 y2=0 stroke="yellow" stroke-width="1" />
+                    <defs>
+                        <marker id="arrowMarker" markerHeight="3" markerWidth="6" refx="3" refy="1.5" orient="auto"
+                            transform="scale(3)">
+                            <path d="M 0,0 L 0,3 6,1.5 0,0" stroke="none" fill="inherit" />
+                            <!-- <circle cx="2.5" cy="2.5" r="2.5"/> -->
+                        </marker>
+                    </defs>
                 
-                    <line id="prograde" x1="0" y1="0" x2="0" y2="-3" stroke="green" stroke-width="2.5" stroke-opacity=".4"
-                        stroke-dashArray="10 15 10" />
+                    <g id="alignment">
                 
-                    <g id="hyperbolaGroup">
-                        <path id="hyperbola" stroke="white" stroke-width="2.5" fill="none"
-                            d="M 93.01 0 L 92.30 -7.25   90.14 -14.72 86.49 -22.64" />
-                        <line id="axis" x1=0 y1=0 x2=.05 y2=0 stroke="grey" stroke-dashArray="3 2 3" />
-                        <line id="asymptote" x1="1.40" y1="0" x2=".4650" y2="-1.3153" stroke="gray" stroke-width="1"
-                            stroke-dashArray="3 2 3" stroke-opacity=".3" />
+                        <line id="sunDir" x1="0" y1="0" x2="-3" y2="0" stroke="yellow" stroke-width="1" />
+                        <line id="planetOrbit" x1="0" y1="0" x2="0" y2="-3" stroke="blue" stroke-width="2.5" stroke-opacity=".4"
+                            stroke-dashArray="10 15 10" />
+                        <line id="shipOrbit" x1="0" y1="0" x2="0" y2="-3" stroke="green" stroke-width="2.5" stroke-opacity=".4"
+                            stroke-dashArray="10 15 10" />
                 
-                        <!-- <circle id="peMarker" cx="0" cy="0" r="5" stroke="red" fill="none" /> -->
-                        <!-- <circle id="soiMarker" cx="0" cy="0" r=".1" stroke="yellow" fill="none" stroke-dashArray="3 2 3" /> -->
+                        <g id="hyperbolaGroup">
+                            <path id="hyperbola" d="M 93.01 0 L 92.30 -7.25   90.14 -14.72 86.49 -22.64" stroke="grey"
+                                stroke-width="2.5" fill="none" />
+                            <line id="axis" x1="0" y1="0" x2=".05" y2="0" stroke="grey" stroke-dashArray="3 2 3" stroke-opacity=".3" />
+                            <line id="asymptote" x1="1.40" y1="0" x2=".4650" y2="-1.3153" stroke="gray" stroke-dashArray="3 2 3"
+                                stroke-opacity=".3" stroke-width="1" />
+                            <circle id="peMarker" cx="0" cy="0" r=".01" fill="red" />
+                        </g>
+                
+                        <!-- <line x1="0" y1="0" x2="10" y2="0" stroke="black" stroke-width="3" style="marker-end: url(#arrowMarker);"/> -->
+                
+                        <g id="velocities">
+                            <line id="planetV" stroke="blue" stroke-width="3" style="marker-end: url(#arrowMarker)" />
+                            <line id="shipV" stroke="darkGreen" stroke-width="3"
+                                style="marker-end: url(#arrowMarker); stroke-opacity: .5;" />
+                            <line id="shipRelV" stroke="red" stroke-width="3"
+                                style="marker-end: url(#arrowMarker); stroke-opacity: .5;" />
+                            <line id="planetVclose" stroke="blue" stroke-width="3" style="marker-end: url(#arrowMarker)" />
+                        </g>
+                
                     </g>
                 
-                    <circle id="planetSystemSOI" cx="0" cy="0" r="1" stroke="white" fill="none" stroke-dashArray="20 50 20"
+                    <circle id="planetSystemSOI" cx="0" cy="0" r="100" stroke="black" fill="none" stroke-dashArray="20 50 20"
                         stroke-opacity=".5" />
-                    <circle id="planetSystemPark" cx="0" cy="0" r=".20" stroke="gray" fill="none" />
-                    <circle id="planetSystemPlanet" cx="0" cy="0" r=".10" stroke="blue" fill="cyan" />
+                    <circle id="planetSystemPark" cx="0" cy="0" r="6" stroke="gray" fill="none" />
+                    <circle id="planetSystemPlanet" cx="0" cy="0" r="7" stroke="blue" fill="cyan" />
+                
+                    <g id="gnode" font-family="arial" font-size=".1">
+                        <text x="0" y="0">PE: <tspan id="outPe">xxx</tspan> km</text>
+                        <text dx="0" dy=".15">LN: <tspan id="nodeLn"></tspan></text>
+                        <text dx="0" dy=".3">UT: <tspan id="nodeTod"></tspan></text>
+                        <text dx="0" dy=".45">dV: <tspan id="nodeDv"></tspan> m/s</text>
+                    </g>
+                
+                
                 
                 </svg>
-
             </div>
 
             <div id="divTopButtonGroup">
@@ -536,7 +567,7 @@
             
             <div id="divBottomLabelGroup">
                 
-                <input id="optB0" name="bottom" form="frmBottom" type="radio" value="0" onclick="setTime()">
+                <input id="optB0" name="bottom" form="frmBottom" type="radio" value="0">
                 <label id="lblB0" for="optB0">opt B0</label>
             
                 <input id="optB1" name="bottom" form="frmBottom" type="radio" value="1">

@@ -178,6 +178,7 @@ function scaleText() {
     gnode.transform.baseVal.replaceItem(T, 1);
 
 }
+
 function toggleMouseDown(event) {
     boolDown = !boolDown;
 }
