@@ -229,6 +229,8 @@ class SVGTransfer extends TransferOrbit{
        
         let that = this;
         window.addEventListener("displayedTimeChange", (e) => { that.eventHandler(e) });
+
+        document.forms["options"]["alignToPrograde"].addEventListener("change", (e)=>that.eventHandler(e))
     }
 
     eventHandler(event) {
@@ -248,7 +250,7 @@ class SVGTransfer extends TransferOrbit{
                     case "destination":
                         this.destinationChange(event.target.value);
                         break;
-                    case "chkAlign":
+                    case "alignToPrograde":
                         this.alignToLn = event.target.checked;
                         console.log("align: ", this.alignToLn);
                         this.setAlignment();
@@ -357,14 +359,14 @@ class SVGTransfer extends TransferOrbit{
 
     setAlignment(){
 
-        //if (document.getElementById("chkAlign").checked) {
-            //let ln = radToDeg(this.Ln_o) //super
-            //console.log(ln);
-            //document.getElementById("gSolarSystemAlign").setAttribute("transform", `rotate(${ln})`);
-        //} else {
-            //console.log(0);
-        //    document.getElementById("gSolarSystemAign").setAttribute("transform", "");
-        //}
+        if (document.forms["options"]["alignToPrograde"].checked) {
+            let ln = radToDeg(this.Ln_o) //super
+            console.log(ln);
+            document.getElementById("gSolarSystemAlign").setAttribute("transform", `rotate(${ln})`);
+        } else {
+            console.log(0);
+           document.getElementById("gSolarSystemAlign").setAttribute("transform", "");
+        }
 
         zoomTxOrbit();
     }
@@ -598,7 +600,7 @@ function updateHypSVG(){
     peAlt = 100000;
 
 
-    let alignTo = "ln" //document.options.align.value;
+    let alignToPrograde = document.forms["options"]["alignToPrograde"].checked;
 
     hypOrbit.update(peAlt);
     let io = hypOrbit.outbound ? 0 : Math.PI;
@@ -608,20 +610,22 @@ function updateHypSVG(){
     let fa = hypOrbit.fa;
     let theta = 0;
 
-    switch(alignTo){
-        case "prograde":
-            theta = fa + io;
-            break;
-        case "sun":
-            theta = 0 + io;
-            break;
-        default:
-            theta=ln;
-    }
+    // switch(alignTo){
+    //     case "prograde":
+    //         theta = fa + io;
+    //         break;
+    //     case "sun":
+    //         theta = 0 + io;
+    //         break;
+    //     default:
+    //         theta=ln;
+    // }
+
+    theta = alignToPrograde ? fa + io : ln;
 
     document.getElementById("planetSystemPark").setAttribute("r", svgPe);
     document.getElementById("alignment").setAttribute("transform", `rotate(${-radToDeg(theta)})`);
-
+    document.getElementById("alignmentMarker").setAttribute("transform", `rotate(${-radToDeg(theta)})`)
     setNodeText();
 
 }
