@@ -700,9 +700,6 @@ function initializeSolarSystemSVG() {
         svgOrbits[planetName] = svgOrbit;
 
     }
-
-    dimPlanets();
-
 }
 
 

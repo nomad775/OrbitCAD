@@ -3,10 +3,6 @@ const planets = {};
 let currentTime = 1;
 let displayedTime = 0;
 
-var txOrbit;
-var ejectOrbit;
-var captureOrbit;
-
 const timeChangeEvent = new Event('timeChange');
 const displayedTimeChangeEvent = new Event('displayedTimeChange');
 
@@ -98,13 +94,10 @@ function initializeTransfer(originName, destinationName, utNow){
     window.dispatchEvent(displayedTimeChangeEvent);
 }
 
-function setAlt(){
-
-    let dialog = document.getElementById('altEntry');
-    dialog.showModal();
-
-    let optButton = document.getElementById("optB0");
-    optButton.checked = false;
+function setTransferView(){
+    setSolarSystemSVG();
+    dimPlanets();
+    zoomTxOrbit();
 }
 
 function fromPrev() {
@@ -159,7 +152,53 @@ function fromPrev() {
     let peAlt = 100000
     initializeEjectionSVG(planetName, t, peAlt, v3, outbound);
     peChange();
+    setPlanetSystemSVG();
+}
 
+// ----- end page 2 -----
+
+// ---------- page 3 ----------
+
+function setEjection(){
+
+    let origin = planets[transferOrbit.originName];
+
+    let name= origin.name;
+    let t = transferOrbit.tod;
+    let peAlt = 100000;
+    let v3 = transferOrbit.v3o;
+
+    let eqR = origin.eqR;
+    let soi = origin.soi;
+
+    setPlanetSystemSVG(eqR, soi);
+    initializeEjectionSVG(name, t, peAlt, v3, true);
+    
+}
+
+function setCapture(){
+
+    let destination = planets[transferOrbit.destinationName];
+
+    let name = destination.name;
+    let t = transferOrbit.toa;
+    let peAlt = 100000;
+    let v3 = transferOrbit.v3d;
+
+    let eqR = destination.eqR;
+    let soi = destination.soi;
+
+    setPlanetSystemSVG(eqR, soi);
+    initializeEjectionSVG(name, t, peAlt, v3, false);
+}
+
+function setAlt() {
+
+    let dialog = document.getElementById('altEntry');
+    dialog.showModal();
+
+    let optButton = document.getElementById("optB0");
+    optButton.checked = false;
 }
 
 function peChange() {
@@ -201,23 +240,8 @@ function peChange() {
     scaleText();
 }
 
-function validate() {
+// ---------- end page 3 ----------
 
-    let form = document.forms["parkOrbit"];
-
-    if (form["circular"].checked) {
-        return true;
-    }
-
-    let pe = Number(document.forms["parkOrbit"]["pe"].value);
-    let ap = Number(document.forms["parkOrbit"]["ap"].value);
-    let valid = !(pe > ap);
-    console.log(pe, ap, pe > ap);
-    return valid;
-}
-
-
-// ----- end page 2 -----
 
 function setActiveView(params){
 
@@ -227,6 +251,7 @@ function setActiveView(params){
             break;
         case 2:
             setSolarSystemSVG();
+            dimPlanets();
             initializeTransfer(params.originName, params.destinationName, params.utNow);
             break;
         case 3:

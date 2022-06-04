@@ -227,12 +227,12 @@ function setPlanetSystemSVG(eqR, soi) {
 
     console.log("set to planet system SVG");
 
-    if (svgSet){
-        let w = 200 / scaleFactor;
-        //zoomWindow(-w/2,-w/2,w,w)
-        return;
-    }
-    svgSet=true;
+    // if (svgSet){
+    //     let w = 200 / scaleFactor;
+    //     //zoomWindow(-w/2,-w/2,w,w)
+    //     return;
+    // }
+    // svgSet=true;
 
     // switch SVG's
     document.getElementById("solarSystem").setAttribute("display", "none");

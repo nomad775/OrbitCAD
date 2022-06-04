@@ -10,27 +10,27 @@
         {
             "id": "t1",
             "label": "TRNFER",
-            "fn": ""
+            "fn": "setTransferView()"
         },
 
         {
             "id": "t2",
             "label": "EJECT",
-            "fn": "",
+            "fn": "setEjection()",
             "disabled": ""
         },
 
         {
             "id": "t3",
             "label": "INC",
-            "fn": "",
+            "fn": "setTransferView()",
             "disabled": ""
         },
 
         {
             "id": "t4",
             "label": "CAPTURE",
-            "fn": "",
+            "fn": "setCapture()",
             "disabled": ""
         },
 

@@ -155,6 +155,29 @@
             svg *{
                 vector-effect: non-scaling-stroke;
             }
+
+            .planet.dimPlanet{
+                r: .5%;
+                opacity: .5;
+            }
+
+            .planet.highlight{
+                r: 2%;
+                opacity: 1;
+                stroke: red;
+                stroke-width: 1px;
+            }
+
+            .orbit.highlight{
+                opacity: .7;
+                stroke-dasharray: none;
+            }
+
+            .orbit{
+                opacity: .5;
+                stroke-dasharray: 5 5;
+            }
+
         </style>
 
     </head>
@@ -215,6 +238,10 @@
             <input name="utNow" type="number" value="0">
             <input name="origin" type="text" required>
             <input name="destination" type="text" required>
+            <input name="tod" type="number">
+            <input name="toa" type="number">
+            <input name="originPark" type="number" value="100">
+            <input name="destinationPark" type="number" value="100">
         </form>
 
         <form name="parkOrbit">
@@ -236,9 +263,7 @@
 
         <div id="divMFD">
 
-            <div id="divScreen">
-                
-                <div id="screenHtml"></div>
+            <div id="divScreen" style="position: relative; top:0px; left: 0px;">
 
                 <svg id="solarSystem" class="svgMap" viewbox="-1150 -1150 2000 1900"
                     onwheel="zoomWheel(event)">
@@ -353,6 +378,11 @@
                 
                 
                 </svg>
+
+                <div id="screenHtml" style="position: absolute; top: 0px; left:0px;">
+                    <p>This is the screen div for HTML output</p>
+                </div>
+
             </div>
 
             <div id="divTopButtonGroup">
