@@ -38,7 +38,7 @@
             #divScreen{
                 grid-row: 3/4;
                 grid-column: 2/5;
-                background-color: black;
+                background-color: white;
             }
 
             #divTopButtonGroup, #divTopLabelGroup, #divBottomButtonGroup, #divBottomLabelGroup{
@@ -152,6 +152,9 @@
                 appearance: none;
             }
             
+            svg *{
+                vector-effect: non-scaling-stroke;
+            }
         </style>
 
     </head>
@@ -214,7 +217,11 @@
             <input name="destination" type="text" required>
         </form>
 
-        
+        <form name="parkOrbit">
+            <input name="peAlt" value="100">
+        </form>
+
+
         <svg id="svgButton" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg"
             xmlns:xlink="http://www.w3.org/1999/xlink" version="1.2" display="none">
         

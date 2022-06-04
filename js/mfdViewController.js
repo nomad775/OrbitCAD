@@ -114,7 +114,7 @@ function zoomWindow(x0,y0,w,h){
 
     //document.getElementById("zoom").textContent = `zoom ${Math.round(initialViewBoxWidth / viewBox.width * 100) / 100}`;
 
-    scaleText();
+    //scaleText();
 }
 
 function zoomPlanetOrbit(planetName){

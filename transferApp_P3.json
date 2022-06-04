@@ -43,8 +43,8 @@
     
         {
             "id": "b0",
-            "label": "",
-            "fn": ""
+            "label": "SET PE",
+            "fn": "setAlt()"
         },
 
         {
