@@ -50,7 +50,7 @@ class Orbit{
         // true anomaly
         var theta = 2 * Math.atan(Math.sqrt((1 + this.ecc) / (1 - this.ecc)) * Math.tan(E / 2))
 
-        return modRev(theta, 4);
+        return modRev(theta, 4); n
     }
 
     MeanLnAtTimeT(t) {
@@ -100,25 +100,7 @@ class Orbit{
     }
 }
 
-class Planet extends Orbit {
-
-    moons = [];
-
-    constructor(name, sma, ecc, inc, LAN, argPe, mean0, parentMu, eqR, soi, bodyMu) {
-
-        let muParent = mu_sun;
-
-        super(name, sma, ecc, inc, LAN, argPe, mean0, muParent);
-
-        this.eqR = eqR;
-        this.soi = soi
-        this.mu = bodyMu;
-
-    }
-
-}
-
-class HyperbolicOrbit{
+class HyperbolicOrbit {
 
     _mu;
     _eqR;
@@ -126,14 +108,14 @@ class HyperbolicOrbit{
     _v3;
 
     _a;
-    
-    constructor(bodyName, t, peAlt, v3){
+
+    constructor(bodyName, t, peAlt, v3) {
 
         this.body = planets[bodyName];
         this._mu = this.body.mu;
         this._eqR = this.body.eqR;
         this._soi = this.body.soi;
-        
+
         this._t = t;
         this._v3 = v3;
 
@@ -150,19 +132,19 @@ class HyperbolicOrbit{
         this.update(peAlt);
     }
 
-    get a(){
+    get a() {
         return this._a;
     }
 
-    get soi(){
+    get soi() {
         return this._soi;
     }
 
-    get eqR(){
+    get eqR() {
         return this._eqR;
     }
 
-    get v3(){
+    get v3() {
         return this._v3;
     }
 
@@ -226,7 +208,7 @@ class HyperbolicOrbit{
         //this.v2AngleDelta = Math.asin(this.v2x / this.v2);
     }
 
-    getRotation(outbound){
+    getRotation(outbound) {
 
         // inital coordinate system:
         // planet at LN0, planet velocity roughly vertical (upwards) (off by flight angle)
@@ -236,7 +218,7 @@ class HyperbolicOrbit{
 
         let theta;
 
-        if(outbound){
+        if (outbound) {
 
             // rotate right leg CCW by turn angle
             // let r1 = -this.turnAngle + Math.PI/2;
@@ -245,7 +227,7 @@ class HyperbolicOrbit{
 
             theta = this.v2Angle - this.turnAngle
 
-        }else{
+        } else {
 
             // rotate left leg CW by turn angle
             // let r1 = this.turnAngle - Math.PI/2
@@ -255,13 +237,13 @@ class HyperbolicOrbit{
             theta = this.v2Angle + this.turnAngle;
         }
 
-        this.lnPe = modRev(this.lnp - Math.PI/2 + theta);
+        this.lnPe = modRev(this.lnp - Math.PI / 2 + theta);
 
         return theta;
-        
+
     }
 
-    get TOF(){
+    get TOF() {
 
         // time of flight
         let theta = Math.acos((this.p / this._soi - 1) / this.e);
@@ -274,6 +256,24 @@ class HyperbolicOrbit{
         let TOF = Math.sqrt((-this.a) ** 3 / this._mu) * M;
 
         return TOF;
+    }
+
+}
+
+class Planet extends Orbit {
+
+    moons = [];
+
+    constructor(name, sma, ecc, inc, LAN, argPe, mean0, parentMu, eqR, soi, bodyMu) {
+
+        let muParent = mu_sun;
+
+        super(name, sma, ecc, inc, LAN, argPe, mean0, muParent);
+
+        this.eqR = eqR;
+        this.soi = soi
+        this.mu = bodyMu;
+
     }
 
 }
@@ -441,6 +441,8 @@ class TransferOrbit {
         return dV;
     }
 }
+
+
 
 function createPlanetObjectsFromXML(data, callback){
     

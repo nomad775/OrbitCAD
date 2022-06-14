@@ -112,6 +112,8 @@ function zoomWindow(x0,y0,w,h){
     viewBox.height = h;
     viewBox.width = w;
 
+    let zoom = initialViewBoxWidth / viewBox.width;
+    
     //document.getElementById("zoom").textContent = `zoom ${Math.round(initialViewBoxWidth / viewBox.width * 100) / 100}`;
 
     //scaleText();

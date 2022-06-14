@@ -26,14 +26,18 @@ function getTime() {
     var form = document.getElementById('frmTimeEntry');
 
     if (form.returnValue = "Submit") {
+        
         console.log("TIME SET")
-        let name = form.field.value;
+        // let name = form.field.value;
         let uts = form.utS.value;
 
         document.forms["initializeTransfer"]["utNow"].value = uts;
         displayedTime = uts;
-
-        window.dispatchEvent(timeChangeEvent);
+        document.querySelector("output[name='utNow']").value = convertSecondsToDateObj(displayedTime).toString();
+        window.dispatchEvent(displayedTimeChangeEvent);
+        setOriginMarker();
+        setDestinationMarker();
+        setAlignment();
     }
 
 }
@@ -53,10 +57,23 @@ function planetClickAsInput(event, planetName){
         case 1:
             fieldName="origin";
             document.forms["initializeTransfer"]["origin"].value = planetName;
+            document.querySelector("output[name='origin']").value = planetName;
+            
+            setOriginMarker();
+            
+            setAlignment();
+
             break;
         case 2:
+
             fieldName="destination";
             document.forms["initializeTransfer"]["destination"].value = planetName;
+
+            setDestinationMarker();
+
+            let op = document.querySelector("output[name='destination']")
+            op.value = planetName;
+            op.classList.remove("activeFn");
             break;
     }
 
@@ -74,11 +91,80 @@ function planetClickAsInput(event, planetName){
 
 }
 
+function setOriginMarker(){
+
+    let planetName = document.forms["initializeTransfer"]["origin"].value;
+    let outArrow = document.getElementById("outArrow");
+    let planetO = svgPlanets[planetName];
+    let cxo = planetO.cx;
+    let cyo = planetO.cy;
+    let lno = radToDeg(planetO.ln);
+
+    outArrow.setAttribute("x", cxo);
+    outArrow.setAttribute("y", cyo);
+    outArrow.setAttribute("transform", `rotate(${-lno}, ${cxo}, ${cyo})`);
+
+}
+
+function setDestinationMarker(){
+
+    let planetName=document.forms["initializeTransfer"]["destination"].value;
+    let inArrow = document.getElementById("inArrow");
+    let planetD = svgPlanets[planetName];
+    let cxd = planetD.cx;
+    let cyd = planetD.cy;
+    let lnd = radToDeg(planetD.ln);
+
+    inArrow.setAttribute("x", cxd);
+    inArrow.setAttribute("y", cyd);
+    inArrow.setAttribute("transform", `rotate(${-lnd}, ${cxd}, ${cyd})`);
+
+}
+
+function calcuate(){
+    
+    transferOrbit = new SVGTransfer(originName, destinationName);
+
+    let t2 = transferOrbit.solveTForRdv(utNow);
+    let t1 = transferOrbit.tod;
+
+    displayedTime = transferOrbit.solveTForRdv(utNow);
+    window.dispatchEvent(displayedTimeChangeEvent);
+
+
+    // temp : 
+
+    dimPlanets();
+
+    let originName = document.forms["initializeTransfer"]["origin"].value;
+    let destinationName = document.forms["initializeTransfer"]["destination"].value;
+    let utNow = Number(document.forms["initializeTransfer"]["utNow"].value);
+
+    transferOrbit = new SVGTransfer(originName, destinationName);
+    transferOrbit.solveTForRdv(utNow);
+
+    let tod = transferOrbit.tod;
+    let toa = transferOrbit.toa;
+
+    let origin1 = new SVGplanet(planets[originName], "planet_origin_tod");
+    let destination1 = new SVGplanet(planets[destinationName], "planet_destination_tod");
+    origin1.update(tod);
+    destination1.update(tod);
+
+    let origin2 = new SVGplanet(planets[originName], "planet_origin_toa");
+    let destination2 = new SVGplanet(planets[destinationName], "planet_destination_toa");
+
+    origin2.update(toa);
+    destination2.update(toa);
+
+    //window.dispatchEvent(displayedTimeChangeEvent);
+
+}
+
 function next(){
     
     console.log("next");
     document.forms["initializeTransfer"].submit();
-
 }
 
 // ---------- end page 1 ----------
@@ -173,6 +259,7 @@ function setEjection(){
 
     setPlanetSystemSVG(eqR, soi);
     initializeEjectionSVG(name, t, peAlt, v3, true);
+    peChange(peAlt);
     
 }
 
@@ -219,20 +306,21 @@ function peChange() {
     let todTx = Number(params.get("tod"));
     let tod = todTx - tof;
 
-    document.getElementById("outPe").textContent = pe;
-    document.getElementById("outLnPe").textContent = radToDeg(lnPe, 1);
-    document.getElementById("outDv").textContent = dv.toFixed(2);
-    document.getElementById("outTod").textContent = convertSecondsToDateObj(tod).toString();
+    // document.getElementById("outPe").textContent = pe;
+    // document.getElementById("outLnPe").textContent = radToDeg(lnPe, 1);
+    // document.getElementById("outDv").textContent = dv.toFixed(2);
+    // document.getElementById("outTod").textContent = convertSecondsToDateObj(tod).toString();
 
-    document.getElementById("outTurnAngle").textContent = radToDeg(theOrbit.turnAngle, 2);
-    document.getElementById("outV2Angle").textContent = radToDeg(theOrbit.v2Angle, 2);
-    document.getElementById("outV2AngleDelta").textContent = radToDeg(theOrbit.v2AngleDelta, 2);
-    document.getElementById("outEjectionAngle").textContent = 90 + radToDeg(theOrbit.turnAngle);
+    // document.getElementById("outTurnAngle").textContent = radToDeg(theOrbit.turnAngle, 2);
+    // document.getElementById("outV2Angle").textContent = radToDeg(theOrbit.v2Angle, 2);
+    // document.getElementById("outV2AngleDelta").textContent = radToDeg(theOrbit.v2AngleDelta, 2);
+    // document.getElementById("outEjectionAngle").textContent = 90 + radToDeg(theOrbit.turnAngle);
 
-    document.getElementById("outA").textContent = theOrbit.a.toFixed(0);
-    document.getElementById("outE").textContent = theOrbit.e.toFixed(4);
-    document.getElementById("outTof").textContent = convertSecondsToDateObj(tof).toString();
+    // document.getElementById("outA").textContent = theOrbit.a.toFixed(0);
+    // document.getElementById("outE").textContent = theOrbit.e.toFixed(4);
+    // document.getElementById("outTof").textContent = convertSecondsToDateObj(tof).toString();
 
+    document.getElementById("nodePe").textContent = pe;
     document.getElementById("nodeLn").textContent = radToDeg(lnPe, 1);
     document.getElementById("nodeDv").textContent = dv.toFixed(2);
     document.getElementById("nodeTod").textContent = convertSecondsToDateObj(tod).toString();
@@ -339,7 +427,7 @@ function initialize() {
         setActiveView(params);
 
         console.log("intialized");
-        // troubleShoot();
+         troubleShoot();
     });
 
 }
@@ -347,4 +435,6 @@ function initialize() {
 function troubleShoot() {
     console.log("troubleshoot");
     //initializeEjectionOrbit();
+
+    //document.forms["options"]["alignToPrograde"].click();
 }

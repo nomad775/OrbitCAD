@@ -6,46 +6,50 @@ var hypOrbit = {};
 
 var scaleFactor  = 1/1e8;
 var unitFactor = 1/1e9;
-var showAligned = true;
 
 var r = 10;
 
+
 class SVGplanet extends Planet{
+    
+    cx = 0;
+    cy = 0;
+    ln = 0;
 
-    constructor(planet) {
+    constructor(planet, name) {
 
-        super();
+        name = name ? name: planet.name;
+
+        super(name, planet.sma, planet.ecc, planet.inc, planet.LAN, planet.argPe, planet.mean0, mu_sun, planet.eqR, planet.soi, planet.mu);
 
         this.planet = planet;
 
-        this.element = document.getElementById(planet.name);
+        this.element = document.getElementById(name);
 
         this.soi = planet.soi * scaleFactor;
-        
-        this.x = 0;
-        this.y = 0;
+        this.cx = planet.cx * scaleFactor;
+        this.cy = planet.cy * scaleFactor;
+        this.ln = planet.LnAtTimeT(0);
 
-        let that = this;
-        window.addEventListener("displayedTimeChange", (e) => { that.eventHandler(e) });
-        this.element.addEventListener("click", (e) => {that.eventHandler(e)});
-
-        //this.element.addEventListener("click",planetClickAsInput(i,planet.name);        
+        let thisObj = this;
+        window.addEventListener("displayedTimeChange", (e) => { thisObj.eventHandler(e) });
+        this.element.addEventListener("click", (e) => {thisObj.eventHandler(e)});
     }
 
     toggleHighlight(){
-        this.element.classList.toggle("highlight");
+        this.element.classList.add("highlight");
     }
 
     update(t) {
 
-        var Ln = this.planet.LnAtTimeT(t);
-        var r = this.planet.rAtLn(Ln) * scaleFactor;
+        this.ln = this.planet.LnAtTimeT(t);
+        let r = this.rAtLn(this.ln) * scaleFactor;
 
-        this.x = r * Math.cos(Ln);
-        this.y = -r * Math.sin(Ln);
+        this.cx = r * Math.cos(this.ln);
+        this.cy = -r * Math.sin(this.ln);
 
-        this.element.setAttribute("cx", this.x);
-        this.element.setAttribute("cy", this.y);
+        this.element.setAttribute("cx", this.cx);
+        this.element.setAttribute("cy", this.cy);
 
     }
 
@@ -85,7 +89,7 @@ class SVGellipiticalOrbit{
     }
     
     toggleHighlight(){
-        this.element.classList.toggle("highlight");
+        this.element.classList.add("highlight");
     }
 
     update(t){
@@ -364,11 +368,10 @@ class SVGTransfer extends TransferOrbit{
             console.log(ln);
             document.getElementById("gSolarSystemAlign").setAttribute("transform", `rotate(${ln})`);
         } else {
-            console.log(0);
            document.getElementById("gSolarSystemAlign").setAttribute("transform", "");
         }
 
-        zoomTxOrbit();
+        //zoomTxOrbit();
     }
 }
 
@@ -552,13 +555,26 @@ class SVGhyperbolicOrbit extends HyperbolicOrbit{
 
 function dimPlanets() {
 
-    //console.log("initialize transfer SVG");
-
-    // dim other planets
     for (let planet in svgPlanets) {
+        svgPlanets[planet].element.classList.remove("highlight");
         svgPlanets[planet].element.classList.add("dimPlanet");
     };
 
+}
+
+function unDimPlanets(){
+    
+    console.log("undim");
+
+    for (let planet in svgPlanets) {
+        
+        svgPlanets[planet].element.classList.remove("dimPlanet");
+    };
+
+    for (let orbit in svgOrbits) {
+
+        svgOrbits[orbit].element.classList.remove("highlight");
+    };
 }
 
 function setNodeText(){
@@ -601,33 +617,55 @@ function updateHypSVG(){
 
 
     let alignToPrograde = document.forms["options"]["alignToPrograde"].checked;
-
-    hypOrbit.update(peAlt);
-    let io = hypOrbit.outbound ? 0 : Math.PI;
-
-    let svgPe = hypOrbit.rpScaled;
-    let ln = hypOrbit.lnp;
-    let fa = hypOrbit.fa;
     let theta = 0;
 
-    // switch(alignTo){
-    //     case "prograde":
-    //         theta = fa + io;
-    //         break;
-    //     case "sun":
-    //         theta = 0 + io;
-    //         break;
-    //     default:
-    //         theta=ln;
-    // }
+    if(Object.keys(hypOrbit).length!=0){
+        hypOrbit.update(peAlt);
+        
+        //hypOrbit.setAlignment();
+        
+        let io = hypOrbit.outbound ? 0 : Math.PI;
+        
+        let svgPe = hypOrbit.rpScaled;
+        let ln = hypOrbit.lnp;
+        let fa = hypOrbit.fa;
+        theta = alignToPrograde ? fa + io : ln;
+        
+        document.getElementById("planetSystemPark").setAttribute("r", svgPe);
+        
+        setNodeText();
 
-    theta = alignToPrograde ? fa + io : ln;
+    }else{
+        let originName = document.forms["initializeTransfer"]["origin"].value;
+        let origin = planets[originName];
+        // let origin = transferOrbit.originPlanet == undefined ? planets['Kerbin'] : transferOrbit.originPlanet;
+        let ln = origin.LnAtTimeT(displayedTime);
+        theta = alignToPrograde ? -ln : 0;
+        
+    }
 
-    document.getElementById("planetSystemPark").setAttribute("r", svgPe);
     document.getElementById("alignment").setAttribute("transform", `rotate(${-radToDeg(theta)})`);
+    document.getElementById("gSolarSystemAlign").setAttribute("transform", `rotate(${-radToDeg(theta)})`);
     document.getElementById("alignmentMarker").setAttribute("transform", `rotate(${-radToDeg(theta)})`)
-    setNodeText();
+    
+    // let w = park * 4;
+    // zoomWindow(-w / 2, -w / 2, w, w);    
 
+
+}
+
+function setAlignment(){
+
+    let alignToOrigin = document.forms["options"]["alignToPrograde"].checked;
+    let originName = document.forms["initializeTransfer"]["origin"].value;
+    let origin = planets[originName];
+
+    let ln = origin.LnAtTimeT(displayedTime);
+    theta = alignToOrigin ? -ln : 0;
+
+    document.getElementById("alignment").setAttribute("transform", `rotate(${-radToDeg(theta)})`);
+    document.getElementById("gSolarSystemAlign").setAttribute("transform", `rotate(${-radToDeg(theta)})`);
+    document.getElementById("alignmentMarker").setAttribute("transform", `rotate(${-radToDeg(theta)})`)
 }
 
 function initializeEjectionSVG(bodyName, t, peAlt, v3, outbound){
