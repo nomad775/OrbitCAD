@@ -1,0 +1,111 @@
+#divDisplayContainer {
+    display: grid;
+    /* width: 350px; */
+    grid-template-columns: 140px 120px 100px 100px;
+    grid-template-rows: 50px 50px;
+    grid-row-gap: 5px;
+    grid-column-gap: 10px;
+    justify-content: center;
+    background-color: #484f5b;
+    border: 1px solid black;
+    border-radius: 8px;
+    padding: 5px;
+}
+
+.paramDisp {
+    color: white;
+    overflow: hidden;
+    padding: 5px;
+    border: 1px solid black;
+    background-color: #858c98;
+    border-radius: 3px;
+    font-size: 12px;
+}
+
+.paramDisp_hidden {
+    display: none;
+}
+
+.paramDisp_inactive {
+    color: #ddd;
+    overflow: hidden;
+    padding: 5px;
+    border: 1px solid black;
+    background-color: #858c98;
+    border-radius: 3px;
+    font-size: 12px;
+}
+
+/* LCD screen */
+.LCDscreen,
+input {
+    background-color: darkslategrey;
+    color: greenyellow;
+    font-family: "VT323";
+    font-size: 12pt;
+    border-radius: 2px;
+    text-align: right;
+    height: 18px;
+}
+
+input[type="number"] {
+    height: 16px;
+    width: auto;
+    border: none;
+}
+
+.activeFn {
+    background-color: greenyellow;
+}
+
+input[type="number"].activeFn {
+    color: darkslategrey;
+    background-color: greenyellow;
+}
+
+input.fn {
+    color: greenyellow;
+    background-color: darkslategrey;
+}
+
+
+/* inactive LCD screen */
+div.paramDisp_inactive .LCDscreen,
+div.paramDisp_inactive input {
+    background-color: darkslategrey;
+    text-align: right;
+    color: black;
+    font-family: "VT323";
+    font-size: 12pt;
+    border-radius: 2px;
+}
+
+#utPanelUnit {
+    grid-row: 1;
+    grid-column: 1;
+}
+
+#pePanelUnit {
+    grid-row: 1;
+    grid-column: 2;
+}
+
+#apPanelUnit {
+    grid-row: 2;
+    grid-column: 2;
+}
+
+#lanPanelUnit {
+    grid-row: 1;
+    grid-column: 3;
+}
+
+#argPePanelUnit {
+    grid-row: 2;
+    grid-column: 3;
+}
+
+#incPanelUnit {
+    grid-row: 1;
+    grid-column: 4;
+}

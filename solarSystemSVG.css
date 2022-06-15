@@ -1,0 +1,29 @@
+svg * {
+    vector-effect: non-scaling-stroke;
+}
+
+.planet {
+    r: 2%;
+}
+
+.planet.dimPlanet {
+    r: .5%;
+    opacity: .5;
+}
+
+.planet.highlight {
+    r: 2%;
+    opacity: 1;
+    stroke: red;
+    stroke-width: 1px;
+}
+
+.orbit.highlight {
+    opacity: .7;
+    stroke-dasharray: none;
+}
+
+.orbit {
+    opacity: .5;
+    stroke-dasharray: 5 5;
+}
