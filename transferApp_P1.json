@@ -10,7 +10,8 @@
         {
             "id": "t1",
             "label": "INIT",
-            "fn": ""
+            "fn": "",
+            "checked": "checked"
         },
 
         {
@@ -44,7 +45,7 @@
         {
             "id": "b0",
             "label": "SET UT",
-            "fn": "setTime('utNow')"
+            "fn": "getTime()"
         },
 
         {

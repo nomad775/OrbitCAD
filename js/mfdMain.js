@@ -9,36 +9,49 @@ const displayedTimeChangeEvent = new Event('displayedTimeChange');
 
 // ---------- page 1 ----------
 
-function setTime(name) {
+function getTime() {
 
     let dialog = document.getElementById('timeEntry');
-    //let form = document.getElementById("frmTimeEntry");
-    //form["field"].value = name;
+    let form = document.forms["frmTimeEntry"];
+
+    let ut = convertSecondsToDateObj(displayedTime, false);
     
+    form.utY.value = Number(ut.y);
+    form.utD.value = Number(ut.d);
+     
+    form.utH.value = Number(ut.h);
+    form.utM.value = Number(ut.m);
+
+    form.utS.value = ut;
+
     dialog.showModal();
 
     let optButton = document.getElementById("optB0");
     optButton.checked = false;
 }
 
-function getTime() {
+function setTime(overrideTime) {
 
     var form = document.getElementById('frmTimeEntry');
-
-    if (form.returnValue = "Submit") {
-        
-        console.log("TIME SET")
-        // let name = form.field.value;
-        let uts = form.utS.value;
-
-        document.forms["initializeTransfer"]["utNow"].value = uts;
-        displayedTime = uts;
-        document.querySelector("output[name='utNow']").value = convertSecondsToDateObj(displayedTime).toString();
-        window.dispatchEvent(displayedTimeChangeEvent);
-        setOriginMarker();
-        setDestinationMarker();
-        setAlignment();
+    var uts = 0;
+    
+    if (!(overrideTime == undefined || overrideTime == null)) {
+        uts = overrideTime;
+    }else if (form.returnValue = "Submit") {
+        uts = form.utS.value;
+    }else{
+        return;
     }
+
+    document.forms["initializeTransfer"]["utNow"].value = uts;
+    displayedTime = uts;
+    document.querySelector("output[name='utNow']").value = convertSecondsToDateObj(uts).toString();
+
+    window.dispatchEvent(displayedTimeChangeEvent);
+    
+    setOriginMarker();
+    setDestinationMarker();
+    setAlignment();
 
 }
 
@@ -81,20 +94,18 @@ function planetClickAsInput(event, planetName){
     optButton.checked=false;
 
     console.log(fieldName);
-    let origin = document.forms["initializeTransfer"]["origin"].value;
-    let destination = document.forms["initializeTransfer"]["destination"].value;
-
-    let mainForm = document.forms["initializeTransfer"];
-    let isValid = mainForm.checkValidity() && (origin != destination);
-
-    document.getElementById("optB5").disabled= !isValid;
+   
+    setNext();
 
 }
 
 function setOriginMarker(){
 
     let planetName = document.forms["initializeTransfer"]["origin"].value;
-    let outArrow = document.getElementById("outArrow");
+
+    if(!planetName) return;
+
+    let outArrow = solarSystemSVG.getElementById("outArrow");
     let planetO = svgPlanets[planetName];
     let cxo = planetO.cx;
     let cyo = planetO.cy;
@@ -108,8 +119,11 @@ function setOriginMarker(){
 
 function setDestinationMarker(){
 
-    let planetName=document.forms["initializeTransfer"]["destination"].value;
-    let inArrow = document.getElementById("inArrow");
+    let planetName = document.forms["initializeTransfer"]["destination"].value;
+
+    if(!planetName) return;
+
+    let inArrow = solarSystemSVG.getElementById("inArrow");
     let planetD = svgPlanets[planetName];
     let cxd = planetD.cx;
     let cyd = planetD.cy;
@@ -161,9 +175,23 @@ function calcuate(){
 
 }
 
+function setNext(){
+
+    let origin = document.forms["initializeTransfer"]["origin"].value;
+    let destination = document.forms["initializeTransfer"]["destination"].value;
+    
+    let mainForm = document.forms["initializeTransfer"];
+    let isValid = mainForm.checkValidity() && (origin != destination);
+    
+    document.getElementById("optB5").disabled = !isValid;
+
+}
+
 function next(){
     
     console.log("next");
+    document.forms["fmrBottom"]
+    document.getElementById("optB5").checked = false;
     document.forms["initializeTransfer"].submit();
 }
 
@@ -372,6 +400,7 @@ function setActivePage(dataObj) {
         let input = document.getElementById(inputId);
 
         let isDisabled = !(Boolean(button.label)) || !(button.disabled == undefined || button.disabled == "");
+        let isChecked = !(button.checked == undefined || button.checked == "");
 
         label.textContent = button.label;
 
@@ -379,6 +408,10 @@ function setActivePage(dataObj) {
             input.setAttribute("disabled", true);
         }
         
+        if(isChecked) {
+            input.setAttribute("checked", true);
+        }
+
         let fn = Function(button.fn);
         input.onclick = fn;
     
@@ -427,7 +460,8 @@ function initialize() {
         setActiveView(params);
 
         console.log("intialized");
-         troubleShoot();
+        
+        troubleShoot();
     });
 
 }
@@ -435,6 +469,21 @@ function initialize() {
 function troubleShoot() {
     console.log("troubleshoot");
     //initializeEjectionOrbit();
+
+    var form = document.getElementById('frmTimeEntry');
+    var uts = form.utS.value;
+
+    var x = form.returnValue = "Submit"
+
+    uts = Number(document.forms["initializeTransfer"]["utNow"].value);
+    setTime(uts);       
+
+    setNext(); // sets next as active or inactive as needed
+
+
+    // setOriginMarker();
+    // setDestinationMarker();
+    // setAlignment();
 
     //document.forms["options"]["alignToPrograde"].click();
 }

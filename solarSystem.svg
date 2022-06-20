@@ -1,0 +1,91 @@
+<?xml-stylesheet type="text/css" href="solarSystemSVG.css" ?>
+<svg id="solarSystem" class="svgMap" viewBox="-1150 -1150 2000 1900"
+version="1.2"
+xmlns:svg="http://www.w3.org/2000/svg"
+xmlns="http://www.w3.org/2000/svg"
+xmlns:xlink="http://www.w3.org/1999/xlink"
+    >
+                        
+    <defs>
+        <g id="txMarker" transform="translate(10,10)" stroke-width="2" stroke="greenYellow">
+        
+            <circle id="txMarker" cx="0" cy="0" r="12" fill="none" stroke-opacity="100" />
+        
+            <line x1="10" y1="0" x2="18" y2="0" />
+            <line x1="0" y1="10" x2="0" y2="18" />
+            <line x1="-10" y1="0" x2="-18" y2="0" />
+            <line x1="0" y1="-10" x2="0" y2="-18" />
+        
+            <circle cx="0" cy="0" r="1" storke="green" fill="green" />
+        
+        </g>
+
+        <symbol id="outArrowDef" width="5%" height="10%" viewBox="0 0 10 20" overflow="visible">
+            <path d="M 0 -20 L 5 -12 H 2 V 0 H -2 V -12 H -5 L 0 -20 " stroke="black" fill="green" />
+        </symbol>
+
+        <symbol id="inArrowDef" width="5%" height="10%" viewBox="0 0 10 20" overflow="visible">
+            <path d="M 0 0 L -5 8 H -2 V 20 H 2 V 8 H 5 L 0 0" stroke="black" fill="red"/>
+        </symbol>
+        
+        
+    </defs>
+
+    <circle id="sun" cx="0" cy="0" r="4" fill="yellow" stroke="orange" />
+
+    <g id="gSolarSystemAlign">
+
+        <!-- x and y axis -->
+        <line id="lnx" x0="20" y1="0" x2="100%" y2="0" stroke="red" stroke-opacity=".2"></line>
+        <line id="lny" x0="0" y1="0" x2="0" y2="-100%" stroke="green" stroke-opacity=".2"></line>
+        
+        <!-- orbit paths -->
+        <path class="orbit" id="MohoOrbit" stroke="peachpuff" fill="none"
+            d="M   -5.50   62.92 A 52.63   51.57  -265    0 0    3.67  -41.95 A 52.63   51.57  -265    0 0   -5.50   62.92 " />
+        <path class="orbit" id="EveOrbit" stroke="purple" fill="none"
+            d="M  -95.93   25.70 A 98.33   98.32  -195    0 0   94.02  -25.19 A 98.33   98.32  -195    0 0  -95.93   25.7  " />
+        <path class="orbit" id="KerbinOrbit" stroke="cyan" fill="none"
+            d="M -136.00    0    A 136.00 136.00  -180    0 0  136.00    0    A 136.00 136.00  -180    0 0 -136.00    0    " />
+        <path class="orbit" id="DunaOrbit" stroke="red" fill="none"
+            d="M  155.37  152.68 A 207.26 207.00  -315.5  0 0 -140.30 -137.87 A 207.26 207.00  -315.5  0 0  155.37  152.68 " />
+        <path class="orbit" id="DresOrbit" stroke="chocolate" fill="none"
+            d="M -460.51   81.20 A 408.39 404.08  -190    0 0  343.88  -60.63 A 408.39 404.08  -190    0 0 -460.51   81.2  " />
+        <path class="orbit" id="JoolOrbit" stroke="green" fill="none"
+            d="M  348.91 -552.57 A 687.74 686.87   -232   0 0 -444.58  569.04 A 687.74 686.87   -232    1 0  348.91 -552.57" />
+        <path class="orbit" id="EelooOrbit" stroke="gray" fill="none"
+            d="M -729.89 -869.84 A 901.19 870.20  -130    0 0 428.66 510.86   A 901.19 870.20  -130    0 0 -729.89 -869.84 " />
+    
+        <!-- planets -->
+        <circle class="planet" id="Moho" cx="-5.50" cy="62.92" r="18" fill="peachpuff" />
+        <circle class="planet" id="Eve" cx="-95.93" cy="25.70" r="18" fill="purple" />
+        <circle class="planet" id="Kerbin" cx="-136.00" cy="0" r="18" fill="cyan" />
+        <circle class="planet" id="Duna" cx="155.37" cy="152.68" r="18" fill="crimson" />
+        <circle class="planet" id="Dres" cx="-460.51" cy="81.20" r="18" fill="#a44128" />
+        <circle class="planet" id="Jool" cx="348.92" cy="-552.57" r="18" fill="green" />
+        <circle class="planet" id="Eeloo" cx="-729.89" cy="-869.84" r="18" fill="gray" />
+        
+        <!-- init -->
+
+        <!-- <circle id="planet_origin_tod" class="planet" r="10" fill="green" fill-opacity=".4" />
+        <circle id="planet_origin_toa" class="planet" r="10" fill="green" fill-opacity=".1" />
+
+        <circle id="planet_destination_tod" class="planet" r="10" fill="red" fill-opacity=".4" />
+        <circle id="planet_destination_toa" class="planet" r="10" fill="red" fill-opacity=".4" /> -->
+
+        <!-- <circle id="planet_destination_future" r="10" fill="red" fill-opacity=".4" /> -->
+
+        <!-- transfer orbit -->
+
+        <path class="orbit" id="txOrbit" stroke="gray" fill="none"
+            d="M -729.89 -869.84 A 901.19 870.20  -130    0 0 428.66 510.86   A 901.19 870.20  -130    0 0 -729.89 -869.84 " />
+    
+        <line id="line1" x1="0" y1="0" x2="0" y2="0" stroke="lightblue" stroke-dashArray="15 5 5 5 1 5 5 5 10 5" />
+    
+        <path id="destTOF" stroke="yellow" stroke-width="3" fill="none" stroke-opacity="30%" />
+        <path id="txTOF" stroke="lightgreen" stroke-width="3" fill="none" stroke-opacity="100%" />
+
+        <use id="outArrow" href="#outArrowDef" x="-2000" y="0" transform="rotate(-180, -136, 0)" />
+        <use id="inArrow"  href="#inArrowDef"  x="-2095.93" y="25.70" transform="rotate(-200, -95.93, 25.70)" />
+    </g>
+
+</svg>

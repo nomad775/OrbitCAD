@@ -1,3 +1,5 @@
+var solarSystemSVG;
+
 var viewBox;
 var initialViewBoxWidth;
 
@@ -203,20 +205,24 @@ function setSolarSystemSVG() {
 
     console.log("set solar system SVG");
 
+    solarSystemSVG = document.getElementById("svgObject").contentDocument.getElementById("solarSystem");
+    solarSystemSVG.addEventListener("mousemove", mouseMove);
+    solarSystemSVG.addEventListener("mousewheel", zoomWheel);
+
     // switch SVG's
-    document.getElementById("planetSystem").setAttribute("display", "none");
-    document.getElementById("solarSystem").setAttribute("display", "initial");
+    // document.getElementById("planetSystem").setAttribute("display", "none");
+    // document.getElementById("solarSystem").setAttribute("display", "initial");
 
     scaleFactor = 1 / 1e8;
     unitScale = 1 / 1e9;
 
     // set viewBox to new SVG
-    var svg = document.getElementById("solarSystem");
-    viewBox = svg.viewBox.baseVal;
+    //var svg = document.getElementById("solarSystem");
+    viewBox = solarSystemSVG.viewBox.baseVal;
 
     initialViewBoxWidth = viewBox.width;
-    mapWidth = svg.scrollWidth;
-    mapHeight = svg.scrollHeight;
+    mapWidth = solarSystemSVG.scrollWidth;
+    mapHeight = solarSystemSVG.scrollHeight;
 
     maxZoom = 150;
     minZoom = .9;
@@ -322,11 +328,11 @@ function initializeScreen(){
     mouseDown = { active: false, x: 0, y: 0 };
     boolDown = false;
     
-    var svg1 = document.getElementById("solarSystem");
-    svg1.addEventListener("mousemove", mouseMove);
+    // let svg1 = document.getElementById("solarSystem");
+    // svg1.addEventListener("mousemove", mouseMove);
 
-    var svg2 = document.getElementById("planetSystem");
-    svg2.addEventListener("mousemove", mouseMove);
+    //var svg2 = document.getElementById("planetSystem");
+    //svg2.addEventListener("mousemove", mouseMove);
 
     setSolarSystemSVG();
 }

@@ -24,7 +24,7 @@ class SVGplanet extends Planet{
 
         this.planet = planet;
 
-        this.element = document.getElementById(name);
+        this.element = solarSystemSVG.getElementById(name);
 
         this.soi = planet.soi * scaleFactor;
         this.cx = planet.cx * scaleFactor;
@@ -81,7 +81,7 @@ class SVGellipiticalOrbit{
 
     constructor(elementId, object1, t){
         
-        this.element = document.getElementById(elementId);
+        this.element = solarSystemSVG.getElementById(elementId);
        
         this.definingObject = object1;
         this.update(t);
@@ -234,7 +234,7 @@ class SVGTransfer extends TransferOrbit{
         let that = this;
         window.addEventListener("displayedTimeChange", (e) => { that.eventHandler(e) });
 
-        document.forms["options"]["alignToPrograde"].addEventListener("change", (e)=>that.eventHandler(e))
+        document.forms["options"]["alignToLn0"].addEventListener("change", (e)=>that.eventHandler(e))
     }
 
     eventHandler(event) {
@@ -254,9 +254,9 @@ class SVGTransfer extends TransferOrbit{
                     case "destination":
                         this.destinationChange(event.target.value);
                         break;
-                    case "alignToPrograde":
-                        this.alignToLn = event.target.checked;
-                        console.log("align: ", this.alignToLn);
+                    case "alignToLn0":
+                        this.alignToLn0 = event.target.checked;
+                        console.log("align: ", this.alignToLn0);
                         this.setAlignment();
                 }
                 
@@ -363,15 +363,15 @@ class SVGTransfer extends TransferOrbit{
 
     setAlignment(){
 
-        if (document.forms["options"]["alignToPrograde"].checked) {
+        if (document.forms["options"]["alignToLn0"].checked) {
+            document.getElementById("gSolarSystemAlign").setAttribute("transform", "");
+        } else {
             let ln = radToDeg(this.Ln_o) //super
             console.log(ln);
             document.getElementById("gSolarSystemAlign").setAttribute("transform", `rotate(${ln})`);
-        } else {
-           document.getElementById("gSolarSystemAlign").setAttribute("transform", "");
         }
 
-        //zoomTxOrbit();
+        zoomTxOrbit();
     }
 }
 
@@ -616,7 +616,7 @@ function updateHypSVG(){
     peAlt = 100000;
 
 
-    let alignToPrograde = document.forms["options"]["alignToPrograde"].checked;
+    let alignToLn0 = document.forms["options"]["alignToLn0"].checked;
     let theta = 0;
 
     if(Object.keys(hypOrbit).length!=0){
@@ -629,7 +629,7 @@ function updateHypSVG(){
         let svgPe = hypOrbit.rpScaled;
         let ln = hypOrbit.lnp;
         let fa = hypOrbit.fa;
-        theta = alignToPrograde ? fa + io : ln;
+        theta = alignToLn0 ? fa + io : ln;
         
         document.getElementById("planetSystemPark").setAttribute("r", svgPe);
         
@@ -640,12 +640,12 @@ function updateHypSVG(){
         let origin = planets[originName];
         // let origin = transferOrbit.originPlanet == undefined ? planets['Kerbin'] : transferOrbit.originPlanet;
         let ln = origin.LnAtTimeT(displayedTime);
-        theta = alignToPrograde ? -ln : 0;
+        theta = alignToLn0 ? 0: -ln;
         
     }
 
-    document.getElementById("alignment").setAttribute("transform", `rotate(${-radToDeg(theta)})`);
-    document.getElementById("gSolarSystemAlign").setAttribute("transform", `rotate(${-radToDeg(theta)})`);
+    //document.getElementById("alignment").setAttribute("transform", `rotate(${-radToDeg(theta)})`);
+    solarSystemSVG.getElementById("gSolarSystemAlign").setAttribute("transform", `rotate(${-radToDeg(theta)})`);
     document.getElementById("alignmentMarker").setAttribute("transform", `rotate(${-radToDeg(theta)})`)
     
     // let w = park * 4;
@@ -656,15 +656,18 @@ function updateHypSVG(){
 
 function setAlignment(){
 
-    let alignToOrigin = document.forms["options"]["alignToPrograde"].checked;
+    let alignToLn0 = document.forms["options"]["alignToLn0"].checked;
     let originName = document.forms["initializeTransfer"]["origin"].value;
+
+    if(!originName) return;
+    
     let origin = planets[originName];
 
     let ln = origin.LnAtTimeT(displayedTime);
-    theta = alignToOrigin ? -ln : 0;
+    theta = alignToLn0 ? 0 : -ln;
 
-    document.getElementById("alignment").setAttribute("transform", `rotate(${-radToDeg(theta)})`);
-    document.getElementById("gSolarSystemAlign").setAttribute("transform", `rotate(${-radToDeg(theta)})`);
+    //document.getElementById("alignment").setAttribute("transform", `rotate(${-radToDeg(theta)})`);
+    solarSystemSVG.getElementById("gSolarSystemAlign").setAttribute("transform", `rotate(${-radToDeg(theta)})`);
     document.getElementById("alignmentMarker").setAttribute("transform", `rotate(${-radToDeg(theta)})`)
 }
 
