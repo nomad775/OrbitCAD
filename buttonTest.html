@@ -69,37 +69,31 @@
     <body onload="initialize()">
 
         <dialog id="timeEntry" class="paramDisp">
-            <form id="frmTimeEntry" method="dialog"
-                oninput="let s = convertDateToSeconds(utY.value, utD.value, utH.value, utM.value, true); utS.value=s;"
-                onsubmit="setTime()">
-        
-                <!-- <input type="hidden" name="field"> -->
+            <form id="frmTimeEntry" method="dialog">
+                
                 <h1>ENTER INITIAL DATE</h1>
+            
+                <label for="utY">Y:</label>
+                <input name="utY" type="number" min="1" max="100" value="1" required >
+                <br> 
+                
+                <label for="utD">D:</label>
+                <input name="utD" type="number" min="1" max="426" value="1" required>
+                <br>
+                <p>Optional: Enter Current Time</p>
+                <label for="utH">H:</label>
+                <input name="utH" type="number" min="0" max="5" value="3" required >
 
-                <!-- <div class="LCDscreen"> -->
+                <br>
+                <label for="utM">M:</label>
+                <input name="utM" type="number" min="0" max="59" value="0" required>
 
-                    <label for="utY">Y:</label>
-                    <input name="utY" type="number" min="1" max="100" value="1" required onfocus="utS.value=convertDateToSeconds(utY.value, utD.value, utH.value, utM.value, true);">
-                    <br> 
-                    
-                    <label for="utD">D:</label>
-                    <input name="utD" type="number" min="1" max="426" value="1" required>
-                    <br>
-                    <p>Optional: Enter Current Time</p>
-                    <label for="utH">H:</label>
-                    <input name="utH" type="number" min="0" max="5" value="3" required >
-
-                    <br>
-                    <label for="utM">M:</label>
-                    <input name="utM" type="number" min="0" max="59" value="0" required>
-
-                <!-- </div> -->
-
+                
                 <p>UT <output id="utS" name="utS"></output> seconds</p>
                 
                 <div id="divFrmButtons">
-                    <input name="cancel" type="reset" value="Cancel" onclick="document.getElementById('timeEntry').close()">
-                    <input name="submit" type="submit" value="Submit">
+                    <input name="cancel" type="reset"  value="Cancel" onclick="document.getElementById('timeEntry').close()">
+                    <input name="submit" type="submit" value="Submit" >
                 </div>
 
             </form>
@@ -123,15 +117,15 @@
             </form>
         </dialog>
 
-        <form name="initializeTransfer" style="display: none;">
-            <input name="page" type="number" value="2">
-            <input name="utNow" type="number" value="0">
-            <input name="origin" type="text" required>
-            <input name="destination" type="text" required>
-            <input name="tod" type="number">
-            <input name="toa" type="number">
-            <input name="originPark" type="number" value="100">
-            <input name="destinationPark" type="number" value="100">
+        <form name="initializeTransfer" style="display: ;">
+            page: <input name="page"  type="number" value="2" style="width: 3em;">
+            utNow <input name="utNow" type="number" value="0" style="width: 7em;">
+            origin<input name="origin" type="text" required style="width: 4em;">
+            dest  <input name="destination" type="text" required style="width: 4em;">
+            tod   <input name="tod" type="number" style="width: 8em;">
+            toa   <input name="toa" type="number" style="width: 8em;">
+            originPark <input name="originPark" type="number" value="100" style="width: 8em;">
+            destPark   <input name="destinationPark" type="number" value="100" style="width: 8em;">
         </form>
 
         <form name="parkOrbit" style="display: none;">
@@ -241,7 +235,7 @@
 
                 <object id="svgObject" type="image/svg+xml" data="solarSystem.svg" width="100%" height="100%"></object>
 
-                <div id="screenHtml" style="position: absolute; top: 0px; left:0px;">
+                <div id="screenHtml" style="position: absolute; top: 0px; left:0px; display:none;" >
                     <p style="margin-left: 10px;">TRANSFER: <output name="origin">Kerbin</output> to <output name="destination" class="activeFn">DESTINATION</output></p>
                 </div>
 
@@ -496,7 +490,7 @@
         </form>
 
         <form id="options">
-            <input id="alignToLn0" name="alignToLn0" type="checkbox" onclick="updateHypSVG()">
+            <input id="alignToLn0" name="alignToLn0" type="checkbox" onclick="setAlignment()">
         </form>
         
     </body>

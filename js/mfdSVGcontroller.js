@@ -140,7 +140,7 @@ class svgPartialArc{
 
     constructor(id, orbit, startObj, endObj){
         
-        this.element = document.getElementById(id);
+        this.element = solarSystemSVG.getElementById(id);
        
         this.orbit = orbit;
         this.startObj = startObj;
@@ -192,8 +192,8 @@ class SVGTransfer extends TransferOrbit{
 
     svgEllipse = {};
 
-    svgCl = document.getElementById("line1");
-    svgMarker = document.getElementById("txMarker");
+    svgCl = solarSystemSVG.getElementById("line1");
+    svgMarker = solarSystemSVG.getElementById("txMarker");
 
     svgDestinationArc;
     svgTxArc;
@@ -213,13 +213,12 @@ class SVGTransfer extends TransferOrbit{
         
         this.svgOrigin = svgPlanets[this.originName];
         this.svgDestination = svgPlanets[this.destinationName];
-        this.svgDestinationFuture = document.getElementById("planet_destination_future");
+        this.svgDestinationFuture = solarSystemSVG.getElementById("planet_destination_future");
 
         this.svgOriginOrbit = svgOrbits[this.originName];
         this.svgDestinationOrbit = svgOrbits[this.destinationName];
         
         this.svgDestinationArc = new svgPartialArc("destTOF", this.svgDestinationOrbit, this.svgDestination.element, this.svgDestinationFuture);
-
         this.svgTxArc = new svgPartialArc("txTOF", this.svgEllipse, this.svgOrigin.element, this.svgMarker)
 
         this.svgOrigin.element.setAttribute("r", 16);
@@ -241,7 +240,7 @@ class SVGTransfer extends TransferOrbit{
 
         switch (event.type) {
             case "displayedTimeChange":
-                //console.log("time change caught : svg transfer " + displayedTime);
+                console.log("time change caught : svg transfer " + displayedTime);
                 this.update(displayedTime);
                 break;
 
@@ -332,7 +331,7 @@ class SVGTransfer extends TransferOrbit{
 
         // marker
         let transform = `translate(${dx},${dy})`
-        this.svgMarker.setAttribute("transform", transform);
+        //this.svgMarker.setAttribute("transform", transform);
 
         // tx tof arc
         this.svgTxArc.updatePoints(ox, oy, dx, dy);
@@ -363,30 +362,95 @@ class SVGTransfer extends TransferOrbit{
 
     setAlignment(){
 
-        if (document.forms["options"]["alignToLn0"].checked) {
-            document.getElementById("gSolarSystemAlign").setAttribute("transform", "");
-        } else {
-            let ln = radToDeg(this.Ln_o) //super
-            console.log(ln);
-            document.getElementById("gSolarSystemAlign").setAttribute("transform", `rotate(${ln})`);
-        }
-
+        //if (document.forms["options"]["alignToLn0"].checked) {
+        //    solarSystemSVG.getElementById("gSolarSystemAlign").setAttribute("transform", "");
+        //} else {
+        //    let ln = radToDeg(this.Ln_o) //super
+        //    console.log(ln);
+        //    solarSystemSVG.setAttribute("transform", `rotate(${ln})`);
+        //}
+        setAlignment();
         zoomTxOrbit();
     }
 }
 
-class SVGhyperbolicOrbit extends HyperbolicOrbit{
+function dimPlanets() {
 
-    constructor(bodyName, t, peAlt, v3, outbound){
+    for (let planet in svgPlanets) {
+        svgPlanets[planet].element.classList.remove("highlight");
+        svgPlanets[planet].element.classList.add("dimPlanet");
+    };
+
+}
+
+function unDimPlanets() {
+
+    console.log("undim");
+
+    for (let planet in svgPlanets) {
+
+        svgPlanets[planet].element.classList.remove("dimPlanet");
+    };
+
+    for (let orbit in svgOrbits) {
+
+        svgOrbits[orbit].element.classList.remove("highlight");
+    };
+}
+
+function setAlignment() {
+
+    let alignToLn0 = document.forms["options"]["alignToLn0"].checked;
+    let originName = document.forms["initializeTransfer"]["origin"].value;
+
+    if (!originName) return;
+
+    let origin = planets[originName];
+
+    let ln = origin.LnAtTimeT(displayedTime);
+    theta = alignToLn0 ? 0 : -ln;
+
+    solarSystemSVG.getElementById("gSolarSystemAlign").setAttribute("transform", `rotate(${-radToDeg(theta)})`);
+    document.getElementById("alignmentMarker").setAttribute("transform", `rotate(${-radToDeg(theta)})`)
+
+}
+
+function initializeSolarSystemSVGelements() {
+
+    console.log("initialize solar system SVG");
+
+    for(let planetName in planets){
+
+        let curPlanet = planets[planetName];
+
+        let svgPlanet = new SVGplanet(curPlanet);
+        svgPlanets[planetName] = svgPlanet;
+
+        let orbitName = planetName+"Orbit";
+        let svgOrbit = new SVGellipiticalOrbit(orbitName, curPlanet, 0);
+        
+        svgOrbits[planetName] = svgOrbit;
+
+    }
+}
+
+
+
+
+// hyperbolic orbit functions
+
+class SVGhyperbolicOrbit extends HyperbolicOrbit {
+
+    constructor(bodyName, t, peAlt, v3, outbound) {
 
         super(bodyName, t, peAlt, v3);
 
         this.outbound = outbound;
-        
+
         this.update(peAlt);
     }
 
-    update(peAlt){
+    update(peAlt) {
 
         super.update(peAlt);
 
@@ -396,13 +460,13 @@ class SVGhyperbolicOrbit extends HyperbolicOrbit{
         let a = this.a * scaleFactor;
         let c = this.c * scaleFactor;
         let b = this.b * scaleFactor;
-        
+
         let soi = this.soi * scaleFactor
         let thetaSOI = this.thetaSoi;
-       
+
         let endx = soi * Math.sin(thetaSOI);
         let endy = soi * Math.cos(thetaSOI);
-        
+
         let theta = super.getRotation(this.outbound);
 
         let vpx = this.vpy;
@@ -422,12 +486,12 @@ class SVGhyperbolicOrbit extends HyperbolicOrbit{
         // planet velocity includes flight angle
 
         // scale so planet velocity is 1.5 times soi
-        
+
         let vscale = soi / vpy * 1.5;
-        
+
         let vpx2 = vpx * vscale;
         let vpy2 = -vpy * vscale;
-        
+
         let vpx1 = soi * Math.sin(fa);
         let vpy1 = -soi;
 
@@ -436,7 +500,7 @@ class SVGhyperbolicOrbit extends HyperbolicOrbit{
 
         let vsx2 = 0;
         let vsy2 = -v3 * vscale;
-        
+
         let vsx1 = 0;
         let vsy1 = -soi;
 
@@ -456,14 +520,14 @@ class SVGhyperbolicOrbit extends HyperbolicOrbit{
         document.getElementById("shipV").setAttribute("y2", vsy2);
 
         document.getElementById("shipRelV").setAttribute("x1", vpx2);
-        document.getElementById("shipRelV").setAttribute("y1", vpy2-.25);
+        document.getElementById("shipRelV").setAttribute("y1", vpy2 - .25);
         document.getElementById("shipRelV").setAttribute("x2", vsx2);
-        document.getElementById("shipRelV").setAttribute("y2", vsy2-.25);
+        document.getElementById("shipRelV").setAttribute("y2", vsy2 - .25);
 
     }
 
-    drawHyperbola(a, b, c, endx, endy, theta){
-        
+    drawHyperbola(a, b, c, endx, endy, theta) {
+
         // requires a, b, c of hyperbola
         // requires endx, endy - soi and thetaSOI
         // rotation - LnPe
@@ -483,7 +547,7 @@ class SVGhyperbolicOrbit extends HyperbolicOrbit{
         let ay = 2 * a + c;
         let ax = -b * Math.sqrt(3);
 
-        let by = 2 / 3 * a + c ;
+        let by = 2 / 3 * a + c;
         let bx = -b * (48 - 26 * Math.sqrt(3)) / 18;
 
         let cx = -bx;
@@ -514,16 +578,16 @@ class SVGhyperbolicOrbit extends HyperbolicOrbit{
 
         let path = "";
 
-        let m = this.mirrored ? -1: 1;
+        let m = this.mirrored ? -1 : 1;
         let k = 1;
 
-        if(this.outbound){ 
+        if (this.outbound) {
             path = `M ${m * jx},${jy} C ${m * ix},${iy} ${m * gx},${gy} ${m * dx},${dy} L ${m * endx},${endy}`;
-        }else{
+        } else {
             k = -1
-            path = `M ${-endx},${m * endy} L ${ax},${m * ay} C ${ex},${m * ey} ${hx},${m * hy} ${jx},${m * jy}`;            
+            path = `M ${-endx},${m * endy} L ${ax},${m * ay} C ${ex},${m * ey} ${hx},${m * hy} ${jx},${m * jy}`;
         }
-    
+
         // full hyperbola
         //path = `M ${-this.endx}, ${this.endy} L ${ax},${ay} C ${bx},${by} ${cx},${cy} ${dx},${dy} L${this.endx}, ${this.endy}`;
 
@@ -539,45 +603,20 @@ class SVGhyperbolicOrbit extends HyperbolicOrbit{
 
         document.getElementById("asymptote").setAttribute("y1", m * c);
         document.getElementById("asymptote").setAttribute("x1", 0);
-        
+
         document.getElementById("asymptote").setAttribute("x2", k * m * endx);
         document.getElementById("asymptote").setAttribute("y2", endy);
-        
+
         document.getElementById("peMarker").setAttribute("cx", jx);
         document.getElementById("peMarker").setAttribute("cy", jy);
 
         let hypGroup = document.getElementById("hyperbolaGroup");
         hypGroup.setAttributeNS(null, "transform", `rotate(${-radToDeg(theta)})`)
-        
+
     }
 }
 
-
-function dimPlanets() {
-
-    for (let planet in svgPlanets) {
-        svgPlanets[planet].element.classList.remove("highlight");
-        svgPlanets[planet].element.classList.add("dimPlanet");
-    };
-
-}
-
-function unDimPlanets(){
-    
-    console.log("undim");
-
-    for (let planet in svgPlanets) {
-        
-        svgPlanets[planet].element.classList.remove("dimPlanet");
-    };
-
-    for (let orbit in svgOrbits) {
-
-        svgOrbits[orbit].element.classList.remove("highlight");
-    };
-}
-
-function setNodeText(){
+function setNodeText() {
 
     let svg = document.getElementById("planetSystem");
     let planet = document.getElementById("planetSystemPlanet");
@@ -595,7 +634,7 @@ function setNodeText(){
 
     let ctm0 = planet.getCTM();
     let ctm = pe.getCTM();
-    
+
     pt0 = pt0.matrixTransform(ctm0);
     pt = pt.matrixTransform(ctm);
 
@@ -606,11 +645,11 @@ function setNodeText(){
     //console.log(pt0);
     //console.log(pt);
 
-    node.setAttribute("transform", `translate(${pt.x + .1}, ${pt.y + .1}), scale(1)`);    
+    node.setAttribute("transform", `translate(${pt.x + .1}, ${pt.y + .1}), scale(1)`);
 }
 
-function updateHypSVG(){
-    
+function updateHypSVG() {
+
     let peAlt = document.parkOrbit.peAlt.value * 1000;
 
     peAlt = 100000;
@@ -619,62 +658,45 @@ function updateHypSVG(){
     let alignToLn0 = document.forms["options"]["alignToLn0"].checked;
     let theta = 0;
 
-    if(Object.keys(hypOrbit).length!=0){
+    if (Object.keys(hypOrbit).length != 0) {
         hypOrbit.update(peAlt);
-        
+
         //hypOrbit.setAlignment();
-        
+
         let io = hypOrbit.outbound ? 0 : Math.PI;
-        
+
         let svgPe = hypOrbit.rpScaled;
         let ln = hypOrbit.lnp;
         let fa = hypOrbit.fa;
         theta = alignToLn0 ? fa + io : ln;
-        
+
         document.getElementById("planetSystemPark").setAttribute("r", svgPe);
-        
+
         setNodeText();
 
-    }else{
+    } else {
         let originName = document.forms["initializeTransfer"]["origin"].value;
         let origin = planets[originName];
         // let origin = transferOrbit.originPlanet == undefined ? planets['Kerbin'] : transferOrbit.originPlanet;
         let ln = origin.LnAtTimeT(displayedTime);
-        theta = alignToLn0 ? 0: -ln;
-        
+        theta = alignToLn0 ? 0 : -ln;
+
     }
 
     //document.getElementById("alignment").setAttribute("transform", `rotate(${-radToDeg(theta)})`);
     solarSystemSVG.getElementById("gSolarSystemAlign").setAttribute("transform", `rotate(${-radToDeg(theta)})`);
     document.getElementById("alignmentMarker").setAttribute("transform", `rotate(${-radToDeg(theta)})`)
-    
+
     // let w = park * 4;
     // zoomWindow(-w / 2, -w / 2, w, w);    
 
 
 }
 
-function setAlignment(){
+function initializeEjectionSVG(bodyName, t, peAlt, v3, outbound) {
 
-    let alignToLn0 = document.forms["options"]["alignToLn0"].checked;
-    let originName = document.forms["initializeTransfer"]["origin"].value;
-
-    if(!originName) return;
-    
-    let origin = planets[originName];
-
-    let ln = origin.LnAtTimeT(displayedTime);
-    theta = alignToLn0 ? 0 : -ln;
-
-    //document.getElementById("alignment").setAttribute("transform", `rotate(${-radToDeg(theta)})`);
-    solarSystemSVG.getElementById("gSolarSystemAlign").setAttribute("transform", `rotate(${-radToDeg(theta)})`);
-    document.getElementById("alignmentMarker").setAttribute("transform", `rotate(${-radToDeg(theta)})`)
-}
-
-function initializeEjectionSVG(bodyName, t, peAlt, v3, outbound){
-    
     console.log("initialize ejection SVG");
-    
+
     hypOrbit = new SVGhyperbolicOrbit(bodyName, t, peAlt, v3, outbound);
 
     setPlanetSystemSVG(hypOrbit.eqR, hypOrbit.soi);
@@ -687,7 +709,7 @@ function initializeEjectionSVG(bodyName, t, peAlt, v3, outbound){
     let fa = hypOrbit.fa;
     let x = soi * Math.sin(fa);
     let y = -soi * Math.cos(fa);
-    
+
     // circles
     document.getElementById("planetSystemPlanet").setAttribute("r", r);
     document.getElementById("planetSystemSOI").setAttribute("r", soi);
@@ -695,7 +717,7 @@ function initializeEjectionSVG(bodyName, t, peAlt, v3, outbound){
 
     // lines
     document.getElementById("sunDir").setAttribute("x2", -soi);
-    document.getElementById("sunDir").setAttribute("y2", 0); 
+    document.getElementById("sunDir").setAttribute("y2", 0);
 
     document.getElementById("shipOrbit").setAttribute("x1", 0);
     document.getElementById("shipOrbit").setAttribute("y1", soi);
@@ -713,39 +735,11 @@ function initializeEjectionSVG(bodyName, t, peAlt, v3, outbound){
 
     // set initial zoom (park orbit is half of screen)
     let w = park * 4;
-    zoomWindow(-w/2, -w/2, w, w);    
+    zoomWindow(-w / 2, -w / 2, w, w);
 }
 
 
-function initializeTransferOrbit() {
 
-    console.log("initialize transfer orbit");
-
-    let isForm = location.toString().includes("form");
-
-    transferOrbit = new SVGTransfer(originName, destinationName);
-
-}
-
-
-function initializeSolarSystemSVG() {
-
-    console.log("initialize solar system SVG");
-
-    for(let planetName in planets){
-
-        let curPlanet = planets[planetName];
-
-        let svgPlanet = new SVGplanet(curPlanet);
-        svgPlanets[planetName] = svgPlanet;
-
-        let orbitName = planetName+"Orbit";
-        let svgOrbit = new SVGellipiticalOrbit(orbitName, curPlanet, 0);
-        
-        svgOrbits[planetName] = svgOrbit;
-
-    }
-}
 
 
 

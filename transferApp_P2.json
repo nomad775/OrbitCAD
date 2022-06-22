@@ -10,7 +10,8 @@
         {
             "id": "t1",
             "label": "TRNFER",
-            "fn": "setTransferView()"
+            "fn": "",
+            "checked": "checked"
         },
 
         {
@@ -23,7 +24,7 @@
         {
             "id": "t3",
             "label": "INC",
-            "fn": "setTransferView()",
+            "fn": "",
             "disabled": ""
         },
 

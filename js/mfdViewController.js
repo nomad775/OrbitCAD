@@ -131,7 +131,7 @@ function zoomPlanetOrbit(planetName){
 
     let o = new DOMPoint(x, y);
 
-    let transformList = document.getElementById(planetName + "Orbit").parentElement.transform.baseVal;
+    let transformList = solarSystemSVG.getElementById(planetName + "Orbit").parentElement.transform.baseVal;
 
     if(transformList.length==1){
         
@@ -205,19 +205,17 @@ function setSolarSystemSVG() {
 
     console.log("set solar system SVG");
 
+    mouseDown = { active: false, x: 0, y: 0 };
+    boolDown = false;
+
     solarSystemSVG = document.getElementById("svgObject").contentDocument.getElementById("solarSystem");
     solarSystemSVG.addEventListener("mousemove", mouseMove);
     solarSystemSVG.addEventListener("mousewheel", zoomWheel);
-
-    // switch SVG's
-    // document.getElementById("planetSystem").setAttribute("display", "none");
-    // document.getElementById("solarSystem").setAttribute("display", "initial");
 
     scaleFactor = 1 / 1e8;
     unitScale = 1 / 1e9;
 
     // set viewBox to new SVG
-    //var svg = document.getElementById("solarSystem");
     viewBox = solarSystemSVG.viewBox.baseVal;
 
     initialViewBoxWidth = viewBox.width;
@@ -235,15 +233,6 @@ function setPlanetSystemSVG(eqR, soi) {
 
     console.log("set to planet system SVG");
 
-    // if (svgSet){
-    //     let w = 200 / scaleFactor;
-    //     //zoomWindow(-w/2,-w/2,w,w)
-    //     return;
-    // }
-    // svgSet=true;
-
-    // switch SVG's
-    document.getElementById("solarSystem").setAttribute("display", "none");
     document.getElementById("planetSystem").setAttribute("display", "initial");
     
     scaleFactor = 1 / 1e6;
@@ -269,64 +258,11 @@ function setPlanetSystemSVG(eqR, soi) {
 }
 
 
-function startAnimation(theDir, callback) {
-    dir = Math.sign(theDir);
-    errDir = transferOrbit.err;
-    window.requestAnimationFrame(animationStep);
-}
-
-function animationStep(timestamp) {
-
-    if (start === undefined) { start = timestamp; }
-
-    const elapsed = timestamp - start;
-
-    if (previousTimeStamp !== timestamp) {
-
-        // previous step has completed
-
-        displayedTime += dir * (1 * 6 * 60 * 60) * delta;
-        window.dispatchEvent(displayedTimeChangeEvent);
-
-        var lastErrDir = err;
-
-        err = transferOrbit.err;
-
-        var sign = Math.sign(err * lastErrDir);
-
-        //console.log(err, sign);
-
-        if (sign == -1 && Math.abs(err) > .00001) {
-
-            delta *= .5;
-            dir = -dir;
-
-            //console.log(delta);
-        }
-
-
-        if (Math.abs(transferOrbit.err) < .0001 || elapsed > 1000 * 6 * 1) {
-
-            animationDone = true;
-            start = undefined;
-            delta = 1;
-            activeButton.setInactive();
-            return;
-        }
-
-
-        previousTimeStamp = timestamp
-        window.requestAnimationFrame(animationStep);
-
-    }
-}
-
-function initializeScreen(){
+function z_initializeScreen(){
 
     console.log("initialize screen controls");
 
-    mouseDown = { active: false, x: 0, y: 0 };
-    boolDown = false;
+    
     
     // let svg1 = document.getElementById("solarSystem");
     // svg1.addEventListener("mousemove", mouseMove);

@@ -1,7 +1,6 @@
-const planets = {};
 
 let currentTime = 1;
-let displayedTime = 0;
+let displayedTime = 1;
 
 const timeChangeEvent = new Event('timeChange');
 const displayedTimeChangeEvent = new Event('displayedTimeChange');
@@ -9,11 +8,38 @@ const displayedTimeChangeEvent = new Event('displayedTimeChange');
 
 // ---------- page 1 ----------
 
-function getTime() {
+function initializeForms(){
 
+    let frmTime = document.forms["frmTimeEntry"];
+    let frmTransfer = document.forms["initializeTransfer"];
+   
+    frmTime.addEventListener('input', (e)=>{
+        frmTime.utS.value = convertDateToSeconds(frmTime.utY.value, frmTime.utD.value, frmTime.utH.value, frmTime.utM.value, true);;
+    })
+    
+    frmTime.addEventListener('submit', (e) => {
+        frmTransfer.utNow.value = utS.value;
+        frmTransfer.utNow.dispatchEvent(new Event('change'));
+    })
+
+    frmTransfer.utNow.addEventListener("change", (e)=>{
+        displayedTime = frmTransfer.utNow.value;
+        window.dispatchEvent(displayedTimeChangeEvent);
+    })
+
+    frmTransfer.origin.addEventListener("change", setOriginMarker);
+    frmTransfer.destination.addEventListener("change", setDestinationMarker);
+    
+    window.addEventListener("displayedTimeChange", setOriginMarker);
+    window.addEventListener("displayedTimeChange", setDestinationMarker);
+    window.addEventListener("displayedTimeChange", setAlignment);
+}
+
+function getTime() {
+        
     let dialog = document.getElementById('timeEntry');
     let form = document.forms["frmTimeEntry"];
-
+        
     let ut = convertSecondsToDateObj(displayedTime, false);
     
     form.utY.value = Number(ut.y);
@@ -30,7 +56,7 @@ function getTime() {
     optButton.checked = false;
 }
 
-function setTime(overrideTime) {
+function z_setTime(overrideTime) {
 
     var form = document.getElementById('frmTimeEntry');
     var uts = 0;
@@ -49,9 +75,9 @@ function setTime(overrideTime) {
 
     window.dispatchEvent(displayedTimeChangeEvent);
     
-    setOriginMarker();
-    setDestinationMarker();
-    setAlignment();
+    //setOriginMarker();
+    //setDestinationMarker();
+    //setAlignment();
 
 }
 
@@ -70,23 +96,12 @@ function planetClickAsInput(event, planetName){
         case 1:
             fieldName="origin";
             document.forms["initializeTransfer"]["origin"].value = planetName;
-            document.querySelector("output[name='origin']").value = planetName;
-            
-            setOriginMarker();
-            
-            setAlignment();
-
+            document.forms["initializeTransfer"]["origin"].dispatchEvent(new Event("change"));
             break;
         case 2:
-
             fieldName="destination";
             document.forms["initializeTransfer"]["destination"].value = planetName;
-
-            setDestinationMarker();
-
-            let op = document.querySelector("output[name='destination']")
-            op.value = planetName;
-            op.classList.remove("activeFn");
+            document.forms["initializeTransfer"]["destination"].dispatchEvent(new Event("change"));
             break;
     }
 
@@ -95,8 +110,6 @@ function planetClickAsInput(event, planetName){
 
     console.log(fieldName);
    
-    setNext();
-
 }
 
 function setOriginMarker(){
@@ -115,6 +128,9 @@ function setOriginMarker(){
     outArrow.setAttribute("y", cyo);
     outArrow.setAttribute("transform", `rotate(${-lno}, ${cxo}, ${cyo})`);
 
+    document.querySelector("output[name='origin']").value = planetName;
+    setAlignment();
+    setNext();
 }
 
 function setDestinationMarker(){
@@ -133,46 +149,9 @@ function setDestinationMarker(){
     inArrow.setAttribute("y", cyd);
     inArrow.setAttribute("transform", `rotate(${-lnd}, ${cxd}, ${cyd})`);
 
-}
-
-function calcuate(){
-    
-    transferOrbit = new SVGTransfer(originName, destinationName);
-
-    let t2 = transferOrbit.solveTForRdv(utNow);
-    let t1 = transferOrbit.tod;
-
-    displayedTime = transferOrbit.solveTForRdv(utNow);
-    window.dispatchEvent(displayedTimeChangeEvent);
-
-
-    // temp : 
-
-    dimPlanets();
-
-    let originName = document.forms["initializeTransfer"]["origin"].value;
-    let destinationName = document.forms["initializeTransfer"]["destination"].value;
-    let utNow = Number(document.forms["initializeTransfer"]["utNow"].value);
-
-    transferOrbit = new SVGTransfer(originName, destinationName);
-    transferOrbit.solveTForRdv(utNow);
-
-    let tod = transferOrbit.tod;
-    let toa = transferOrbit.toa;
-
-    let origin1 = new SVGplanet(planets[originName], "planet_origin_tod");
-    let destination1 = new SVGplanet(planets[destinationName], "planet_destination_tod");
-    origin1.update(tod);
-    destination1.update(tod);
-
-    let origin2 = new SVGplanet(planets[originName], "planet_origin_toa");
-    let destination2 = new SVGplanet(planets[destinationName], "planet_destination_toa");
-
-    origin2.update(toa);
-    destination2.update(toa);
-
-    //window.dispatchEvent(displayedTimeChangeEvent);
-
+    document.querySelector("output[name='destination']").value = planetName;
+    setNext();
+    //op.classList.remove("activeFn");
 }
 
 function setNext(){
@@ -202,19 +181,18 @@ function next(){
 // --------- page 2 ---------
 
 function initializeTransfer(originName, destinationName, utNow){
-    
     transferOrbit = new SVGTransfer(originName, destinationName);
     displayedTime = transferOrbit.solveTForRdv(utNow);
     window.dispatchEvent(displayedTimeChangeEvent);
 }
 
-function setTransferView(){
+function z_setTransferView(){
     setSolarSystemSVG();
     dimPlanets();
-    zoomTxOrbit();
+    
 }
 
-function fromPrev() {
+function z_fromPrev() {
 
     console.log("start 2");
 
@@ -363,10 +341,14 @@ function setActiveView(params){
 
     switch(params.page){
         case 1:
-            setSolarSystemSVG();
+            setSolarSystemSVG();                // sets svg, initial zoom, zoom limits, etc
+            initializeSolarSystemSVGelements(); // set planet and orbit svg elements
+            initializeForms();
+            //setTime();
             break;
         case 2:
             setSolarSystemSVG();
+            initializeSolarSystemSVGelements(); // set svg elements
             dimPlanets();
             initializeTransfer(params.originName, params.destinationName, params.utNow);
             break;
@@ -379,58 +361,64 @@ function setActiveView(params){
 
 }
 
-function setActivePage(dataObj) {
+function initializeOrbitalMechanics(params){
 
-    let buttonData = dataObj["pageFunctions"];
-    let inputFields = dataObj["inputFields"];
-    let outputFields = dataObj["outputFields"];
-    let activePanels = dataObj["activePanels"];
+    getPlanetsXML(() => {
 
-    // if(activePage != undefined) activePage.setInactive();
-    // activePage = buttons[id];
-    // activePage.setActive();
+        setActiveView(params);
 
-    // set buttons
-    buttonData.forEach((button) => {
+        console.log("intialized");
+        //troubleShoot();
+    });
 
-        let labelId = `lbl${button.id.toUpperCase()}`;
-        let inputId = `opt${button.id.toUpperCase()}`;
-
-        let label = document.getElementById(labelId);
-        let input = document.getElementById(inputId);
-
-        let isDisabled = !(Boolean(button.label)) || !(button.disabled == undefined || button.disabled == "");
-        let isChecked = !(button.checked == undefined || button.checked == "");
-
-        label.textContent = button.label;
-
-        if (isDisabled) {
-            input.setAttribute("disabled", true);
-        }
-        
-        if(isChecked) {
-            input.setAttribute("checked", true);
-        }
-
-        let fn = Function(button.fn);
-        input.onclick = fn;
-    
-    }
-    );
-
-    // buttons["b0"].setActive();
-    return;
-
-   
 }
 
+function initializeMFDfromFile(pageNumber) {
 
-function initializeMFD(pageNumber) {
+    console.log("initalize MFD buttons");
 
-    console.log("initalize MFD");
+    fetch(`transferApp_P${pageNumber}.json`).then(response => response.json()).then( (dataObj) => 
+        
+        {
+            let buttonData = dataObj["pageFunctions"];
+            let inputFields = dataObj["inputFields"];
+            let outputFields = dataObj["outputFields"];
+            let activePanels = dataObj["activePanels"];
 
-    fetch(`transferApp_P${pageNumber}.json`).then(response => response.json()).then(data => setActivePage(data));
-    
+            // if(activePage != undefined) activePage.setInactive();
+            // activePage = buttons[id];
+            // activePage.setActive();
+
+            // set buttons
+            buttonData.forEach((button) => {
+
+                let labelId = `lbl${button.id.toUpperCase()}`;
+                let inputId = `opt${button.id.toUpperCase()}`;
+
+                let label = document.getElementById(labelId);
+                let input = document.getElementById(inputId);
+
+                let isDisabled = !(Boolean(button.label)) || !(button.disabled == undefined || button.disabled == "");
+                let isChecked = !(button.checked == undefined || button.checked == "");
+
+                label.textContent = button.label;
+
+                if (isDisabled) {
+                    input.setAttribute("disabled", true);
+                }
+
+                if (isChecked) {
+                    input.setAttribute("checked", true);
+                }
+
+                let fn = Function(button.fn);
+                input.onclick = fn;
+
+            }
+            );
+
+        });
+
 }
 
 function parseQueryString(){
@@ -442,6 +430,10 @@ function parseQueryString(){
     let originName = params.get("origin");
     let destinationName = params.get("destination");
 
+    document.forms["initializeTransfer"]["utNow"].value = utNow
+    document.forms["initializeTransfer"]["origin"].value = originName;
+    document.forms["initializeTransfer"]["destination"].value = destinationName
+
     page = (page == 0) ? 1 : page;
 
     return {"page": page, "utNow": utNow, "originName": originName, "destinationName": destinationName};
@@ -451,18 +443,8 @@ function initialize() {
 
     let params = parseQueryString();
 
-    initializeMFD(params.page);
-    initializeScreen();
-
-    getPlanetsXML(() => {
-
-        initializeSolarSystemSVG();
-        setActiveView(params);
-
-        console.log("intialized");
-        
-        troubleShoot();
-    });
+    initializeMFDfromFile(params.page);
+    initializeOrbitalMechanics(params);
 
 }
 

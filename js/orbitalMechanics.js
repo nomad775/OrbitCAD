@@ -1,4 +1,4 @@
-
+const planets = {};
 
 class Orbit{
 
@@ -483,9 +483,17 @@ function getPlanetsXML(callback) {
 
     var fileName = "kspPlanets.xml";
     
-    fetch("kspPlanets.xml").then(response => response.text()).then(data => {
-        window.localStorage.setItem("planetsXML", data);
-        console.log("xml data saved");
-        createPlanetObjectsFromXML(data, callback)
-    });
+    if(!planets.length){
+
+        fetch("kspPlanets.xml").then(response => response.text()).then(data => {
+            //window.localStorage.setItem("planetsXML", data);
+            //console.log(window.localStorage);
+            console.log("xml data fetched");
+            createPlanetObjectsFromXML(data, callback)
+        });
+    }else{
+        console.log("planets already loaded");
+    }
+
+
 }
