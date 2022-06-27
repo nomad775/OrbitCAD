@@ -87,7 +87,6 @@
                 <br>
                 <label for="utM">M:</label>
                 <input name="utM" type="number" min="0" max="59" value="0" required>
-
                 
                 <p>UT <output id="utS" name="utS"></output> seconds</p>
                 
@@ -118,7 +117,7 @@
         </dialog>
 
         <form name="initializeTransfer" style="display: ;">
-            page: <input name="page"  type="number" value="2" style="width: 3em;">
+            page: <input name="page"  type="number" value="1" style="width: 3em;">
             utNow <input name="utNow" type="number" value="0" style="width: 7em;">
             origin<input name="origin" type="text" required style="width: 4em;">
             dest  <input name="destination" type="text" required style="width: 4em;">
@@ -233,7 +232,7 @@
 
             <div id="divScreen" style="position: relative; top:0px; left: 0px;">
 
-                <object id="svgObject" type="image/svg+xml" data="solarSystem.svg" width="100%" height="100%"></object>
+                <object id="svgObject" type="image/svg+xml" data="planetSystem.svg" width="100%" height="100%"></object>
 
                 <div id="screenHtml" style="position: absolute; top: 0px; left:0px; display:none;" >
                     <p style="margin-left: 10px;">TRANSFER: <output name="origin">Kerbin</output> to <output name="destination" class="activeFn">DESTINATION</output></p>
@@ -467,7 +466,7 @@
                 <input id="optB0" name="bottom" form="frmBottom" type="radio" value="0">
                 <label id="lblB0" for="optB0" class="mfdButtonLabel">opt B0</label>
             
-                <input id="optB1" name="bottom" form="frmBottom" type="radio" value="1" onclick="console.log('XXXX');unDimPlanets()">
+                <input id="optB1" name="bottom" form="frmBottom" type="radio" value="1" onclick="unDimPlanets()">
                 <label id="lblB1" for="optB1" class="mfdButtonLabel">opt B1</label>
             
                 <input id="optB2" name="bottom" form="frmBottom" type="radio" value="2" onclick="unDimPlanets()">
@@ -490,7 +489,7 @@
         </form>
 
         <form id="options">
-            <input id="alignToLn0" name="alignToLn0" type="checkbox" onclick="setAlignment()">
+            <input id="alignToLn0" name="alignToLn0" type="checkbox">
         </form>
         
     </body>

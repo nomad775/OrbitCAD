@@ -446,7 +446,7 @@ class TransferOrbit {
 
 function createPlanetObjectsFromXML(data, callback){
     
-    //console.log(data);
+    console.log("...create planet objects");
 
     const parser = new DOMParser();
     const xml = parser.parseFromString(data, "text/xml");
@@ -479,16 +479,14 @@ function createPlanetObjectsFromXML(data, callback){
 
 function getPlanetsXML(callback) {
 
-    console.log("initialize planet data");
+    console.log("getting planet data from XML");
 
-    var fileName = "kspPlanets.xml";
-    
     if(!planets.length){
 
         fetch("kspPlanets.xml").then(response => response.text()).then(data => {
             //window.localStorage.setItem("planetsXML", data);
             //console.log(window.localStorage);
-            console.log("xml data fetched");
+            console.log("...xml data fetched");
             createPlanetObjectsFromXML(data, callback)
         });
     }else{

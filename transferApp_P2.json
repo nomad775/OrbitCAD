@@ -17,7 +17,7 @@
         {
             "id": "t2",
             "label": "EJECT",
-            "fn": "setEjection()",
+            "fn": "gotoPage(3)",
             "disabled": ""
         },
 

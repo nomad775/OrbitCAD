@@ -1,3 +1,7 @@
+svg{
+    background-color: white;
+}
+
 svg * {
     vector-effect: non-scaling-stroke;
 }
@@ -26,4 +30,8 @@ svg * {
 .orbit {
     opacity: .5;
     stroke-dasharray: 5 5;
+}
+
+text{
+    color: yellowgreen;
 }

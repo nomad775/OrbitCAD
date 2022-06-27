@@ -1,3 +1,4 @@
+<?xml-stylesheet type="text/css" href="solarSystemSVG.css" ?>
 <svg id="planetSystem" class="svgMap"
 height="500" width="500" viewBox="-250 -250 500 500"
                     
@@ -12,7 +13,7 @@ xmlns:xlink="http://www.w3.org/1999/xlink">
         </marker>
     </defs>
 
-    <g id="alignment">
+    <g id="gPlanetSystemAlign">
 
         <line id="sunDir" x1="0" y1="0" x2="-3" y2="0" stroke="yellow" stroke-width="1" />
         <line id="planetOrbit" x1="0" y1="0" x2="0" y2="-3" stroke="blue" stroke-width="2.5" stroke-opacity=".4"
@@ -47,13 +48,11 @@ xmlns:xlink="http://www.w3.org/1999/xlink">
     <circle id="planetSystemPark" cx="0" cy="0" r="6" stroke="gray" fill="none" />
     <circle id="planetSystemPlanet" cx="0" cy="0" r="7" stroke="blue" fill="cyan" />
 
-    <g id="gnode" font-family="arial" font-size=".1">
+    <g id="gnode" font-family="arial" font-size=".1" fill="yellowGreen">
         <text x="0" y="0">PE: <tspan id="nodePe">xxx</tspan> km</text>
         <text dx="0" dy=".15">LN: <tspan id="nodeLn"></tspan></text>
         <text dx="0" dy=".3">UT: <tspan id="nodeTod"></tspan></text>
         <text dx="0" dy=".45">dV: <tspan id="nodeDv"></tspan> m/s</text>
     </g>
-
-
 
 </svg>

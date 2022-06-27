@@ -7,6 +7,7 @@ xmlns:xlink="http://www.w3.org/1999/xlink"
     >
                         
     <defs>
+
         <g id="txMarker" transform="translate(10,10)" stroke-width="2" stroke="greenYellow">
         
             <circle id="txMarker" cx="0" cy="0" r="12" fill="none" stroke-opacity="100" />
@@ -58,7 +59,7 @@ xmlns:xlink="http://www.w3.org/1999/xlink"
         <!-- planets -->
         <circle class="planet" id="Moho" cx="-5.50" cy="62.92" r="18" fill="peachpuff" />
         <circle class="planet" id="Eve" cx="-95.93" cy="25.70" r="18" fill="purple" />
-        <circle class="planet" id="Kerbin" cx="-136.00" cy="0" r="18" fill="cyan" />
+        <circle class="planet" id="Kerbin" cx="-136.00" cy="-30" r="18" fill="cyan" />
         <circle class="planet" id="Duna" cx="155.37" cy="152.68" r="18" fill="crimson" />
         <circle class="planet" id="Dres" cx="-460.51" cy="81.20" r="18" fill="#a44128" />
         <circle class="planet" id="Jool" cx="348.92" cy="-552.57" r="18" fill="green" />
@@ -72,7 +73,7 @@ xmlns:xlink="http://www.w3.org/1999/xlink"
         <circle id="planet_destination_tod" class="planet" r="10" fill="red" fill-opacity=".4" />
         <circle id="planet_destination_toa" class="planet" r="10" fill="red" fill-opacity=".4" /> -->
 
-        <!-- <circle id="planet_destination_future" r="10" fill="red" fill-opacity=".4" /> -->
+        <circle id="planet_destination_future" cx="-2000" cy="0" r="2%" fill="red" fill-opacity=".4" />
 
         <!-- transfer orbit -->
 
@@ -82,10 +83,10 @@ xmlns:xlink="http://www.w3.org/1999/xlink"
         <line id="line1" x1="0" y1="0" x2="0" y2="0" stroke="lightblue" stroke-dashArray="15 5 5 5 1 5 5 5 10 5" />
     
         <path id="destTOF" stroke="yellow" stroke-width="3" fill="none" stroke-opacity="30%" />
-        <path id="txTOF" stroke="lightgreen" stroke-width="3" fill="none" stroke-opacity="100%" />
+        <path id="txTOF"   stroke="lightgreen" stroke-width="3" fill="none" stroke-opacity="100%" />
 
         <use id="outArrow" href="#outArrowDef" x="-2000" y="0" transform="rotate(-180, -136, 0)" />
-        <use id="inArrow"  href="#inArrowDef"  x="-2095.93" y="25.70" transform="rotate(-200, -95.93, 25.70)" />
+        <use id="inArrow"  href="#inArrowDef"  x="-2000" y="0" transform="rotate(-200, -95.93, 25.70)" />
     </g>
 
 </svg>
