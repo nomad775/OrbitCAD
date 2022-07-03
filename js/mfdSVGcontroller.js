@@ -258,7 +258,6 @@ class SVGTransfer extends TransferOrbit{
                         break;
                     case "alignToLn0":
                         this.alignToLn0 = event.target.checked;
-                        console.log("align: ", this.alignToLn0);
                         this.setAlignment();
                 }
                 
@@ -417,7 +416,6 @@ function setAlignment() {
     document.getElementById("alignmentMarker").setAttribute("transform", `rotate(${-radToDeg(theta)})`)
 
 }
-
  
 function initializeSolarSystemSVGelements() {
 
@@ -453,7 +451,10 @@ class SVGhyperbolicOrbit extends HyperbolicOrbit {
 
         this.outbound = outbound;
 
+        this.svg = document.getElementById("svgObject").contentDocument.getElementById("planetSystem");
+
         this.update(peAlt);
+        
     }
 
     update(peAlt) {
@@ -481,6 +482,9 @@ class SVGhyperbolicOrbit extends HyperbolicOrbit {
         let vpy = this.vpx;
         let v3 = super.v3;
         let fa = this.fa;
+        
+        let svg = document.getElementById("svgObject").contentDocument.getElementById("planetSystem");
+        svg.getElementById("planetSystemPark").setAttribute("r", this.rpScaled);
 
         this.drawVelocitiesVertical(soi, vpx, vpy, v3, fa);
         this.drawHyperbola(a, b, c, endx, endy, theta);
@@ -611,7 +615,6 @@ class SVGhyperbolicOrbit extends HyperbolicOrbit {
         let hyp = svg.getElementById("hyperbola");
         hyp.setAttributeNS(null, "d", path);
         
-
         svg.getElementById("axis").setAttribute("y1", 0);
         svg.getElementById("axis").setAttribute("x1", 0);
 
@@ -632,6 +635,7 @@ class SVGhyperbolicOrbit extends HyperbolicOrbit {
 
     }
 }
+
 
 function setNodeText() {
 
@@ -668,51 +672,24 @@ function setNodeText() {
 }
 
 function updateHypSVG() {
-
-    let peAlt = document.parkOrbit.peAlt.value * 1000;
-
-    peAlt = 100000;
-
+    
+    let peAlt = Number(document.forms["initializeTransfer"]["originPark"].value);
+    
+    hypOrbit.update(peAlt);
+    setNodeText();
+    
     let alignToLn0 = document.forms["options"]["alignToLn0"].checked;
-    let theta = 0;
+    let io = hypOrbit.outbound ? 0 : Math.PI;
 
-    if (Object.keys(hypOrbit).length != 0) {
-        hypOrbit.update(peAlt);
+    let ln = hypOrbit.lnp;
+    let fa = hypOrbit.fa;
+    let theta = alignToLn0 ? fa + io : ln;
 
-        //hypOrbit.setAlignment();
+    let svg = document.getElementById("svgObject").contentDocument.getElementById("planetSystem");
 
-        let io = hypOrbit.outbound ? 0 : Math.PI;
-
-        let svgPe = hypOrbit.rpScaled;
-        let ln = hypOrbit.lnp;
-        let fa = hypOrbit.fa;
-        theta = alignToLn0 ? fa + io : ln;
-
-        let svg = document.getElementById("svgObject").contentDocument.getElementById("planetSystem");
-        svg.getElementById("planetSystemPark").setAttribute("r", svgPe);
-
-        setNodeText();
-
-    } 
-    
-    // else {
-    //     let originName = document.forms["initializeTransfer"]["origin"].value;
-    //     let origin = planets[originName];
-    //     // let origin = transferOrbit.originPlanet == undefined ? planets['Kerbin'] : transferOrbit.originPlanet;
-    //     let ln = origin.LnAtTimeT(displayedTime);
-    //     theta = alignToLn0 ? 0 : -ln;
-
-    // }
-
-    //document.getElementById("alignment").setAttribute("transform", `rotate(${-radToDeg(theta)})`);
-    
-    let svg = document.getElementById("svgObject").contentDocument.rootElement;
     svg.getElementById("gPlanetSystemAlign").setAttribute("transform", `rotate(${-radToDeg(theta)})`);
-
     document.getElementById("alignmentMarker").setAttribute("transform", `rotate(${-radToDeg(theta)})`)
 
-    // let w = park * 4;
-    // zoomWindow(-w / 2, -w / 2, w, w);    
 }
 
 

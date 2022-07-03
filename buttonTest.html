@@ -102,7 +102,7 @@
             <form name="frmAltEntry" method="dialog">
         
                 <label for="alt">alt:</label>
-                <input name="lat" type="number" min="1" max="1000" value="1" required style="width: 50px;">
+                <input name="alt" type="number" min="1" max="1000" value="100" required style="width: 50px;">
                 <select name="units">
                     <option>Km</option>
                     <option>Mm</option>
@@ -122,31 +122,12 @@
             origin<input name="origin" type="text" required style="width: 4em;">
             dest  <input name="destination" type="text" required style="width: 4em;">
             tod   <input name="tod" type="number" style="width: 8em;">
+            v3_o  <input name="v3o" type="number"style="width: 8em;">
             toa   <input name="toa" type="number" style="width: 8em;">
+            v3_d  <input name="v3d" type="number" style="width: 8em;">
             originPark <input name="originPark" type="number" value="100" style="width: 8em;">
             destPark   <input name="destinationPark" type="number" value="100" style="width: 8em;">
         </form>
-
-        <form name="parkOrbit" style="display: none;">
-            <input name="peAlt" value="100">
-        </form>
-
-
-        <svg id="svgButton" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg"
-            xmlns:xlink="http://www.w3.org/1999/xlink" version="1.2" display="none">
-        
-            <defs>
-                <symbol id="button" width="60" height="20">
-                    <rect x="0" y="0" width="60" height="20" rx="3" ry="3" fill="darkGrey" />
-                    <rect x="1" y="1" width="58" height="18" rx="2" ry="2" fill="black" />
-                    <rect x="10" y="4" width="40" height="12" rx="1" ry="1" fill="white" />
-                </symbol>
-
-                
-
-            </defs>
-        </svg>
-
         
         <div id="divDisplayContainer" style="pointer-events: none;">
             
@@ -155,7 +136,6 @@
                     <output name="utNow">Y001, D001, 0:00</output>
                 </div>
             </div>
-
 
             <div id="pePanelUnit" class="paramDisp">
                 PERIAPSIS
@@ -244,6 +224,21 @@
                 </svg>
 
             </div>
+
+            <svg id="svgButton" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg"
+                xmlns:xlink="http://www.w3.org/1999/xlink" version="1.2" display="none">
+            
+                <defs>
+                    <symbol id="button" width="60" height="20">
+                        <rect x="0" y="0" width="60" height="20" rx="3" ry="3" fill="darkGrey" />
+                        <rect x="1" y="1" width="58" height="18" rx="2" ry="2" fill="black" />
+                        <rect x="10" y="4" width="40" height="12" rx="1" ry="1" fill="white" />
+                    </symbol>
+            
+            
+            
+                </defs>
+            </svg>
 
             <div id="divTopButtonGroup">
 

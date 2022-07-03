@@ -31,11 +31,10 @@ function initializeForms(){
     frmTransfer.origin.addEventListener("change", setOriginMarker);
     frmTransfer.destination.addEventListener("change", setDestinationMarker);
     
-    //window.addEventListener("displayedTimeChange", setOriginMarker);
-    //window.addEventListener("displayedTimeChange", setDestinationMarker);
-    //window.addEventListener("displayedTimeChange", setAlignment);
+    document.forms["options"]["alignToLn0"].addEventListener("click", setAlignment);
 
-    document.froms["options"]["alignToLn0"].addEventListener("click", "setAlignment()");
+    document.querySelector("output[name='utNow']").textContent = convertSecondsToDateObj(displayedTime).toString();
+    
 }
 
 function getTime() {
@@ -65,9 +64,10 @@ function setTime(){
     displayedTime = frmTransfer.utNow.value;
     
     console.log("time set to " + convertSecondsToDateObj(displayedTime, false).toString() );
-
+    document.querySelector("output[name='utNow']").textContent = convertSecondsToDateObj(displayedTime).toString();
     window.dispatchEvent(displayedTimeChangeEvent);
 
+    setAlignment();
     setOriginMarker();
     setDestinationMarker();
 
@@ -186,7 +186,17 @@ function initializeTransfer(originName, destinationName, utNow){
     dimPlanets();
     transferOrbit = new SVGTransfer(originName, destinationName);
     displayedTime = transferOrbit.solveTForRdv(utNow);
+
+    let form =  document.forms["initializeTransfer"]
+    form["tod"].value = displayedTime;
+    form["v3o"].value = transferOrbit.v3o.toFixed(0);
+    form["toa"].value = transferOrbit.toa.toFixed(0);
+    form["v3d"].value = transferOrbit.v3d.toFixed(0);
+
+    document.querySelector("output[name='utNow']").textContent = convertSecondsToDateObj(displayedTime).toString();
     window.dispatchEvent(displayedTimeChangeEvent);
+
+    document.forms["options"]["alignToLn0"].addEventListener("click", setAlignment);
 }
 
 function gotoPage(pageNumber){
@@ -195,27 +205,11 @@ function gotoPage(pageNumber){
 }
 // ----- end page 2 -----
 
+
+
 // ---------- page 3 ----------
 
-function setEjection(){
-
-    let origin = planets[transferOrbit.originName];
-
-    let name= origin.name;
-    let t = transferOrbit.tod;
-    let peAlt = 100000;
-    let v3 = transferOrbit.v3o;
-
-    let eqR = origin.eqR;
-    let soi = origin.soi;
-
-    //setPlanetSystemSVG(eqR, soi);
-    initializeEjectionSVG(name, t, peAlt, v3, true);
-    peChange(peAlt);
-    
-}
-
-function setAlt() {
+function getAlt() {
 
     let dialog = document.getElementById('altEntry');
     dialog.showModal();
@@ -225,7 +219,41 @@ function setAlt() {
 }
 
 
-function setCapture(){
+function setPeAlt() {
+
+    let form = document.forms["frmAltEntry"];
+    let units = form["units"].value;
+    let peAlt = form["alt"].value * 1000;
+
+    document.forms["initializeTransfer"]["originPark"].value = peAlt;
+
+    updateHypSVG()
+
+    let theOrbit = hypOrbit;
+
+    let pe = theOrbit.peAlt / 1000;
+    let lnPe = theOrbit.lnPe;
+    let dv = theOrbit.deltaV;
+    let tof = theOrbit.TOF;
+
+    let params = new URLSearchParams(location.search);
+    let todTx = Number(params.get("tod"));
+    let tod = todTx - tof;
+
+    let svg = document.getElementById("svgObject").contentDocument;
+
+    svg.getElementById("nodePe").textContent = pe;
+    svg.getElementById("nodeLn").textContent = radToDeg(lnPe, 1);
+    svg.getElementById("nodeDv").textContent = dv.toFixed(2);
+    svg.getElementById("nodeTod").textContent = convertSecondsToDateObj(tod).toString();
+
+    scaleText();
+}
+
+// ---------- end page 3 ----------
+
+
+function setCapture() {
 
     let destination = planets[transferOrbit.destinationName];
 
@@ -241,51 +269,6 @@ function setCapture(){
     initializeEjectionSVG(name, t, peAlt, v3, false);
 }
 
-function peChange() {
-
-    let form = document.forms["parkOrbit"];
-    let peAlt = form["peAlt"].value * 1000;
-
-    updateHypSVG(peAlt)
-
-    let theOrbit = hypOrbit;
-
-    let pe = theOrbit.peAlt / 1000;
-    let lnPe = theOrbit.lnPe;
-    let dv = theOrbit.deltaV;
-    let tof = theOrbit.TOF;
-
-    let params = new URLSearchParams(location.search);
-    let todTx = Number(params.get("tod"));
-    let tod = todTx - tof;
-
-    // document.getElementById("outPe").textContent = pe;
-    // document.getElementById("outLnPe").textContent = radToDeg(lnPe, 1);
-    // document.getElementById("outDv").textContent = dv.toFixed(2);
-    // document.getElementById("outTod").textContent = convertSecondsToDateObj(tod).toString();
-
-    // document.getElementById("outTurnAngle").textContent = radToDeg(theOrbit.turnAngle, 2);
-    // document.getElementById("outV2Angle").textContent = radToDeg(theOrbit.v2Angle, 2);
-    // document.getElementById("outV2AngleDelta").textContent = radToDeg(theOrbit.v2AngleDelta, 2);
-    // document.getElementById("outEjectionAngle").textContent = 90 + radToDeg(theOrbit.turnAngle);
-
-    // document.getElementById("outA").textContent = theOrbit.a.toFixed(0);
-    // document.getElementById("outE").textContent = theOrbit.e.toFixed(4);
-    // document.getElementById("outTof").textContent = convertSecondsToDateObj(tof).toString();
-
-    let svg = document.getElementById("svgObject").contentDocument;
-
-    svg.getElementById("nodePe").textContent = pe;
-    svg.getElementById("nodeLn").textContent = radToDeg(lnPe, 1);
-    svg.getElementById("nodeDv").textContent = dv.toFixed(2);
-    svg.getElementById("nodeTod").textContent = convertSecondsToDateObj(tod).toString();
-
-    scaleText();
-}
-
-// ---------- end page 3 ----------
-
-
 function setActiveView(params){
 
     switch(Number(params.page)){
@@ -298,23 +281,18 @@ function setActiveView(params){
         case 2:
             console.log("setting page 2");
             
-            setSolarSystemSVG().then(
-                function(x){
-                    initializeTransfer(params.originName, params.destinationName, params.utNow);
+            setSolarSystemSVG().then(function(x){
+                initializeTransfer(params.originName, params.destinationName, params.utNow);
                 });
             break;
         case 3:
             
-            params.originName="Kerbin";
-            let origin = planets[params.originName];
-            
             setPlanetSystemSVG(params.originName).then(function(){
-                initializeEjectionSVG(params.originName, 0, 100000, 3000, true)
-                peChange(1000000);
+                initializeEjectionSVG(params.originName, params.tod, 100000, params.v3o, true);
+                setPeAlt(100000)
+                document.getElementById('altEntry').addEventListener("submit", setPeAlt);
+                document.forms["options"]["alignToLn0"].addEventListener("click", updateHypSVG);
             });
-
-            // document.forms["options"]["alignToLn0"].addEventListener("click", ???)
-
             break;
     }
 
@@ -388,14 +366,28 @@ function parseQueryString(){
     let utNow = Number(params.get("utNow"));
     let originName = params.get("origin");
     let destinationName = params.get("destination");
+    let tod = params.get("tod");
+    let v3o = params.get("v3o");
+    let originPark = params.get("originPark");
 
-    document.forms["initializeTransfer"]["utNow"].value = utNow
-    document.forms["initializeTransfer"]["origin"].value = originName;
-    document.forms["initializeTransfer"]["destination"].value = destinationName
+    let toa = params.get("toa");
+    let v3d = params.get("v3d");
+    let destinationPark = params.get("destinationPark");
+
+    let form = document.forms["initializeTransfer"];
+    form["utNow"].value = utNow;
+    form["origin"].value = originName;
+    form["destination"].value = destinationName;
+    form["tod"].value = tod;
+    form["v3o"].value = v3o;
+    form["toa"].value = toa;
+    form["v3d"].value = v3d;
+    form["originPark"].value = originPark;
+    form["destinationPark"].value = destinationPark;
 
     page = (page == 0) ? document.forms["initializeTransfer"]["page"].value : page;
 
-    return {"page": page, "utNow": utNow, "originName": originName, "destinationName": destinationName};
+    return { "page": page, "utNow": utNow, "originName": originName, "destinationName": destinationName, "tod": tod, "v3o": v3o, "toa": toa, "v3d": v3d, "originPark": originPark, "destinationPark": destinationPark};
 }
 
 function initialize() {
