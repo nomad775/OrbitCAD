@@ -31,7 +31,7 @@
         {
             "id": "t4",
             "label": "CAPTURE",
-            "fn": "setCapture()",
+            "fn": "gotoPage(5)",
             "disabled": ""
         },
 
@@ -44,8 +44,8 @@
     
         {
             "id": "b0",
-            "label": "",
-            "fn": ""
+            "label": "RESET",
+            "fn": "gotoPage(0)"
         },
 
         {
@@ -74,8 +74,8 @@
         {
             "id": "b5",
             "label": "NEXT",
-            "fn": "",
-            "disabled": "disabled"
+            "fn": "gotoPage(3)",
+            "disabled": ""
 
         }
     ],
@@ -88,8 +88,8 @@
 
     "outputFields": [
         "utNow",
-        "origin",
-        "destination"
+        "originName",
+        "destinationName"
     ],
 
     "activePanels": [

@@ -10,56 +10,54 @@
         {
             "id": "t1",
             "label": "TRNFER",
-            "fn": "",
-            "checked": "checked"
+            "fn": "gotoPage(2)"
         },
 
         {
             "id": "t2",
             "label": "EJECT",
-            "fn": "",
-            "disabled": "true"
+            "fn": "gotoPage(3)",
+            "disabled": ""
         },
 
         {
             "id": "t3",
             "label": "INC",
             "fn": "",
-            "disabled": "disabled"
+            "disabled": ""
         },
 
         {
             "id": "t4",
             "label": "CAPTURE",
             "fn": "",
-            "disabled": "disabled"
+            "checked": "checked",
+            "disabled": ""
         },
 
         {
             "id": "t5",
-            "label": "",
-            "fn": "",
-            "disabled": "disabled"
+            "label": "NEW",
+            "fn": "gotoPage(1)",
+            "disabled": ""
         },
     
         {
             "id": "b0",
-            "label": "SET UT",
-            "fn": "getTime()"
+            "label": "SET PE",
+            "fn": "getAlt()"
         },
 
-
-        
         {
             "id": "b1",
-            "label": "ORIGIN",
-            "fn": "unDimPlanets()"
+            "label": "",
+            "fn": ""
         },
 
         {
             "id": "b2",
-            "label": "DEST",
-            "fn": "unDimPlanets()"
+            "label": "",
+            "fn": ""
         },
         {
             "id": "b3",
@@ -76,16 +74,15 @@
         {
             "id": "b5",
             "label": "NEXT",
-            "fn": "next()",
+            "fn": "",
             "disabled": "disabled"
-
         }
     ],
 
     "inputFields": [
         "utNow",
-        "originName",
-        "destinationName"
+        "origin",
+        "destination"
     ],
 
     "outputFields": [

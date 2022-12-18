@@ -10,13 +10,14 @@
         {
             "id": "t1",
             "label": "TRNFER",
-            "fn": ""
+            "fn": "gotoPage(2)"
         },
 
         {
             "id": "t2",
             "label": "EJECT",
             "fn": "",
+            "checked": "checked",
             "disabled": ""
         },
 
@@ -30,7 +31,7 @@
         {
             "id": "t4",
             "label": "CAPTURE",
-            "fn": "",
+            "fn": "gotoPage(5)",
             "disabled": ""
         },
 
@@ -86,8 +87,8 @@
 
     "outputFields": [
         "utNow",
-        "origin",
-        "destination"
+        "originName",
+        "destinationName"
     ],
 
     "activePanels": [
