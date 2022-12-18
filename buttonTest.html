@@ -117,8 +117,8 @@
         </dialog>
 
         <form name="initializeTransfer" style="display: ;">
-            page: <input name="page"  type="number" value="1" style="width: 3em;">
-            utNow <input name="utNow" type="number" value="0" style="width: 7em;">
+            page: <input name="page"       type="number" value="1" style="width: 3em;">
+            utNow <input name="utNow"      type="number" value="0" style="width: 7em;">
             origin<input name="origin" type="text" required style="width: 4em;">
             dest  <input name="destination" type="text" required style="width: 4em;">
             tod   <input name="tod" type="number" style="width: 8em;">
@@ -214,15 +214,29 @@
 
                 <object id="svgObject" type="image/svg+xml" data="planetSystem.svg" width="100%" height="100%"></object>
 
-                <div id="screenHtml" style="position: absolute; top: 0px; left:0px; display:none;" >
-                    <p style="margin-left: 10px;">TRANSFER: <output name="origin">Kerbin</output> to <output name="destination" class="activeFn">DESTINATION</output></p>
+                <div id="screenHtml" style="position: absolute; top: 0px; left:0px;" >
+                    <p style="margin-left: 10px;">TRANSFER: <output name="originName">ORIGIN</output> to <output name="destinationName" >DESTINATION</output></p>
+
+                    <div id="txText" style="">
+                        <p>Eject <output name="eject_dv"></output> m/s</p>                        
+                        <p>Plane change <output name="planeChange_dv"></output> m/s</p>
+                        <p>Capture <output name="capture_dv"></output> m/s</p>
+                        <p>TOTAL <output name="total_dv"></output> m/s</p>
+                    </div>
+                </div>
+
+                <div id="nodeDiv" style="position: absolute; right:20px; bottom: 15px; display: none;">
+                    <p id="peText"></p>
+                    <p id="utText"></p>
+                    <p id="lnText"></p>
+                    <p id="dvText"></p>
                 </div>
 
                 <svg id="alignmentMarker" width="20" height="40" viewbox="0 0 40 80" style="position: absolute; top: 20px; right: 20px;" onclick="document.getElementById('alignToLn0').click()">
                     <path d="M 0, 30 l 10,-30 l 10,30 l-20,0" stroke="black" fill="red"></path>
                     <path d="M 0, 30 l 10,30 l10,-30 l-20,0" stroke="black" fill="white"></path>
                 </svg>
-
+                
             </div>
 
             <svg id="svgButton" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg"
@@ -485,6 +499,7 @@
 
         <form id="options">
             <input id="alignToLn0" name="alignToLn0" type="checkbox">
+            <p>zoom<output id="zoom" name="zoom"></output></p>
         </form>
         
     </body>

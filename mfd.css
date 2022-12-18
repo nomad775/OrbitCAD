@@ -143,3 +143,14 @@ input[type="radio"] {
     appearance: none;
 }
 
+#nodeDiv{
+    font-size: 18pt;
+    font-family: "arial";
+    color: green;
+    
+}
+
+#nodeDiv p{
+    padding: 1px;
+    margin: 1px;
+}

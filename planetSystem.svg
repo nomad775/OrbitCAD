@@ -6,12 +6,25 @@ xmlns="http://www.w3.org/2000/svg"
 xmlns:xlink="http://www.w3.org/1999/xlink">
                 
     <defs>
-        <marker id="arrowMarker" markerHeight="3" markerWidth="6" refx="3" refy="1.5" orient="auto"
-            transform="scale(3)">
+        <marker id="arrowMarker" markerWidth="10" markerHeight="3" refX="0" refY="1.5" orient="auto">
             <path d="M 0,0 L 0,3 6,1.5 0,0" stroke="none" fill="inherit" />
-            <!-- <circle cx="2.5" cy="2.5" r="2.5"/> -->
         </marker>
     </defs>
+
+    <symbol id="arrowHead2" width="4" height="1" viewBox="-3,-.5 4,1" x="-3" y="-.5">
+        <!-- <path d="M 0,0 l -6,-2 1,2 -1,2 z" stroke="blue" fill="blue"/> -->
+        <circle x="0" y="0" r=".5" fill="yellow" fill-opacity=".5"/>
+        <line x1="-3" y1="0" x2="0" y2="0" stroke="black"/>
+        <text font-size="1"> asdf </text>
+    </symbol>
+
+    <symbol id="symText"  width="8" height="6" viewBox="0 0 8 6" font-size="1">
+        <rect x="0" y="0" width="8" height="5" stroke="black" fill="none"></rect>
+        <text dominant-baseline="hanging" x=".1" y=".1">PE: <tspan id="nodePe">xxx</tspan> km</text>
+        <text dominant-baseline="hanging" dx="0" dy="1.2">LN: <tspan id="nodeLn"></tspan></text>
+        <text dominant-baseline="hanging" dx="0" dy="2.4">UT: <tspan id="nodeTod"></tspan></text>
+        <text dominant-baseline="hanging" dx="0" dy="3.6">dV: <tspan id="nodeDv"></tspan> m/s</text>
+    </symbol>
 
     <g id="gPlanetSystemAlign">
 
@@ -30,7 +43,15 @@ xmlns:xlink="http://www.w3.org/1999/xlink">
             <circle id="peMarker" cx="0" cy="0" r=".01" fill="red" />
         </g>
 
+        <line id="ln0" x1="0" y1="0" x2="100" y2="0" stroke="red"/>
+
         <!-- <line x1="0" y1="0" x2="10" y2="0" stroke="black" stroke-width="3" style="marker-end: url(#arrowMarker);"/> -->
+
+        <!-- <path id="arrowHead" d="M 15,-10 l-4,2 4,-12 4,12 z" stroke="red" fill="red"/> -->
+        
+        <!-- <use id="xxx" href="#arrowHead2" x="0" y="0" transform="rotate(21.4) translate(10)"></use> -->
+
+        <!-- <line x1="0" y1="0" x2="10" y2="4" stroke="black"/> -->
 
         <g id="velocities">
             <line id="planetV" stroke="blue" stroke-width="3" style="marker-end: url(#arrowMarker)" />
@@ -38,7 +59,8 @@ xmlns:xlink="http://www.w3.org/1999/xlink">
                 style="marker-end: url(#arrowMarker); stroke-opacity: .5;" />
             <line id="shipRelV" stroke="red" stroke-width="3"
                 style="marker-end: url(#arrowMarker); stroke-opacity: .5;" />
-            <line id="planetVclose" stroke="blue" stroke-width="3" style="marker-end: url(#arrowMarker)" />
+
+            <line id="planetVclose" stroke="blue" stroke-width="3" style="marker-end: url(#arrowMarker);"  />
         </g>
 
     </g>
@@ -47,12 +69,13 @@ xmlns:xlink="http://www.w3.org/1999/xlink">
         stroke-opacity=".5" />
     <circle id="planetSystemPark" cx="0" cy="0" r="6" stroke="gray" fill="none" />
     <circle id="planetSystemPlanet" cx="0" cy="0" r="7" stroke="blue" fill="cyan" />
+    
+    <!-- <g id="gnode" font-family="arial" font-size=".1" fill="yellowGreen">
+        <text dominant-baseline="hanging" x="0" y="0">PE: <tspan id="nodePe">xxx</tspan> km</text>
+        <text dominant-baseline="hanging" dx="0" dy=".15">LN: <tspan id="nodeLn"></tspan></text>
+        <text dominant-baseline="hanging" dx="0" dy=".3">UT: <tspan id="nodeTod"></tspan></text>
+        <text dominant-baseline="hanging" dx="0" dy=".45">dV: <tspan id="nodeDv"></tspan> m/s</text>
+    </g> -->
 
-    <g id="gnode" font-family="arial" font-size=".1" fill="yellowGreen">
-        <text x="0" y="0">PE: <tspan id="nodePe">xxx</tspan> km</text>
-        <text dx="0" dy=".15">LN: <tspan id="nodeLn"></tspan></text>
-        <text dx="0" dy=".3">UT: <tspan id="nodeTod"></tspan></text>
-        <text dx="0" dy=".45">dV: <tspan id="nodeDv"></tspan> m/s</text>
-    </g>
-
+    <use id="nodeInSymbol" href="#symText" x="0" y="0" width="45%" height="30%" fill="green"/>
 </svg>

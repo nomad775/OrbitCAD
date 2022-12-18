@@ -1,10 +1,12 @@
 <?xml-stylesheet type="text/css" href="solarSystemSVG.css" ?>
 <svg id="solarSystem" class="svgMap" viewBox="-1150 -1150 2000 1900"
 version="1.2"
+baseProfile="tiny"
 xmlns:svg="http://www.w3.org/2000/svg"
 xmlns="http://www.w3.org/2000/svg"
 xmlns:xlink="http://www.w3.org/1999/xlink"
     >
+
                         
     <defs>
 
@@ -29,9 +31,14 @@ xmlns:xlink="http://www.w3.org/1999/xlink"
             <path d="M 0 0 L -5 8 H -2 V 20 H 2 V 8 H 5 L 0 0" stroke="black" fill="red"/>
         </symbol>
         
-        
-    </defs>
+        <symbol id="label">
+            <rect x="0" y="0" width="30" hieght="20" fill="none" stroke="green"/>
+            <text dominant-baseline="hanging" dx="0" dy="1.2">LN: <tspan id="nodeLn"></tspan></text>
+            <text dominant-baseline="hanging" dx="0" dy="3.6">dV: <tspan id="nodeDv"></tspan> m/s</text>
+        </symbol>
 
+    </defs>
+    
     <circle id="sun" cx="0" cy="0" r="4" fill="yellow" stroke="orange" />
 
     <g id="gSolarSystemAlign">
@@ -67,13 +74,14 @@ xmlns:xlink="http://www.w3.org/1999/xlink"
         
         <!-- init -->
 
-        <!-- <circle id="planet_origin_tod" class="planet" r="10" fill="green" fill-opacity=".4" />
-        <circle id="planet_origin_toa" class="planet" r="10" fill="green" fill-opacity=".1" />
+        <!-- planet_destination_future -->
 
-        <circle id="planet_destination_tod" class="planet" r="10" fill="red" fill-opacity=".4" />
-        <circle id="planet_destination_toa" class="planet" r="10" fill="red" fill-opacity=".4" /> -->
+        <circle class="planet" id="origin_t0" cx="0" cy="0" r="1.5%" fill="none" fill-opacity=".4"/>
+        <circle class="planet" id="origin_t2" cx="0" cy="0" r="1.5%" fill="none" fill-opacity=".4"/>
 
-        <circle id="planet_destination_future" cx="-2000" cy="0" r="2%" fill="red" fill-opacity=".4" />
+        <circle class="planet" id="destination_t0" cx="0" cy="0" r="1.5%" fill="none" fill-opacity=".4"/>
+        <circle class="planet" id="destination_t2" cx="0" cy="0" r="2%"  fill="red" fill-opacity=".4" />
+
 
         <!-- transfer orbit -->
 
@@ -85,8 +93,14 @@ xmlns:xlink="http://www.w3.org/1999/xlink"
         <path id="destTOF" stroke="yellow" stroke-width="3" fill="none" stroke-opacity="30%" />
         <path id="txTOF"   stroke="lightgreen" stroke-width="3" fill="none" stroke-opacity="100%" />
 
-        <use id="outArrow" href="#outArrowDef" x="-2000" y="0" transform="rotate(-180, -136, 0)" />
+        <use id="outArrow" href="#outArrowDef" x="-2000" y="0" />
         <use id="inArrow"  href="#inArrowDef"  x="-2000" y="0" transform="rotate(-200, -95.93, 25.70)" />
+
+        <circle id="planeChangeMarker" cx="0" cy="0" r="3%" fill="green"/>
     </g>
+    
+    <circle id="testCircle" cx="0" cy="0" r="10" fill="none" stroke="yellow"/>
+    <rect id="originLabel" x="-12%" y="25%" width="25%" height="25%" fill="none" stroke="blue"/>
+    <rect id="testRect" x="0" y="0" width="20" height="10" fill="none" stroke="red"/>
 
 </svg>

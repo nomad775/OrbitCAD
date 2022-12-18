@@ -4,7 +4,7 @@ let displayedTime = 1;
 
 const timeChangeEvent = new Event('timeChange');
 const displayedTimeChangeEvent = new Event('displayedTimeChange');
-
+const svgZoomEvent = new Event("svgZoom")
 
 // ---------- page 1 ----------
 
@@ -33,8 +33,8 @@ function initializeForms(){
     
     document.forms["options"]["alignToLn0"].addEventListener("click", setAlignment);
 
-    document.querySelector("output[name='utNow']").textContent = convertSecondsToDateObj(displayedTime).toString();
-    
+    //document.forms["options"]["zoom"].addEventListener("svgZoom", (e) => {console.log("resize", e)});
+
 }
 
 function getTime() {
@@ -72,7 +72,6 @@ function setTime(){
     setDestinationMarker();
 
 }
-
 
 function planetClickAsInput(event, planetName){
 
@@ -126,9 +125,10 @@ function setOriginMarker(){
     outArrow.setAttribute("y", cyo);
     outArrow.setAttribute("transform", `rotate(${-lno}, ${cxo}, ${cyo})`);
 
-    document.querySelector("output[name='origin']").value = planetName;
+    document.querySelector("output[name='originName']").value = planetName;
     
-    setAlignment();
+    //setAlignment();
+
     setNext();
 }
 
@@ -148,7 +148,7 @@ function setDestinationMarker(){
     inArrow.setAttribute("y", cyd);
     inArrow.setAttribute("transform", `rotate(${-lnd}, ${cxd}, ${cyd})`);
 
-    document.querySelector("output[name='destination']").value = planetName;
+    document.querySelector("output[name='destinationName']").value = planetName;
     setNext();
     //op.classList.remove("activeFn");
 }
@@ -183,6 +183,7 @@ function next(){
 function initializeTransfer(originName, destinationName, utNow){
     
     console.log("initialize transfer");
+
     dimPlanets();
     transferOrbit = new SVGTransfer(originName, destinationName);
     displayedTime = transferOrbit.solveTForRdv(utNow);
@@ -193,21 +194,39 @@ function initializeTransfer(originName, destinationName, utNow){
     form["toa"].value = transferOrbit.toa.toFixed(0);
     form["v3d"].value = transferOrbit.v3d.toFixed(0);
 
+    let dv_eject = transferOrbit.ejectDv
+    let dv_capture = transferOrbit.captureDv;
+    let dv_planeChange = transferOrbit.planeChangeDv();
+    let dv_total = dv_eject + dv_capture + dv_planeChange;
+
+    // let svg = document.getElementById("svgObject").contentDocument.getElementById("solarSystem");
+    // svg.getElementById("ejectDv").textContent = dv_eject;
+    // svg.getElementById("captureDv").textContent = dv_capture;
+    // svg.getElementById("planeChangeDv").textContent = dv_planeChange;
+
+
     document.querySelector("output[name='utNow']").textContent = convertSecondsToDateObj(displayedTime).toString();
+    document.querySelector("output[name='eject_dv']").textContent = dv_eject.toFixed(2);
+    document.querySelector("output[name='planeChange_dv']").textContent = dv_planeChange.toFixed(2);
+    document.querySelector("output[name='capture_dv']").textContent = dv_capture.toFixed(2);
+    document.querySelector("output[name='total_dv']").textContent = dv_total.toFixed(2);
+    
     window.dispatchEvent(displayedTimeChangeEvent);
 
     document.forms["options"]["alignToLn0"].addEventListener("click", setAlignment);
 }
 
-function gotoPage(pageNumber){
-    document.forms["initializeTransfer"]["page"].value = pageNumber;
-    document.forms["initializeTransfer"].submit();
-}
+
 // ----- end page 2 -----
 
 
 
 // ---------- page 3 ----------
+
+function z_backToTransfer(){
+    // document.forms["initializeTransfer"]["page"].value = 2;
+    // document.forms["initializeTransfer"].submit();
+}
 
 function getAlt() {
 
@@ -240,20 +259,45 @@ function setPeAlt() {
     let todTx = Number(params.get("tod"));
     let tod = todTx - tof;
 
-    let svg = document.getElementById("svgObject").contentDocument;
 
-    svg.getElementById("nodePe").textContent = pe;
-    svg.getElementById("nodeLn").textContent = radToDeg(lnPe, 1);
-    svg.getElementById("nodeDv").textContent = dv.toFixed(2);
-    svg.getElementById("nodeTod").textContent = convertSecondsToDateObj(tod).toString();
+    // screen html node text
+    let outbound = theOrbit.outbound;
 
-    scaleText();
+    let qPe = theOrbit.lnPe - theOrbit.lnp;
+    if(!outbound){qPe += Math.PI};
+    qPe = modRev(qPe);
+
+    let x = Math.cos(qPe);
+    let y = Math.sin(qPe);
+
+    console.log(Math.sign(x), Math.sign(y));
+
+    let el2 = document.getElementById("nodeDiv");
+    
+    if(Math.sign(x)<0){
+        el2.style.left = "20px";
+    }else{
+        el2.style.right="20px";
+    }
+
+    if(Math.sign(y)<0){
+        el2.style.bottom = "20px";
+    }else{
+        el2.style.top = "20px";
+    }
+
+
+    document.getElementById("peText").textContent = "PE: " + pe + " km";
+    document.getElementById("utText").textContent = "TOD: " + convertSecondsToDateObj(tod).toString();
+    document.getElementById("lnText").textContent = "LN: " + radToDeg(lnPe, 1);
+    document.getElementById("dvText").textContent = "dV: " + dv.toFixed(2);
+    
 }
 
 // ---------- end page 3 ----------
 
 
-function setCapture() {
+function z_setCapture() {
 
     let destination = planets[transferOrbit.destinationName];
 
@@ -266,8 +310,23 @@ function setCapture() {
     let soi = destination.soi;
 
     setPlanetSystemSVG(eqR, soi);
-    initializeEjectionSVG(name, t, peAlt, v3, false);
+    initializeHyperbolicSVG(name, t, peAlt, v3, false);
 }
+
+
+function gotoPage(pageNumber) {
+
+    let form = document.forms["initializeTransfer"];
+
+    if(pageNumber==0){
+        location.search="";
+        form.reset();
+    }else{
+        form["page"].value = pageNumber;
+        form.submit();
+    }
+}
+
 
 function setActiveView(params){
 
@@ -280,16 +339,22 @@ function setActiveView(params){
             break;
         case 2:
             console.log("setting page 2");
-            
             setSolarSystemSVG().then(function(x){
                 initializeTransfer(params.originName, params.destinationName, params.utNow);
                 });
             break;
         case 3:
-            
             setPlanetSystemSVG(params.originName).then(function(){
-                initializeEjectionSVG(params.originName, params.tod, 100000, params.v3o, true);
-                setPeAlt(100000)
+                initializeHyperbolicSVG(params.originName, params.tod, 100000, params.v3o, true);
+                document.getElementById('altEntry').addEventListener("submit", setPeAlt);
+                document.forms["options"]["alignToLn0"].addEventListener("click", updateHypSVG);
+            });
+            break;
+        case 4:
+            break;
+        case 5:
+            setPlanetSystemSVG(params.destinationName).then(function () {
+                initializeHyperbolicSVG(params.destinationName, params.toa, 100000, params.v3d, false);
                 document.getElementById('altEntry').addEventListener("submit", setPeAlt);
                 document.forms["options"]["alignToLn0"].addEventListener("click", updateHypSVG);
             });
@@ -310,9 +375,9 @@ function initializeOrbitalMechanics(params){
 
 }
 
-function initializeMFDfromFile(pageNumber) {
+function initializeMFDfromFile(params) {
 
-    console.log("initalize MFD buttons");
+    let pageNumber = params.page;
 
     fetch(`transferApp_P${pageNumber}.json`).then(response => response.json()).then( (dataObj) => 
         
@@ -327,6 +392,7 @@ function initializeMFDfromFile(pageNumber) {
             // activePage.setActive();
 
             // set buttons
+            console.log("initalize MFD buttons");
             buttonData.forEach((button) => {
 
                 let labelId = `lbl${button.id.toUpperCase()}`;
@@ -354,6 +420,15 @@ function initializeMFDfromFile(pageNumber) {
             }
             );
 
+            console.log("initalize output fields");
+            outputFields.forEach((field) =>{
+                console.log(field);
+                if(params[field]){
+                    console.log(field, params[field]);
+                    document.querySelector(`output[name='${field}']`).textContent = params[field];
+                }
+
+            });
         });
 
 }
@@ -368,8 +443,7 @@ function parseQueryString(){
     let destinationName = params.get("destination");
     let tod = params.get("tod");
     let v3o = params.get("v3o");
-    let originPark = params.get("originPark");
-
+    let originPark = Number(params.get("originPark"));
     let toa = params.get("toa");
     let v3d = params.get("v3d");
     let destinationPark = params.get("destinationPark");
@@ -394,29 +468,7 @@ function initialize() {
 
     let params = parseQueryString();
 
-    initializeMFDfromFile(params.page);
+    initializeMFDfromFile(params);
     initializeOrbitalMechanics(params);
 
-}
-
-function troubleShoot() {
-    console.log("troubleshoot");
-    //initializeEjectionOrbit();
-
-    var form = document.getElementById('frmTimeEntry');
-    var uts = form.utS.value;
-
-    var x = form.returnValue = "Submit"
-
-    uts = Number(document.forms["initializeTransfer"]["utNow"].value);
-    setTime(uts);       
-
-    setNext(); // sets next as active or inactive as needed
-
-
-    // setOriginMarker();
-    // setDestinationMarker();
-    // setAlignment();
-
-    //document.forms["options"]["alignToPrograde"].click();
 }

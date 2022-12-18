@@ -79,11 +79,12 @@ function zoomWheel(event) {
 
     zoomPerCent(Math.sign(v) * .25);
 
-    event.preventDefault();
+    //event.preventDefault();
     event.stopImmediatePropagation();
 }
 
 function zoomPerCent(amount) {
+
 
     let w1 = viewBox.width;
     let h1 = viewBox.height;
@@ -115,10 +116,13 @@ function zoomWindow(x0,y0,w,h){
 
     let zoom = initialViewBoxWidth / viewBox.width;
     
+    window.dispatchEvent(svgZoomEvent);
+
     //document.getElementById("zoom").textContent = `zoom ${Math.round(initialViewBoxWidth / viewBox.width * 100) / 100}`;
 
     //scaleText();
 }
+
 
 function zoomPlanetOrbit(planetName){
 
@@ -167,18 +171,20 @@ function zoomAll(event) {
 
 function scaleText() {
 
-    let svg = document.getElementById("planetSystem");
-    let gnode = document.getElementById("gnode");
+    //let svg = document.getElementById("planetSystem");
+    let svg = document.getElementById("svgObject").contentDocument.getElementById("planetSystem");
+    let gnode = svg.getElementById("gnode");
 
     if (gnode == null) return;
 
-    let w = viewBox.width;
+    let currentWidth = viewBox.width;
+    let scaleValue = mapWidth / currentWidth;
 
-    let s1 = 18 * w / mapWidth * 10;
-    let M = svg.createSVGMatrix();
-    M = M.scale(s1);
-    let T = svg.createSVGTransformFromMatrix(M)
-    gnode.transform.baseVal.replaceItem(T, 1);
+    let scaleTransform = svg.createSVGTransform();
+    scaleTransform.setScale(10, 20);
+    gnode.transform.baseVal.appendItem(scaleTransform);
+
+    console.log("scale text value: ", scaleValue)
 
 }
 
@@ -213,7 +219,7 @@ function initializeSVG() {
 
     svg.addEventListener("mousemove", mouseMove);
     svg.addEventListener("mousewheel", zoomWheel);
-
+ 
     mapWidth = svg.scrollWidth;
     mapHeight = svg.scrollHeight;
 
@@ -228,55 +234,14 @@ function loadSVG(svgName, callback) {
     console.log("...loading svg " + svgName);
 
     let obj = document.getElementById("svgObject");
-    //obj.addEventListener("load", (e)=>{initializeSVG(callback)});
-
     obj.setAttribute("data", svgName);
 
     return new Promise(resolve => {
         window.setTimeout(()=>{resolve("loaded")}
-            ,500
+            ,300
         );
     });
 }
-
-
-
-function z_setPlanetSystemSVG(eqR, soi) {
-
-    console.log("set to planet system SVG");
-
-    //document.getElementById("svgObject").setAttribute("data", "planetSystem.svg")
-
-    mouseDown = { active: false, x: 0, y: 0 };
-    boolDown = false;
-
-    //window.addEventListener("load",console.log("**** LOADED ****"));
-
-    planetSystemSVG = document.getElementById("svgObject").contentDocument.getElementById("planetSystem");
-
-    //planetSystemSVG.addEventListener("mousemove", mouseMove);
-    //planetSystemSVG.addEventListener("mousewheel", zoomWheel);
-
-    scaleFactor = 1 / 1e6;
-    unitFactor = 1 / 1e6;
-
-    // set viewBox to new SVG
-    var svg = planetSystemSVG;
-
-    mapWidth = svg.scrollWidth;
-    mapHeight = svg.scrollHeight;
-
-    svg.viewBox.baseVal.x = -soi * scaleFactor;
-    svg.viewBox.baseVal.y = -soi * scaleFactor;
-    svg.viewBox.baseVal.width = soi * scaleFactor * 2;
-    svg.viewBox.baseVal.height = soi * scaleFactor * 2;
-
-    viewBox = svg.viewBox.baseVal;
-    initialViewBoxWidth = viewBox.width;
-
-}
-
-
 
 
 async function setPlanetSystemSVG(planetName) {
