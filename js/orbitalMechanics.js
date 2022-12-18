@@ -174,6 +174,13 @@ class HyperbolicOrbit {
 
         this.deltaV = v1 - v0;
 
+        let theta = this.getRotation(this.outbound);
+        //get rotation same as:
+        //let k = this.outbound ? -1 : 1;
+        //theta = this.v2Angle + k * this.turnAngle;
+
+        this.lnPe = modRev(this.lnp - Math.PI / 2 + theta);
+
     }
 
     getVelocitieds(body, t, v3) {
@@ -214,7 +221,8 @@ class HyperbolicOrbit {
         // planet at LN0, planet velocity roughly vertical (upwards) (off by flight angle)
         // calling the left leg the inbound leg and right leg the outbound leg (assume CCW orbit)
         // hyperbola opening upwards (pe at 270deg)
-        // rotate hyperbola to align vertical 
+        // rotate hyperbola to align vertical (r1)
+        // then align V2 (r2)
 
         let theta;
 
@@ -236,8 +244,6 @@ class HyperbolicOrbit {
 
             theta = this.v2Angle + this.turnAngle;
         }
-
-        this.lnPe = modRev(this.lnp - Math.PI / 2 + theta);
 
         return theta;
 
@@ -264,7 +270,7 @@ class Planet extends Orbit {
 
     moons = [];
 
-    constructor(name, sma, ecc, inc, LAN, argPe, mean0, parentMu, eqR, soi, bodyMu) {
+    constructor(name, sma, ecc, inc, LAN, argPe, mean0, parentMu, eqR, soi, bodyMu, color) {
 
         let muParent = mu_sun;
 
@@ -273,6 +279,8 @@ class Planet extends Orbit {
         this.eqR = eqR;
         this.soi = soi
         this.mu = bodyMu;
+
+        this.color = color;
 
     }
 
@@ -283,8 +291,9 @@ class TransferOrbit {
     tod;
     tof;
 
-    Ln_o;
-    Ln_r;
+    Ln_o; //LN origin
+    Ln_r; //LN rendezvous
+    Ln_inc; //LN plane change
 
     constructor(originPlanet, destinationPlanet) {
 
@@ -412,7 +421,7 @@ class TransferOrbit {
         let id = this.destinationPlanet.inc;
         let LANd = this.destinationPlanet.LAN;
 
-        //vector normal to orbit orbit
+        //vector normal to origin orbit
         let ax = Math.sin(LANo) * Math.sin(io);
         let ay = -Math.cos(LANo) * Math.sin(io);
         let az = Math.cos(io);
@@ -422,29 +431,37 @@ class TransferOrbit {
         let by = -Math.cos(LANd) * Math.sin(id);
         let bz = Math.cos(id);
 
+        //angle between normal vectors = angle between planes
+        //cross product = mag A * mag B * sin(theta); mag A = mag B = 1
+        let cross_x = ay * bz - az * by;
+        let cross_y = -ax * bz + az * bx;
+        let cross_z = ax * by - ay * bz;
+        let cross = Math.hypot(cross_x, cross_y, cross_z);
+        let inc = Math.asin(cross);
+
+        let deg = radToDeg(inc);
+
         //vector towards AN/DN is cross product
         let cx = ay * bz - az * by;
         let cy = az * bx - ax * bz;
         let cz = ax * by - ay * bx;
 
-        //angle between normal vectors = angle between planes
-        //cross product = mag A * mag B * sin(theta); mag A = mag B = 1
         let mag = Math.sqrt(cx ** 2 + cy ** 2 + cz ** 2);
-        let inc = Math.asin(mag);
-        let Ln = Math.acos(cx / mag);
+        let Ln = Math.atan(cy / cx);
 
-        let r = this.a * (1 - this.e ** 2) / (1 + this.e * Math.cos(Ln - this.Ln_pe));
-
+        let r = this.a * (1 - this.e ** 2) / (1 + this.e * Math.cos(modRev(Ln - this.Ln_pe)));
+        
         let v = Math.sqrt(mu_sun * (2 / r - 1 / this.a));
         let dV = 2 * v * Math.sin(inc / 2);
+
+        this.Ln_inc = Ln;
+        this.r_inc = r;
 
         return dV;
     }
 }
 
-
-
-function createPlanetObjectsFromXML(data, callback){
+function createPlanetObjectFromXML(data, callback){
     
     console.log("...create planet objects");
 
@@ -456,6 +473,7 @@ function createPlanetObjectsFromXML(data, callback){
     for(let planetData of planetsData){
 
         let name= planetData.getAttribute("name");
+        let color = planetData.getAttribute("color");
         let soi = Number(planetData.getElementsByTagName("soi")[0].textContent);
         let bodyMu = Number(planetData.getElementsByTagName("mu")[0].textContent);
         let eqR = Number(planetData.getElementsByTagName("radius")[0].textContent);
@@ -468,7 +486,7 @@ function createPlanetObjectsFromXML(data, callback){
         let mean0 = Number(orbit.getElementsByTagName("mean0")[0].textContent);
         let inc = Number(orbit.getElementsByTagName("inc")[0].textContent) * Math.PI / 180;
 
-        let planet = new Planet(name, sma, ecc, inc, LAN, argPe, mean0, mu_sun, eqR, soi, bodyMu);
+        let planet = new Planet(name, sma, ecc, inc, LAN, argPe, mean0, mu_sun, eqR, soi, bodyMu, color);
 
         planets[name] = planet;
         
@@ -487,7 +505,7 @@ function getPlanetsXML(callback) {
             //window.localStorage.setItem("planetsXML", data);
             //console.log(window.localStorage);
             console.log("...xml data fetched");
-            createPlanetObjectsFromXML(data, callback)
+            createPlanetObjectFromXML(data, callback)
         });
     }else{
         console.log("planets already loaded");
