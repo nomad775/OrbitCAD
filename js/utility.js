@@ -1,14 +1,12 @@
 
 const pi = Math.atan(1) * 4;
-const mu_sun = 1172332800000000000;
 
 const secondsPerMinute = 60;
 const secondsPerHour = 60 * secondsPerMinute;
 const secondsPerDay = 6 * secondsPerHour;
 const secondsPerYear = 426 * secondsPerDay;
 
-function radToDeg(rad, decPlcs=2){
-    
+function radToDeg(rad, decPlcs=2){   
     let deg = rad * 180/pi;
     let p = 10 * decPlcs
     deg = Math.round(deg * p)/p;

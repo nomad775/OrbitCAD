@@ -10,19 +10,21 @@
         <script src="js/utility.js" type="text/javascript"></script>
         <script src="js/mfdViewController.js" type="text/javascript"></script>
         <script src="js/mfdSVGcontroller.js" type="text/javascript"></script>
-        <script src="js/mfdOutputcontroller.js" type="text/javascript"></script>
         <script src="js/mfdMain.js" type="text/javascript"></script>
 
         <link rel="stylesheet" href="mfd.css">
         <link rel="stylesheet" href="displayPanel.css">
         <link rel="stylesheet" href="solarSystemSVG.css">
 
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+
         <style>
             #timeEntry{
                 background-color: gray;
                 padding-left: 30px;
                 padding-right: 30px;
-                /* width:300px; */
             }
 
             #timeEntry h1{
@@ -50,7 +52,6 @@
                 color:black;
                 background-color: lightgray;
                 padding: 5px;
-                /* width: 100px; */
                 height: 30px;
                 margin: auto;
                 
@@ -60,7 +61,6 @@
                 display:flex;
                 align-items: center;
             }
-
 
         </style>
 
@@ -116,19 +116,19 @@
             </form>
         </dialog>
 
-        <form name="initializeTransfer" style="display: ;">
+        <form name="initializeTransfer" style="display: none ;">
             page: <input name="page"       type="number" value="1" style="width: 3em;">
-            utNow <input name="utNow"      type="number" value="0" style="width: 7em;">
+            utNow <input name="utNow"      type="number" value="0" style="width: 7em;"><br>
             origin<input name="origin" type="text" required style="width: 4em;">
-            dest  <input name="destination" type="text" required style="width: 4em;">
+            dest  <input name="destination" type="text" required style="width: 4em;"><br>
             tod   <input name="tod" type="number" style="width: 8em;">
-            v3_o  <input name="v3o" type="number"style="width: 8em;">
-            toa   <input name="toa" type="number" style="width: 8em;">
-            v3_d  <input name="v3d" type="number" style="width: 8em;">
-            originPark <input name="originPark" type="number" value="100" style="width: 8em;">
+            v3_o  <input name="v3o" type="number"style="width: 8em;"><br>
+            toa   <input name="toa" type="number" style="width: 8em;"><br>
+            v3_d  <input name="v3d" type="number" style="width: 8em;"><br>
+            originPark <input name="originPark" type="number" value="100" style="width: 8em;"><br>
             destPark   <input name="destinationPark" type="number" value="100" style="width: 8em;">
         </form>
-        
+
         <div id="divDisplayContainer" style="pointer-events: none;">
             
             <div id="utPanelUnit" class="paramDisp">
@@ -214,29 +214,15 @@
 
                 <object id="svgObject" type="image/svg+xml" data="planetSystem.svg" width="100%" height="100%"></object>
 
-                <div id="screenHtml" style="position: absolute; top: 0px; left:0px;" >
-                    <p style="margin-left: 10px;">TRANSFER: <output name="originName">ORIGIN</output> to <output name="destinationName" >DESTINATION</output></p>
-
-                    <div id="txText" style="">
-                        <p>Eject <output name="eject_dv"></output> m/s</p>                        
-                        <p>Plane change <output name="planeChange_dv"></output> m/s</p>
-                        <p>Capture <output name="capture_dv"></output> m/s</p>
-                        <p>TOTAL <output name="total_dv"></output> m/s</p>
-                    </div>
+                <div id="screenHtml" style="color: yellowGreen; position: absolute; top: 0px; left:0px;" >
+                    <p style="margin-left: 10px;">TRANSFER: <output name="originName">ORIGIN</output> to <output name="destinationName" >DESTINATION</output> <output name="totalDv"></output></p>
                 </div>
 
-                <div id="nodeDiv" style="position: absolute; right:20px; bottom: 15px; display: none;">
-                    <p id="peText"></p>
-                    <p id="utText"></p>
-                    <p id="lnText"></p>
-                    <p id="dvText"></p>
-                </div>
-
-                <svg id="alignmentMarker" width="20" height="40" viewbox="0 0 40 80" style="position: absolute; top: 20px; right: 20px;" onclick="document.getElementById('alignToLn0').click()">
-                    <path d="M 0, 30 l 10,-30 l 10,30 l-20,0" stroke="black" fill="red"></path>
-                    <path d="M 0, 30 l 10,30 l10,-30 l-20,0" stroke="black" fill="white"></path>
+                <svg id="alignmentMarker" width="12"  viewbox="0 0 20 60" overflow="visible" style="position: absolute; top: 40px; right: 40px;" onclick="document.getElementById('alignToLn0').click()">
+                    <path d="M 0,30 l 10,-30 l 10,30  l-20,0" stroke="black" fill="red"></path>
+                    <path d="M 0,30 l 10,30  l 10,-30 l-20,0" stroke="black" fill="white"></path>
                 </svg>
-                
+
             </div>
 
             <svg id="svgButton" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg"
@@ -248,9 +234,6 @@
                         <rect x="1" y="1" width="58" height="18" rx="2" ry="2" fill="black" />
                         <rect x="10" y="4" width="40" height="12" rx="1" ry="1" fill="white" />
                     </symbol>
-            
-            
-            
                 </defs>
             </svg>
 
@@ -499,7 +482,7 @@
 
         <form id="options">
             <input id="alignToLn0" name="alignToLn0" type="checkbox">
-            <p>zoom<output id="zoom" name="zoom"></output></p>
+            <p>zoom <output id="zoom" name="zoom"></output></p>
         </form>
         
     </body>

@@ -189,7 +189,7 @@
     <orbit>
       <sma>20726155264</sma>
       <ecc>0.0510</ecc>
-      <inc>0.0600</inc>
+      <inc>.06</inc>
       <lan>135.5</lan>
       <argPe>0</argPe>
       <mean0>3.1400</mean0>

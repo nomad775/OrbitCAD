@@ -31,12 +31,35 @@ xmlns:xlink="http://www.w3.org/1999/xlink"
             <path d="M 0 0 L -5 8 H -2 V 20 H 2 V 8 H 5 L 0 0" stroke="black" fill="red"/>
         </symbol>
         
-        <symbol id="label">
-            <rect x="0" y="0" width="30" hieght="20" fill="none" stroke="green"/>
-            <text dominant-baseline="hanging" dx="0" dy="1.2">LN: <tspan id="nodeLn"></tspan></text>
-            <text dominant-baseline="hanging" dx="0" dy="3.6">dV: <tspan id="nodeDv"></tspan> m/s</text>
+        <symbol id="destLabelSymbol" class="transfer" width="10" height="10" viewBox="0 0 10 10" font-size="1">
+            <rect x="0" y="0" width="10" height="6" stroke="lightGray" fill="black" fill-opacity="50%"></rect>
+            <text dominant-baseline="hanging" font-size=".8" text-anchor="middle" font-weight="bold" x="5" y="0.1" >TO DEST SOI</text>
+            <text dominant-baseline="hanging" x=".2" dy="1.2">TOA <tspan id="t3"      x="3"></tspan></text>
+            <text dominant-baseline="hanging" x=".2" dy="2.4">Alt <tspan id="destAlt" x="3"></tspan> km</text>
+            <text dominant-baseline="hanging" x=".2" dy="3.6">V   <tspan id="destV"   x="3"></tspan> m/s</text>
+            <text dominant-baseline="hanging" x=".2" dy="4.8">Ln  <tspan id="destLn"  x="3"></tspan> deg</text>
         </symbol>
 
+        <symbol id="originLabelSymbol" class="transfer" width="10" height="10" viewBox="0 0 10 10" font-size="1">
+            <rect x="0" y="0" width="10" height="6" stroke="lightGray" fill="black" fill-opacity="50%"></rect>
+            <text dominant-baseline="hanging" font-size=".8" text-anchor="middle" font-weight="bold" x="5" y="0.1">FROM ORIGIN SOI</text>
+            <text dominant-baseline="hanging" x=".2" y="1.2">TOD  <tspan id="t1"        x="3"></tspan></text>
+            <text dominant-baseline="hanging" x=".2" dy="2.4">Alt <tspan id="originAlt" x="3"></tspan> km</text>
+            <text dominant-baseline="hanging" dx=".2" dy="3.6">V   <tspan id="originV"   x="3"></tspan> m/s</text>
+            <text dominant-baseline="hanging" dx=".2" dy="4.8">Ln  <tspan id="originLn"  x="3"></tspan> deg</text>
+        </symbol>
+
+        <symbol id="planeChangeLabelSymbol" class="transfer" width="10" height="10" viewBox="0 0 10 10" font-size="1">
+            <rect x="0" y="0" width="10" height="6" stroke="lightGray" fill="black" fill-opacity="50%"></rect>
+            <text dominant-baseline="hanging" font-size=".8" text-anchor="middle" font-weight="bold" x="5" y="0.1">PLANE CHANGE</text>
+            <text dominant-baseline="hanging" x=".2" dy="1.2">I  <tspan id="pcI"  x="3"></tspan> deg</text>
+            <text dominant-baseline="hanging" x=".2" dy="2.4">LN <tspan id="pcLn" x="3"></tspan> deg</text>
+            <text dominant-baseline="hanging" x=".2" dy="3.6">dV <tspan id="pcDv" x="3"></tspan> m/s</text>
+        </symbol>
+
+        <symbol id="ascendingNodeSymbol" class="transfer" viewBox="0 -5 5 5" overflow="visible">
+            <path d="M 0,-5 L-5,0 -5,5 5,5 5,0 0,-5" stroke="black"></path>
+        </symbol>
     </defs>
     
     <circle id="sun" cx="0" cy="0" r="4" fill="yellow" stroke="orange" />
@@ -64,43 +87,48 @@ xmlns:xlink="http://www.w3.org/1999/xlink"
             d="M -729.89 -869.84 A 901.19 870.20  -130    0 0 428.66 510.86   A 901.19 870.20  -130    0 0 -729.89 -869.84 " />
     
         <!-- planets -->
-        <circle class="planet" id="Moho" cx="-5.50" cy="62.92" r="18" fill="peachpuff" />
-        <circle class="planet" id="Eve" cx="-95.93" cy="25.70" r="18" fill="purple" />
-        <circle class="planet" id="Kerbin" cx="-136.00" cy="-30" r="18" fill="cyan" />
-        <circle class="planet" id="Duna" cx="155.37" cy="152.68" r="18" fill="crimson" />
-        <circle class="planet" id="Dres" cx="-460.51" cy="81.20" r="18" fill="#a44128" />
-        <circle class="planet" id="Jool" cx="348.92" cy="-552.57" r="18" fill="green" />
-        <circle class="planet" id="Eeloo" cx="-729.89" cy="-869.84" r="18" fill="gray" />
+        <circle class="planet" id="Moho" cx="-5.50" cy="62.92" r="2%" fill="peachpuff" />
+        <circle class="planet" id="Eve" cx="-95.93" cy="25.70" r="2%" fill="purple" />
+        <circle class="planet" id="Kerbin" cx="-136.00" cy="0" r="2%" fill="cyan" />
+        <circle class="planet" id="Duna" cx="155.37" cy="152.68" r="2%" fill="crimson" />
+        <circle class="planet" id="Dres" cx="-460.51" cy="81.20" r="2%" fill="#a44128" />
+        <circle class="planet" id="Jool" cx="348.92" cy="-552.57" r="2%" fill="green" />
+        <circle class="planet" id="Eeloo" cx="-729.89" cy="-869.84" r="2%" fill="gray" />
         
-        <!-- init -->
-
-        <!-- planet_destination_future -->
-
-        <circle class="planet" id="origin_t0" cx="0" cy="0" r="1.5%" fill="none" fill-opacity=".4"/>
-        <circle class="planet" id="origin_t2" cx="0" cy="0" r="1.5%" fill="none" fill-opacity=".4"/>
-
-        <circle class="planet" id="destination_t0" cx="0" cy="0" r="1.5%" fill="none" fill-opacity=".4"/>
-        <circle class="planet" id="destination_t2" cx="0" cy="0" r="2%"  fill="red" fill-opacity=".4" />
-
+        <!-- transfer initialization -->
+        <use id="outArrow" class="transferInit" href="#outArrowDef" x="-2" y="0" />
+        <use id="inArrow"  class="transferInit" href="#inArrowDef"  x="-2" y="0" transform="rotate(-200, -95.93, 25.70)" />
 
         <!-- transfer orbit -->
-
-        <path class="orbit" id="txOrbit" stroke="gray" fill="none"
-            d="M -729.89 -869.84 A 901.19 870.20  -130    0 0 428.66 510.86   A 901.19 870.20  -130    0 0 -729.89 -869.84 " />
+        <path class="orbit transfer" id="txOrbit" stroke="gray" fill="none"/>
     
-        <line id="line1" x1="0" y1="0" x2="0" y2="0" stroke="lightblue" stroke-dashArray="15 5 5 5 1 5 5 5 10 5" />
+        <!-- decorations -->
+        <line id="line1" class="transfer" x1="0" y1="0" x2="0" y2="0" stroke="lightblue" stroke-dashArray="15 5 5 5 1 5 5 5 10 5" />
     
-        <path id="destTOF" stroke="yellow" stroke-width="3" fill="none" stroke-opacity="30%" />
-        <path id="txTOF"   stroke="lightgreen" stroke-width="3" fill="none" stroke-opacity="100%" />
+        <path id="destTOF" class="transfer" stroke="yellow" stroke-width="3" fill="none" stroke-opacity="30%" />
+        <path id="txTOF"   class="transfer" stroke="lightgreen" stroke-width="3" fill="none" stroke-opacity="100%" />
 
-        <use id="outArrow" href="#outArrowDef" x="-2000" y="0" />
-        <use id="inArrow"  href="#inArrowDef"  x="-2000" y="0" transform="rotate(-200, -95.93, 25.70)" />
+        <!-- planets t0, t3 -->
+        <!-- t0 = now, t1 = tod, t2=toa -->
+        <circle class="planet transfer" id="origin_t0" cx="0" cy="0" r="1.5%" fill="none" fill-opacity=".4"/>
+        <circle class="planet transfer" id="origin_t2" cx="0" cy="0" r="1.5%" fill="none" fill-opacity=".4"/>
 
-        <circle id="planeChangeMarker" cx="0" cy="0" r="3%" fill="green"/>
+        <circle class="planet transfer" id="destination_t0" cx="0" cy="0" r="1.5%" fill="none" fill-opacity=".4"/>
+        <circle class="planet transfer" id="destination_t2" cx="0" cy="0" r="2%" fill="red" fill-opacity=".4" />
+
+        <circle id="planeChangeMarkerA" class="transfer" r=".5%" fill="cyan" opacity="30%"/>
+        <circle id="planeChangeMarkerD" class="transfer" r=".5%" fill="lightBrown" opacity="30%"/>
+
     </g>
-    
-    <circle id="testCircle" cx="0" cy="0" r="10" fill="none" stroke="yellow"/>
-    <rect id="originLabel" x="-12%" y="25%" width="25%" height="25%" fill="none" stroke="blue"/>
-    <rect id="testRect" x="0" y="0" width="20" height="10" fill="none" stroke="red"/>
+
+    <!-- note use insert point is the upper left of viewbox-->
+    <use id="ascendingNode" class="transfer" href="#ascendingNodeSymbol" x="0" y="0" width="1%" height="1%" fill="blue"/>
+    <use id="descendingNode" class="transfer" href="#ascendingNodeSymbol" x="0" y="0" width="1%" height="1%" transform="rotate(180)" fill="brown"/>
+
+
+    <!-- labels -->
+    <use id="destLabel"   class="transfer" href="#destLabelSymbol"   x="0" y="0" width="35%" height="35%"/>
+    <use id="originLabel" class="transfer" href="#originLabelSymbol" x="0" y="0" width="35%" height="35%"/>
+    <use id="planeChangeLabel" class="transfer" href="#planeChangeLabelSymbol" x="0" y="0" width="35%" height="-35%"/>
 
 </svg>

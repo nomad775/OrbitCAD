@@ -1,5 +1,5 @@
 svg{
-    background-color: white;
+    background-color: black;
 }
 
 svg * {
@@ -40,9 +40,14 @@ svg * {
 }
 
 text{
-    color: yellowgreen;
+    font-family: "VT323";
+    fill: yellowgreen;
 }
 
-#gnode{
-    
+.transferInit{
+    display : none;
+}
+
+.transfer{
+    display: none;
 }

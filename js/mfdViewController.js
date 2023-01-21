@@ -117,16 +117,15 @@ function zoomWindow(x0,y0,w,h){
     let zoom = initialViewBoxWidth / viewBox.width;
     
     window.dispatchEvent(svgZoomEvent);
-
-    //document.getElementById("zoom").textContent = `zoom ${Math.round(initialViewBoxWidth / viewBox.width * 100) / 100}`;
+    document.getElementById("zoom").textContent = Math.round(initialViewBoxWidth / viewBox.width * 100) / 100;
 
     //scaleText();
 }
 
 
-function zoomPlanetOrbit(planetName){
+function zoomPlanetOrbit(orbit){
 
-    let orbit = svgOrbits[planetName];
+    //let orbit = svgOrbits[planetName];
 
     let x = (orbit.ox + orbit.dx) / 2;
     let y = (orbit.oy + orbit.dy) / 2;
@@ -134,7 +133,9 @@ function zoomPlanetOrbit(planetName){
 
     let o = new DOMPoint(x, y);
 
-    let transformList = solarSystemSVG.getElementById(planetName + "Orbit").parentElement.transform.baseVal;
+    let element = orbit.element;
+    let transformList = element.parentElement.transform.baseVal;
+    //let transformList = solarSystemSVG.getElementById(planetName + "Orbit").parentElement.transform.baseVal;
 
     if(transformList.length==1){
         
@@ -161,11 +162,15 @@ function zoomTxOrbit() { //planet1, planet2){
         planetO = planet2;
     }
 
-    zoomPlanetOrbit(planetO.name);
+    zoomPlanetOrbit(svgOrbits[planetO.name]);
+}
+
+function zoomTxOrbit2(){
+
 }
 
 function zoomAll(event) {
-    zoomPlanetOrbit("Eeloo");
+    zoomPlanetOrbit(svgOrbits["Eeloo"]);
 }
 
 
@@ -209,7 +214,7 @@ function touchUp() {
 
 function initializeSVG() {
 
-    console.log("...initializing svg");
+    console.log("....initializing svg");
 
     let obj = document.getElementById("svgObject");
     let svg = obj.contentDocument.rootElement;
@@ -226,12 +231,14 @@ function initializeSVG() {
     viewBox = svg.viewBox.baseVal;
 
     initialViewBoxWidth = viewBox.width;
+
+    console.log("....svg initialized");
 }
 
 
 function loadSVG(svgName, callback) {
 
-    console.log("...loading svg " + svgName);
+    console.log("....loading svg : " + svgName);
 
     let obj = document.getElementById("svgObject");
     obj.setAttribute("data", svgName);
@@ -246,12 +253,13 @@ function loadSVG(svgName, callback) {
 
 async function setPlanetSystemSVG(planetName) {
 
+    console.log("setting planet system SVG");
+
     scaleFactor = 1 / 1e6;
     unitScale = 1 / 1e6;
 
     let planet = planets[planetName];
-    let svg = document.getElementById("svgObject").contentDocument.rootElement;
-
+    
     let eqR = planet.eqR;
     let soi = planet.soi;
 
@@ -260,10 +268,12 @@ async function setPlanetSystemSVG(planetName) {
 
     await loadSVG("planetSystem.svg");
 
-    svg.viewBox.baseVal.x = -soi * scaleFactor;
-    svg.viewBox.baseVal.y = -soi * scaleFactor;
-    svg.viewBox.baseVal.width = soi * scaleFactor * 2;
-    svg.viewBox.baseVal.height = soi * scaleFactor * 2;
+    let svg = document.getElementById("svgObject").contentDocument.rootElement;
+    
+    svg.viewBox.baseVal.x = -soi * scaleFactor / 2;
+    svg.viewBox.baseVal.y = -soi * scaleFactor / 2;
+    svg.viewBox.baseVal.width = soi * scaleFactor;
+    svg.viewBox.baseVal.height = soi * scaleFactor;
 
     initializeSVG();
 }
@@ -271,7 +281,7 @@ async function setPlanetSystemSVG(planetName) {
 
 async function setSolarSystemSVG() {
 
-    console.log("setting solar system SVG");
+    console.log("...setting solar system SVG");
 
     scaleFactor = 1 / 1e8;
     unitScale = 1 / 1e9;

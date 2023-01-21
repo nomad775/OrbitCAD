@@ -2,6 +2,9 @@
 body{
     width: 30%;
     margin: auto;
+    font-family: "VT323";
+    /* "Lucida Console", "monospace"; */
+    color: greenyellow;
 }
 
 #divMFD {
@@ -81,8 +84,6 @@ body{
     flex-direction: column;
     justify-items: center;
     justify-content: space-between;
-    /* align-items: center; */
-    /* align-content: center; */
 }
 
 #divLeftButtonGroup,
@@ -124,6 +125,9 @@ body{
     top: 2px;
 }
 
+
+/* non-div items */
+
 label.mfdButtonLabel {
     background-color: black;
     color: rgb(154, 205, 50);
@@ -143,11 +147,13 @@ input[type="radio"] {
     appearance: none;
 }
 
+
+
 #nodeDiv{
     font-size: 18pt;
     font-family: "arial";
-    color: green;
-    
+    color: orange;
+    background-color: red;
 }
 
 #nodeDiv p{
