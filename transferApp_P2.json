@@ -24,7 +24,7 @@
         {
             "id": "t3",
             "label": "INC",
-            "fn": "",
+            "fn": "gotoPage(4)",
             "disabled": ""
         },
 
@@ -37,15 +37,15 @@
 
         {
             "id": "t5",
-            "label": "",
-            "fn": "",
-            "disabled": "disabled"
+            "label": "NEW",
+            "fn": "gotoPage(1)",
+            "disabled": ""
         },
     
         {
             "id": "b0",
-            "label": "RESET",
-            "fn": "gotoPage(0)"
+            "label": "INFO",
+            "fn": ""
         },
 
         {
@@ -67,8 +67,8 @@
 
         {
             "id": "b4",
-            "label": "",
-            "fn": ""
+            "label": "PREV",
+            "fn": "gotoPage(1)"
         },
 
         {

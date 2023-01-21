@@ -23,7 +23,7 @@
         {
             "id": "t3",
             "label": "INC",
-            "fn": "",
+            "fn": "gotoPage(4)",
             "disabled": ""
         },
 
@@ -67,8 +67,8 @@
 
         {
             "id": "b4",
-            "label": "",
-            "fn": ""
+            "label": "PREV",
+            "fn": "gotoPage(4)"
         },
 
         {

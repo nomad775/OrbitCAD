@@ -10,54 +10,55 @@
         {
             "id": "t1",
             "label": "TRNFER",
-            "fn": "",
-            "checked": "checked"
+            "fn": "gotoPage(2)",
+            "checked": ""
         },
 
         {
             "id": "t2",
             "label": "EJECT",
-            "fn": "",
-            "disabled": "true"
+            "fn": "gotoPage(3)",
+            "disabled": ""
         },
 
         {
             "id": "t3",
             "label": "INC",
             "fn": "",
-            "disabled": "disabled"
+            "checked": "checked",
+            "disabled": ""
         },
 
         {
             "id": "t4",
             "label": "CAPTURE",
-            "fn": "",
-            "disabled": "disabled"
+            "fn": "gotoPage(5)",
+            "disabled": ""
         },
 
         {
             "id": "t5",
             "label": "NEW",
-            "fn": "",
-            "disabled": "disabled"
+            "fn": "gotoPage(1)",
+            "disabled": ""
         },
     
         {
             "id": "b0",
-            "label": "SET UT",
-            "fn": "getTime()"
+            "label": "",
+            "fn": ""
         },
-        
+
         {
             "id": "b1",
-            "label": "ORIGIN",
-            "fn": "unDimPlanets()"
+            "label": "",
+            "fn": ""
         },
 
         {
             "id": "b2",
-            "label": "DEST",
-            "fn": "unDimPlanets()"
+            "label": "",
+            "fn": ""
         },
         {
             "id": "b3",
@@ -67,23 +68,23 @@
 
         {
             "id": "b4",
-            "label": "",
-            "fn": ""
+            "label": "PREV",
+            "fn": "gotoPage(3)"
         },
 
         {
             "id": "b5",
             "label": "NEXT",
-            "fn": "next()",
-            "disabled": "disabled"
+            "fn": "gotoPage(5)",
+            "disabled": ""
 
         }
     ],
 
     "inputFields": [
         "utNow",
-        "originName",
-        "destinationName"
+        "origin",
+        "destination"
     ],
 
     "outputFields": [
