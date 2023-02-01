@@ -235,6 +235,7 @@ function initializeTransfer(originName, destinationName, utNow){
     window.dispatchEvent(displayedTimeChangeEvent);
 
     document.forms["options"]["alignToLn0"].addEventListener("click", setAlignment);
+    zoomTxOrbit();
 }
 
 function info(){
@@ -363,8 +364,17 @@ function setTransferOrbit(originName, destinationName, tod){
     label.setAttribute("height", "35%");
     window.dispatchEvent(displayedTimeChangeEvent);
     
+
+    if (transferOrbit.crossProduct > 0) {
+        svgDoc.getElementById("ascendingNode").setAttribute("width", "3%");
+        svgDoc.getElementById("ascendingNode").setAttribute("height", "3%");
+    } else {
+        svgDoc.getElementById("descendingNode").setAttribute("width", "3%");
+        svgDoc.getElementById("descendingNode").setAttribute("height", "3%");
+    }
     document.forms["options"]["alignToLn0"].addEventListener("click", setAlignment);
     
+    zoomPlanetOrbit(transferOrbit.svgEllipse);
 }
 
 // ---------- end page 4 ----------

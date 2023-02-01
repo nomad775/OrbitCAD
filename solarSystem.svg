@@ -59,7 +59,9 @@ xmlns:xlink="http://www.w3.org/1999/xlink"
 
         <symbol id="ascendingNodeSymbol" class="transfer" viewBox="0 -5 5 5" overflow="visible">
             <path d="M 0,-5 L-5,0 -5,5 5,5 5,0 0,-5" stroke="black"></path>
+            <text x="0" y="4.5" fill="white" font-size="8" text-anchor="middle" vertical-align="middle">&#x260a;</text>
         </symbol>
+
     </defs>
     
     <circle id="sun" cx="0" cy="0" r="4" fill="yellow" stroke="orange" />
@@ -122,8 +124,8 @@ xmlns:xlink="http://www.w3.org/1999/xlink"
     </g>
 
     <!-- note use insert point is the upper left of viewbox-->
-    <use id="ascendingNode" class="transfer" href="#ascendingNodeSymbol" x="0" y="0" width="1%" height="1%" fill="blue"/>
-    <use id="descendingNode" class="transfer" href="#ascendingNodeSymbol" x="0" y="0" width="1%" height="1%" transform="rotate(180)" fill="brown"/>
+    <use id="ascendingNode" class="transfer" href="#ascendingNodeSymbol" x="0" y="0" width="-2%" height="-2%" fill="blue"/>
+    <use id="descendingNode" class="transfer" href="#ascendingNodeSymbol" x="0" y="0" width="-2%" height="-2%" transform="rotate(180)" fill="brown"/>
 
 
     <!-- labels -->

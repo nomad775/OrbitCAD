@@ -401,7 +401,7 @@ class SVGTransfer extends TransferOrbit{
         setAlignment();
 
         //zoomPlanetOrbit(this.svgEllipse);
-        zoomTxOrbit();
+        //zoomTxOrbit();
 
         this.setOriginLabel();
         this.setDestinationLabel();
@@ -992,7 +992,8 @@ function initializeHyperbolicSVG(bodyName, t, peAlt, v3, outbound) {
 
     let w = park * 4;
     let l = peX > 0 ? -.3 * w : -.7 * w;
-    let top = peY > 0 ? -.6 * w : -.4 * w;
+    //let top = peY > 0 ? -.5 * w : -.5 * w;
+    let top=-.55 * w;
     
     zoomWindow(l, top, w, w);
 
