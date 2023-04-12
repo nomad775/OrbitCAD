@@ -1,5 +1,6 @@
 svg{
     background-color: black;
+    touch-action: none;
 }
 
 svg * {
@@ -22,6 +23,7 @@ svg * {
     stroke-width: 1px;
     stroke-dasharray: 1 2;
 }
+
 .planet.highlight {
     r: 2%;
     opacity: 1;

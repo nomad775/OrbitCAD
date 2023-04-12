@@ -55,6 +55,7 @@ function getTime() {
     form.utS.value = displayedTime;
 
     dialog.showModal();
+    dialog
 
     let optButton = document.getElementById("optB0");
     optButton.checked = false;
@@ -174,11 +175,19 @@ function next(){
     console.log("next");
     //document.forms["fmrBottom"]
     document.getElementById("optB5").checked = false;
+
     document.forms["initializeTransfer"]["page"].value = 2;
+    
+    let formData = new FormData(document.forms["initializeTransfer"]);
+    for(const e of formData){
+        console.log(e);
+    }
+    //console.log(formData.values().toArray());
+    
     document.forms["initializeTransfer"].submit();
 }
 
-// ---------- end page 1 ----------
+// --------- end page 1 ----------
 
 
 
@@ -205,8 +214,8 @@ function initializeTransfer(originName, destinationName, utNow){
     form["v3o"].value = transferOrbit.v3o.toFixed(0);
     form["toa"].value = transferOrbit.toa.toFixed(0);
     form["v3d"].value = transferOrbit.v3d.toFixed(0);
-    form["originPark"].value = 100000;
-    form["destinationPark"].value = 100000;
+    //form["originPark"].value = 100000;    //should already be set by parse query string
+    //form["destinationPark"].value = 100000;
 
     let dv_eject = transferOrbit.ejectDv;
     let dv_capture = transferOrbit.captureDv;
@@ -225,12 +234,12 @@ function initializeTransfer(originName, destinationName, utNow){
     let ln_da = radToDeg(transferOrbit.Ln_da);
     let err = radToDeg(transferOrbit.rdvDiff);
 
-    //document.querySelector("output[name='utNow']").textContent = convertSecondsToDateObj(displayedTime).toString();
+    document.querySelector("output[name='utNow']").textContent = convertSecondsToDateObj(utNow).toString();
+    document.querySelector("output[name='totalDv']").textContent = dv_total.toFixed(2);
     //document.querySelector("output[name='tod']").textContent = convertSecondsToDateObj(displayedTime).toString();
     //document.querySelector("output[name='eject_dv']").textContent = dv_eject.toFixed(2);
     //document.querySelector("output[name='planeChange_dv']").textContent = dv_planeChange.toFixed(2);
     //document.querySelector("output[name='capture_dv']").textContent = dv_capture.toFixed(2);
-    document.querySelector("output[name='totalDv']").textContent = dv_total.toFixed(2);
     
     window.dispatchEvent(displayedTimeChangeEvent);
 
@@ -323,12 +332,14 @@ function setPeAlt() {
         el2.style.top = "20px";
     }
 
-
+    // set node text
     document.getElementById("peText").textContent = "PE: " + pe + " km";
     document.getElementById("utText").textContent = "TOD: " + convertSecondsToDateObj(tod).toString();
     document.getElementById("lnText").textContent = "LN: " + radToDeg(lnPe, 1);
     document.getElementById("dvText").textContent = "dV: " + dv.toFixed(2);
-    
+
+    // set total dV display
+    document.querySelector("output[name='totalDv']").textContent = dv_total.toFixed(2);
 }
 
 // ---------- end page 3 ----------
@@ -372,6 +383,8 @@ function setTransferOrbit(originName, destinationName, tod){
         svgDoc.getElementById("descendingNode").setAttribute("width", "3%");
         svgDoc.getElementById("descendingNode").setAttribute("height", "3%");
     }
+
+    document.querySelector("output[name='utNow']").textContent = convertSecondsToDateObj(displayedTime).toString();
     document.forms["options"]["alignToLn0"].addEventListener("click", setAlignment);
     
     zoomPlanetOrbit(transferOrbit.svgEllipse);
@@ -419,9 +432,13 @@ function setActiveView(params){
             // ejection
             console.log("..setting page 3")
             setPlanetSystemSVG(params.originName).then(function(){
+
                 initializeHyperbolicSVG(params.originName, params.tod, params.originPark, params.v3o, true);
+
                 document.getElementById('altEntry').addEventListener("submit", setPeAlt);
                 document.forms["options"]["alignToLn0"].addEventListener("click", updateHypSVG);
+                
+                document.querySelector("output[name='utNow']").textContent = convertSecondsToDateObj(params.utNow).toString();
             });
             break;
         case 4:
@@ -438,6 +455,7 @@ function setActiveView(params){
                 initializeHyperbolicSVG(params.destinationName, params.toa, params.destinationPark, params.v3d, false);
                 document.getElementById('altEntry').addEventListener("submit", setPeAlt);
                 document.forms["options"]["alignToLn0"].addEventListener("click", updateHypSVG);
+                document.querySelector("output[name='utNow']").textContent = convertSecondsToDateObj(params.utNow).toString();
             });
             break;
     }
@@ -504,7 +522,7 @@ function initializeMFDfromFile(params) {
             outputFields.forEach((field) =>{
 
                 if(params[field]){
-                    //console.log(".." + field + " = ", params[field]);
+                    console.log(".." + field + " = ", params[field]);
                     document.querySelector(`output[name='${field}']`).textContent = params[field];
                 }
 
@@ -518,7 +536,10 @@ function initializeMFDfromFile(params) {
 function parseQueryString(){
 
     let params = new URLSearchParams(location.search);
-    
+    let i = params.length;
+    console.log(params.entries.length);
+
+
     let page = Number(params.get("page"));
     let utNow = Number(params.get("utNow"));
     let originName = params.get("origin");

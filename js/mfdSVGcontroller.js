@@ -8,7 +8,7 @@ var hypOrbit = {};
 
 var scaleFactor  = 1/1e8;
 var unitFactor = 1/1e9;
-
+  
 
 class SVGplanet extends Planet{
     

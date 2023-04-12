@@ -10,66 +10,15 @@ var zoom = 1;
 var minZoom = .9;
 var maxZoom = 5;
 
+var pointerCount = 0;
+
+var pointerA;
+var pointerB;
+var lastD;
+
 let zoomAnchorX = 0;
 let zoomAnchorY = 0;
 
-var boolDown;
-var mouseDown;
-
-var lastD;
-var lastTouch;
-var lastX;
-var lastY;
-
-
-let start, previousTimeStamp;
-let dir, err; delta=1;
-let animationDone;
-
-function mouseMove(event){
-    
-    if(event.buttons==1){
-        
-        //pan
-        viewBox.x -= event.movementX * viewBox.width/mapWidth;
-        viewBox.y -= event.movementY * viewBox.height/mapHeight;
-
-        event.preventDefault();
-        event.stopImmediatePropagation();
-
-    }else{
-
-        let vbX = viewBox.x;
-        let vbY = viewBox.y;
-        
-        let vbwidth = viewBox.width;
-        let vbheight = viewBox.height;
-        
-        let mouseX = event.offsetX;
-        let mouseY = event.offsetY;
-        
-        let dx = (vbwidth / mapWidth * mouseX + vbX) *  unitFactor/scaleFactor;
-        let dy = -(vbheight / mapHeight * mouseY + vbY) * unitFactor/scaleFactor;
-        
-        let r = Math.hypot(dx,dy);
-        let theta = radToDeg(modRev(Math.atan2(dy,dx)));
-
-        zoomAnchorX = mouseX;
-        zoomAnchorY = mouseY;
-        
-        // document.getElementById("xyCoordinates").textContent = (`${dx.toFixed(2)}, ${dy.toFixed(2)}`);
-        // document.getElementById("polarCoordinates").textContent = (`${r.toFixed(2)} <  ${theta.toFixed(2)}deg`);
-    }
-        
-}
-    
-function mouseLeave(event){
-    mouseX = null;
-    mouseY = null;
-
-    zoomAnchorX=0;
-    zoomAnchorY=0;
-}
 
 // ===== ZOOM =====
 function zoomWheel(event) {
@@ -79,7 +28,7 @@ function zoomWheel(event) {
 
     zoomPerCent(Math.sign(v) * .25);
 
-    //event.preventDefault();
+    event.preventDefault();
     event.stopImmediatePropagation();
 }
 
@@ -122,7 +71,7 @@ function zoomWindow(x0,y0,w,h){
     //scaleText();
 }
 
-
+// ----- Zoom By Orbit -----
 function zoomPlanetOrbit(orbit){
 
     //let orbit = svgOrbits[planetName];
@@ -174,7 +123,206 @@ function zoomAll(event) {
 }
 
 
-function scaleText() {
+// ======== POINTER MANAGER ==========
+
+function pointerDown(event){
+    
+    event.preventDefault();
+    event.stopImmediatePropagation();
+
+    pointerCount += 1;
+
+    console.log("PC" + pointerCount, "DOWN");
+
+    if(event.pointerType=="mouse") return;
+
+    if(pointerCount==1){
+        //console.log("A: ", event);
+        pointerA = event;
+    }else{
+        //console.log("B:", event);
+        pointerB = event;
+    }
+
+    
+}
+
+function pointerUp(event){
+
+    pointerCount -= 1;
+
+    console.log("PC" + pointerCount, "UP");
+
+    if(pointerCount<0) pointerCount = 0;
+
+    if(event.pointerType=="mouse") return;
+
+    if(event.pointerId==pointerA.pointerId){
+        pointerA = null;
+    }else{
+        pointerB = null;
+    }
+
+
+}
+
+function pointerMove(event) {
+
+    let isPan = (event.pointerType="mouse" && event.buttons == 1) || (event.pointerType=="touch" && pointerCount == 1);
+    let isPinchZoom = (event.pointerType=="touch" && pointerCount == 2);
+
+    document.getElementById("xyCoordinates").textContent = "is pinch  " +  isPinchZoom;
+
+    console.log("move", isPinchZoom);
+
+    //event.preventDefault();
+    //event.stopImmediatePropagation();
+
+    document.getElementById("xyCoordinates").textContent = "PC" + pointerCount;
+
+    if(isPan) pan(event);
+    if(isPinchZoom){
+
+        if(event.pointerId == pointerA.pointerId){
+            pointerA = event;
+        }
+        if(event.pointerId == pointerB.pointerId){
+            pointerB = event;
+        }
+
+        pinchZoom(event);
+    }
+        
+
+    
+        // let vbX = viewBox.x;
+        // let vbY = viewBox.y;
+
+        // let vbwidth = viewBox.width;
+        // let vbheight = viewBox.height;
+
+        // let mouseX = event.offsetX;
+        // let mouseY = event.offsetY;
+
+        // let dx = (vbwidth / mapWidth * mouseX + vbX) * unitFactor / scaleFactor;
+        // let dy = -(vbheight / mapHeight * mouseY + vbY) * unitFactor / scaleFactor;
+
+        // let r = Math.hypot(dx, dy);
+        // let theta = radToDeg(modRev(Math.atan2(dy, dx)));
+
+        // zoomAnchorX = mouseX;
+        // zoomAnchorY = mouseY;
+
+        // document.getElementById("xyCoordinates").textContent = (`${dx.toFixed(2)}, ${dy.toFixed(2)}`);
+        // document.getElementById("polarCoordinates").textContent = (`${r.toFixed(2)} <  ${theta.toFixed(2)}deg`);
+    
+
+}
+
+
+function pan(event){
+    //console.log(event, isPan);
+
+    //pan
+    viewBox.x -= event.movementX * viewBox.width / mapWidth;
+    viewBox.y -= event.movementY * viewBox.height / mapHeight;
+
+   
+
+}
+
+function pinchZoom(event){
+
+    let ax = pointerA.clientX;
+    let ay = pointerA.clientY;
+
+    let bx = pointerB.clientX;
+    let by = pointerB.clientY;
+
+    let dx = ax - bx;
+    let dy = ay - by;
+
+    let d = Math.hypot(dx, dy);
+    let dd = lastD-d;
+
+    console.log("pz", ax, bx);
+
+    document.getElementById("xyCoordinates").textContent = "pinch zoom "  + d.toFixed(2);
+
+    lastD = d;
+
+    if(dd<0){
+        amount = -.05
+    }else{
+        amount = .05;
+    }
+
+    zoomAnchorX = (ax + bx) / 2;
+    zoomAnchorY = (ay + by) / 2;
+
+    //document.getElementById("polarCoordinates").textContent = amount.toFixed(2);
+    zoomPerCent(amount);
+}
+
+function toggleMouseDown(event) {
+    boolDown = !boolDown;
+}
+
+function touchDown(event) {
+    lastX = event.clientX;
+    lastY = event.clientY;
+}
+
+function touchUp() {
+    lastX = NaN;
+    lastY = NaN;
+}
+
+function z_pan(event) {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+
+    //if(!mouseDown.active) return;
+    //if (boolDown) {
+    if (event.touches.length == 1) {
+
+        let x = event.touches[0].clientX;
+        let y = event.touches[0].clientY;
+
+        let dx = x - lastX;
+        let dy = y - lastY;
+
+        if (!isNaN(dx) && !isNaN(dy)) {
+
+            viewBox.x -= dx * 2;
+            viewBox.y -= dy * 2;
+
+        }
+
+        lastX = x;
+        lastY = y;
+
+    } else {
+
+        let x0 = event.touches[0].clientX;
+        let y0 = event.touches[0].clientY;
+        let x1 = event.touches[1].clientX;
+        let y1 = event.touches[1].clientY;
+        let d = Math.sqrt((x1 - x0) ** 2 + (y1 - y0) ** 2);
+        let deltaD = lastD - d;
+
+        if (d > lastD) {
+            zoom(-150);
+        } else {
+            zoom(150)
+        }
+
+        lastD = d;
+    }
+}
+
+
+function z_scaleText() {
 
     //let svg = document.getElementById("planetSystem");
     let svg = document.getElementById("svgObject").contentDocument.getElementById("planetSystem");
@@ -193,22 +341,6 @@ function scaleText() {
 
 }
 
-function toggleMouseDown(event) {
-    boolDown = !boolDown;
-}
-
-function mouseUp(event){
-}
-
-function touchDown(event) {
-    lastX = event.clientX;
-    lastY = event.clientY;
-}
-
-function touchUp() {
-    lastX = NaN;
-    lastY = NaN;
-}
 
 
 
@@ -219,12 +351,20 @@ function initializeSVG() {
     let obj = document.getElementById("svgObject");
     let svg = obj.contentDocument.rootElement;
 
-    mouseDown = { active: false, x: 0, y: 0 };
-    boolDown = false;
+    //mouseDown = { active: false, x: 0, y: 0 };
+    //boolDown = false;
 
-    svg.addEventListener("mousemove", mouseMove);
+    svg.addEventListener("pointerdown", pointerDown);
+    svg.addEventListener("pointerup", pointerUp);
+    svg.addEventListener("pointermove", pointerMove);
     svg.addEventListener("mousewheel", zoomWheel);
- 
+    
+    svg.style.touchaction = "none";
+
+    //onpointerdown = "toggleMouseDown(event)"
+    //onpointerup = "toggleMouseDown(event)"
+    //onmouseleave = "boolDown=false"
+  
     mapWidth = svg.scrollWidth;
     mapHeight = svg.scrollHeight;
 
@@ -232,6 +372,8 @@ function initializeSVG() {
 
     initialViewBoxWidth = viewBox.width;
 
+    document.getElementById("outer").scrollLeft = 49;
+    
     console.log("....svg initialized");
 }
 
@@ -295,4 +437,3 @@ async function setSolarSystemSVG() {
 
     window.dispatchEvent(displayedTimeChangeEvent);
 }
-

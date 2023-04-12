@@ -1,11 +1,11 @@
 #divDisplayContainer {
-    display: grid;
-    /* width: 350px; */
-    grid-template-columns: 140px 120px 100px 100px;
-    grid-template-rows: 50px 50px;
-    grid-row-gap: 5px;
-    grid-column-gap: 10px;
-    justify-content: center;
+    /* display: grid; */
+    width: 350px;
+    /* grid-template-columns: 140px 120px 100px 100px; */
+    /* grid-template-rows: 50px 50px; */
+    /* grid-row-gap: 5px; */
+    /* grid-column-gap: 10px; */
+    /* justify-content: center; */
     background-color: #484f5b;
     border: 1px solid black;
     border-radius: 8px;
@@ -81,8 +81,9 @@ div.paramDisp_inactive input {
 }
 
 #utPanelUnit {
-    grid-row: 1;
-    grid-column: 1;
+    width: 150px;
+    /* grid-row: 1; */
+    /* grid-column: 2; */
 }
 
 #pePanelUnit {

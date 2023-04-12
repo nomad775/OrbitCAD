@@ -14,79 +14,34 @@
 
         <link rel="stylesheet" href="mfd.css">
         <link rel="stylesheet" href="displayPanel.css">
-        <link rel="stylesheet" href="solarSystemSVG.css">
 
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
 
-        <style>
-            #timeEntry{
-                background-color: gray;
-                padding-left: 30px;
-                padding-right: 30px;
-            }
-
-            #timeEntry h1{
-                text-align: center;
-                font-size: 12pt;
-                color: white;
-            }
-
-            #timeEntry label{
-                display: inline-block;
-                width: 20px;
-                margin-left: 10px;
-                margin-top: 5px;
-                color: white;
-                background-color: gray;
-                background-color: inherit;
-            }
-
-            #timeEntry input[type="number"]{
-                border: 1px black solid;
-                width: 6ch;
-            }
-
-            #timeEntry input[type="reset"], #timeEntry input[type="submit"]{
-                color:black;
-                background-color: lightgray;
-                padding: 5px;
-                height: 30px;
-                margin: auto;
-                
-            }
-
-            #divFrmButtons{
-                display:flex;
-                align-items: center;
-            }
-
-        </style>
-
     </head>
 
     <body onload="initialize()">
 
-        <dialog id="timeEntry" class="paramDisp">
+        <dialog id="timeEntry" class="paramDisp" >
             <form id="frmTimeEntry" method="dialog">
                 
                 <h1>ENTER INITIAL DATE</h1>
             
                 <label for="utY">Y:</label>
-                <input name="utY" type="number" min="1" max="100" value="1" required >
+                <input name="utY" type="number" min="1" max="100" required >
                 <br> 
                 
                 <label for="utD">D:</label>
-                <input name="utD" type="number" min="1" max="426" value="1" required>
+                <input name="utD" type="number" min="1" max="426" required>
                 <br>
                 <p>Optional: Enter Current Time</p>
                 <label for="utH">H:</label>
-                <input name="utH" type="number" min="0" max="5" value="3" required >
+                <input name="utH" type="number" min="0" max="5" >
 
                 <br>
                 <label for="utM">M:</label>
-                <input name="utM" type="number" min="0" max="59" value="0" required>
+                <input name="utM" type="number" min="0" max="59">
                 
                 <p>UT <output id="utS" name="utS"></output> seconds</p>
                 
@@ -116,19 +71,22 @@
             </form>
         </dialog>
 
-        <form name="initializeTransfer" style="display: none ;">
-            page: <input name="page"       type="number" value="1" style="width: 3em;">
-            utNow <input name="utNow"      type="number" value="0" style="width: 7em;"><br>
-            origin<input name="origin" type="text" required style="width: 4em;">
-            dest  <input name="destination" type="text" required style="width: 4em;"><br>
-            tod   <input name="tod" type="number" style="width: 8em;">
-            v3_o  <input name="v3o" type="number"style="width: 8em;"><br>
-            toa   <input name="toa" type="number" style="width: 8em;"><br>
-            v3_d  <input name="v3d" type="number" style="width: 8em;"><br>
-            originPark <input name="originPark" type="number" value="100" style="width: 8em;"><br>
-            destPark   <input name="destinationPark" type="number" value="100" style="width: 8em;">
-        </form>
-
+        <div id="divForm">
+            <form name="initializeTransfer">
+                <label>page </label>       <input name="page"            type="number" value="1" style="width: 3em;"><br>
+                <label>utNow</label>       <input name="utNow"           type="number" value="2" style="width: 7em;"><br>
+                <label>origin</label>      <input name="origin"          type="text" required style="width: 4em;"><br>
+                <label>destination</label> <input name="destination"     type="text" required style="width: 4em;"><br>
+                <label>TOD</label>         <input name="tod"             type="number" style="width: 8em;"><br>
+                <label>V_3_o</label>       <input name="v3o"             type="number" style="width: 8em;"><br>
+                <label>TOA</label>         <input name="toa"             type="number" style="width: 8em;"><br>
+                <label>V_3_d</label>       <input name="v3d"             type="number" style="width: 8em;"><br>
+                <label>Origin Park</label> <input name="originPark"      type="number" value="100000" style="width: 8em;"><br>
+                <label>Dest. Park</label>  <input name="destinationPark" type="number" value="100000" default-value="101" style="width: 8em;">
+            </form>
+        </div>   
+       
+            
         <div id="divDisplayContainer" style="pointer-events: none;">
             
             <div id="utPanelUnit" class="paramDisp">
@@ -137,7 +95,7 @@
                 </div>
             </div>
 
-            <div id="pePanelUnit" class="paramDisp">
+            <div id="pePanelUnit" class="paramDisp_hidden">
                 PERIAPSIS
                 <div class="LCDscreen">
                     <output name="pe" type="text" value="000" style="width:100px">000000</output>
@@ -145,7 +103,7 @@
                 </div>
             </div>
         
-            <div id="apPanelUnit" class="paramDisp">
+            <div id="apPanelUnit" class="paramDisp_hidden">
                 APOAPSIS<br>
                 <div class="LCDscreen">
                     <output name="ap" type="text" style="width:100px">000000</output>
@@ -153,19 +111,19 @@
                 </div>
             </div>
         
-            <div id="lanPanelUnit" class="paramDisp">
+            <div id="lanPanelUnit" class="paramDisp_hidden">
                 LAN<div class="LCDscreen" width="150px">
                     <input name="lan" type="text" value="000.0" style="width:50px"> deg
                 </div>
             </div>
         
-            <div id="argPePanelUnit" class="paramDisp">
+            <div id="argPePanelUnit" class="paramDisp_hidden">
                 ARG PE<div class="LCDscreen">
                     <input name="argPe" type="text" value="000.0" style="width:50px"> deg
                 </div>
             </div>
         
-            <div id="incPanelUnit" class="paramDisp_inactive">
+            <div id="incPanelUnit" class="paramDisp_hidden">
                 INC<div class="LCDscreen">
                     <input name="inc" type="text" value="000.0" style="width:50px"> deg
                 </div>
@@ -179,20 +137,7 @@
                         value="00" style="width:18px" min="0" max="59">
                 </div>
             </div>
-        
-            <!-- <div id="lnPanelUnit" class="paramDisp">
-                LN:
-                <span style="padding-left:5px;">CHASE</span>
-                <span style="padding-left:12px;">TARGET</span>
-                <span style="padding-left:15px;">DIFF</span>
-        
-                <div class="LCDscreen">
-                    <span id="lnChase" style="width:50px; padding-right:5px;">180.0</span>
-                    <span id="lnTarget" style="width:50px; padding-right:5px;">180.0</span>
-                    <span id="lnDiff" style="width:50px; padding-right:5px;">180.0</span>
-                </div>
-            </div> -->
-        
+
             <div class="paramDisp_hidden">PERIOD
                 <div class="display">y<span style="width:50">000</span> d:<span>000</span>00:00
                 </div>
@@ -208,282 +153,290 @@
         
         </div>
 
-        <div id="divMFD">
+        <div id="outer">
+            <div id="divMFD">
 
-            <div id="divScreen" style="position: relative; top:0px; left: 0px;">
+                <div id="divScreen" style="position: relative; top:0px; left: 0px;">
 
-                <object id="svgObject" type="image/svg+xml" data="planetSystem.svg" width="100%" height="100%"></object>
+                    <object id="svgObject" type="image/svg+xml" data="planetSystem.svg" width="100%" height="100%"></object>
 
-                <div id="screenHtml" style="color: yellowGreen; position: absolute; top: 0px; left:0px;" >
-                    <p style="margin-left: 10px;">TRANSFER: <output name="originName">ORIGIN</output> to <output name="destinationName" >DESTINATION</output> <output name="totalDv"></output></p>
+                    <div id="screenHtml" style="color: yellowGreen; position: absolute; top: 0px; left:0px;" >
+                        <p style="margin-left: 10px;">TRANSFER: <output name="originName">ORIGIN</output> to <output name="destinationName" >DESTINATION</output><br/> TOTAL dV : <output name="totalDv"></output> m/s</p>
+                    </div>
+
+                    <svg id="alignmentMarker" width="12"  viewbox="0 0 20 60" overflow="visible" style="position: absolute; top: 40px; right: 40px;" onclick="document.getElementById('alignToLn0').click()">
+                        <path d="M 0,30 l 10,-30 l 10,30  l-20,0" stroke="black" fill="red"></path>
+                        <path d="M 0,30 l 10,30  l 10,-30 l-20,0" stroke="black" fill="white"></path>
+                    </svg>
+
                 </div>
 
-                <svg id="alignmentMarker" width="12"  viewbox="0 0 20 60" overflow="visible" style="position: absolute; top: 40px; right: 40px;" onclick="document.getElementById('alignToLn0').click()">
-                    <path d="M 0,30 l 10,-30 l 10,30  l-20,0" stroke="black" fill="red"></path>
-                    <path d="M 0,30 l 10,30  l 10,-30 l-20,0" stroke="black" fill="white"></path>
+                <svg id="svgButton" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg"
+                    xmlns:xlink="http://www.w3.org/1999/xlink" version="1.2" display="none">
+                
+                    <defs>
+                        <symbol id="button" viewbox="0,0,20,20">
+                            <!-- <rect x="0" y="0" width="60" height="20" rx="3" ry="3" fill="darkGrey" /> -->
+                            <!-- <rect x="1" y="1" width="58" height="18" rx="2" ry="2" fill="black" /> -->
+                            <!-- <rect x="10" y="4" width="40" height="12" rx="1" ry="1" fill="white" /> -->
+
+                            <rect x="0" y="0" width="20" height="20" rx="3" ry="3" fill="darkGrey" />
+                            <rect x="1" y="1" width="18" height="18" rx="2" ry="2" fill="black" />
+                            <rect x="4" y="4" width="12" height="12" rx="1" ry="1" fill="white" />
+                        </symbol>
+                    </defs>
                 </svg>
 
-            </div>
+                <div id="divTopButtonGroup">
 
-            <svg id="svgButton" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg"
-                xmlns:xlink="http://www.w3.org/1999/xlink" version="1.2" display="none">
-            
-                <defs>
-                    <symbol id="button" width="60" height="20">
-                        <rect x="0" y="0" width="60" height="20" rx="3" ry="3" fill="darkGrey" />
-                        <rect x="1" y="1" width="58" height="18" rx="2" ry="2" fill="black" />
-                        <rect x="10" y="4" width="40" height="12" rx="1" ry="1" fill="white" />
-                    </symbol>
-                </defs>
-            </svg>
-
-            <div id="divTopButtonGroup">
-
-                <label for="optT0">
-                    <svg width="60" height="20">
-                        <use href="#button"></use>
-                    </svg>
-                </label>
-                
-                <label for="optT1">
-                    <svg width="60" height="20">
-                        <use href="#button"></use>
-                    </svg>
-                </label>
-                
-                <label for="optT2">
-                    <svg width="60" height="20">
-                        <use href="#button"></use>
-                    </svg>
-                </label>
-                
-                <label for="optT3">
-                    <svg width="60" height="20">
-                        <use href="#button"></use>
-                    </svg>
-                </label>
-                
-                <label for="optT4">
-                    <svg width="60" height="20">
-                        <use href="#button"></use>
-                    </svg>
-                </label>
-                
-                <label for="optT5">
-                    <svg width="60" height="20">
-                        <use href="#button"></use>
-                    </svg>
-                </label>
-
-            </div>
-
-            <div id="divTopLabelGroup">
-                    <input id="optT0" name="top" type="radio">
-                    <label id="lblT0" for="optT0" class="mfdButtonLabel">opt T0</label>
+                    <label for="optT0">
+                        <svg class="button">
+                            <use href="#button"></use>
+                        </svg>
+                    </label>
                     
-                    <input id="optT1" name="top" type="radio">
-                    <label id="lblT1" for="optT1" class="mfdButtonLabel">opt T1</label>
+                    <label for="optT1">
+                        <svg class="button">
+                            <use href="#button"></use>
+                        </svg>
+                    </label>
                     
-                    <input id="optT2" name="top" type="radio">
-                    <label id="lblT2" for="optT2" class="mfdButtonLabel">opt T2</label>
+                    <label for="optT2">
+                        <svg class="button">
+                            <use href="#button"></use>
+                        </svg>
+                    </label>
                     
-                    <input id="optT3" name="top" type="radio">
-                    <label id="lblT3" for="optT3" class="mfdButtonLabel">opt T3</label>
+                    <label for="optT3">
+                        <svg class="button">
+                            <use href="#button"></use>
+                        </svg>
+                    </label>
                     
-                    <input id="optT4" name="top" type="radio">
-                    <label id="lblT4" for="optT4" class="mfdButtonLabel">opt T4</label>
+                    <label for="optT4">
+                        <svg class="button">
+                            <use href="#button"></use>
+                        </svg>
+                    </label>
                     
-                    <input id="optT5" name="top" type="radio">
-                    <label id="lblT5" for="optT5" class="mfdButtonLabel">opt T5</label>
-            </div>
+                    <label for="optT5">
+                        <svg class="button">
+                            <use href="#button"></use>
+                        </svg>
+                    </label>
 
-            <div id="divLeftButtonGroup">
-                <label for="optL0">
-                    <svg width="60" height="20">
-                        <use href="#button"></use>
-                    </svg>
-                </label>
-                
-                <label for="optL1">
-                    <svg width="60" height="20">
-                        <use href="#button"></use>
-                    </svg>
-                </label>
-                
-                <label for="optL2">
-                    <svg width="60" height="20">
-                        <use href="#button"></use>
-                    </svg>
-                </label>
-                
-                <label for="optL3">
-                    <svg width="60" height="20">
-                        <use href="#button"></use>
-                    </svg>
-                </label>
-                
-                <label for="optL4">
-                    <svg width="60" height="20">
-                        <use href="#button"></use>
-                    </svg>
-                </label>
-                
-                <label for="optL5">
-                    <svg width="60" height="20">
-                        <use href="#button"></use>
-                    </svg>
-                </label>
-            </div>
+                </div>
 
-            <div id="divLeftLabelGroup">
-                <input id="optL0" name="left" type="radio">
-                <label id="lblL0" for="optL0"  class="mfdButtonLabel"></label>
-            
-                <input id="optL1" name="left" type="radio">
-                <label id="lblL1" for="optL1"  class="mfdButtonLabel"></label>
-            
-                <input id="optL2" name="left" type="radio">
-                <label id="lblL2" for="optL2" class="mfdButtonLabel"></label>
-            
-                <input id="optL3" name="left" type="radio">
-                <label id="lblL3" for="optL3" class="mfdButtonLabel"></label>
-            
-                <input id="optL4" name="left" type="radio">
-                <label id="lblL4" for="optL4" class="mfdButtonLabel"></label>
-            
-                <input id="optL5" name="left" type="radio">
-                <label id="lblL5" for="optL5" class="mfdButtonLabel"></label>
-            </div>
+                <div id="divTopLabelGroup">
+                        <input id="optT0" name="top" type="radio">
+                        <label id="lblT0" for="optT0" class="mfdButtonLabel">opt T0</label>
+                        
+                        <input id="optT1" name="top" type="radio">
+                        <label id="lblT1" for="optT1" class="mfdButtonLabel">opt T1</label>
+                        
+                        <input id="optT2" name="top" type="radio">
+                        <label id="lblT2" for="optT2" class="mfdButtonLabel">opt T2</label>
+                        
+                        <input id="optT3" name="top" type="radio">
+                        <label id="lblT3" for="optT3" class="mfdButtonLabel">opt T3</label>
+                        
+                        <input id="optT4" name="top" type="radio">
+                        <label id="lblT4" for="optT4" class="mfdButtonLabel">opt T4</label>
+                        
+                        <input id="optT5" name="top" type="radio">
+                        <label id="lblT5" for="optT5" class="mfdButtonLabel">opt T5</label>
+                </div>
 
-            <div id="divRightButtonGroup">
-                <label for="optR0">
-                    <svg width="60" height="20">
-                        <use href="#button"></use>
-                    </svg>
-                </label>
-            
-                <label for="optR1">
-                    <svg width="60" height="20">
-                        <use href="#button"></use>
-                    </svg>
-                </label>
-            
-                <label for="optR2">
-                    <svg width="60" height="20">
-                        <use href="#button"></use>
-                    </svg>
-                </label>
-            
-                <label for="optR3">
-                    <svg width="60" height="20">
-                        <use href="#button"></use>
-                    </svg>
-                </label>
-            
-                <label for="optR4">
-                    <svg width="60" height="20">
-                        <use href="#button"></use>
-                    </svg>
-                </label>
-            
-                <label for="optR5">
-                    <svg width="60" height="20">
-                        <use href="#button"></use>
-                    </svg>
-                </label>
-            </div>
-            
-            <div id="divRightLabelGroup">
-                <input id="optR0" name="right" type="radio">
-                <label id="lblR0" for="optR0"></label>
-            
-                <input id="optR1" name="right" type="radio">
-                <label id="lblR1" for="optR1"></label>
-            
-                <input id="optR2" name="right" type="radio">
-                <label id="lblR2" for="optR2"></label>
-            
-                <input id="optR3" name="right" type="radio">
-                <label id="lblR3" for="optR3"></label>
-            
-                <input id="optR4" name="right" type="radio">
-                <label id="lblR4" for="optR4"></label>
-            
-                <input id="optR5" name="top" type="radio">
-                <label id="lblR5" for="optR5"></label>
-            </div>
+                <div id="divLeftButtonGroup">
+                    <label for="optL0">
+                        <svg class="button">
+                            <use href="#button"></use>
+                        </svg>
+                    </label>
+                    
+                    <label for="optL1">
+                        <svg class="button">
+                            <use href="#button"></use>
+                        </svg>
+                    </label>
+                    
+                    <label for="optL2">
+                        <svg class="button">
+                            <use href="#button"></use>
+                        </svg>
+                    </label>
+                    
+                    <label for="optL3">
+                        <svg class="button">
+                            <use href="#button"></use>
+                        </svg>
+                    </label>
+                    
+                    <label for="optL4">
+                        <svg class="button">
+                            <use href="#button"></use>
+                        </svg>
+                    </label>
+                    
+                    <label for="optL5">
+                        <svg class="button">
+                            <use href="#button"></use>
+                        </svg>
+                    </label>
+                </div>
 
-            <div id="divBottomButtonGroup">
-            
-                <label for="optB0">
-                    <svg width="60" height="20">
-                        <use href="#button"></use>
-                    </svg>
-                </label>
-            
-                <label for="optB1">
-                    <svg width="60" height="20">
-                        <use href="#button"></use>
-                    </svg>
-                </label>
-            
-                <label for="optB2">
-                    <svg width="60" height="20">
-                        <use href="#button"></use>
-                    </svg>
-                </label>
-            
-                <label for="optB3">
-                    <svg width="60" height="20">
-                        <use href="#button"></use>
-                    </svg>
-                </label>
-            
-                <label for="optB4">
-                    <svg width="60" height="20">
-                        <use href="#button"></use>
-                    </svg>
-                </label>
-            
-                <label for="optB5">
-                    <svg width="60" height="20">
-                        <use href="#button"></use>
-                    </svg>
-                </label>
-            
-            </div>
-            
-            <div id="divBottomLabelGroup">
+                <div id="divLeftLabelGroup">
+                    <input id="optL0" name="left" type="radio">
+                    <label id="lblL0" for="optL0"  class="mfdButtonLabel"></label>
                 
-                <input id="optB0" name="bottom" form="frmBottom" type="radio" value="0">
-                <label id="lblB0" for="optB0" class="mfdButtonLabel">opt B0</label>
-            
-                <input id="optB1" name="bottom" form="frmBottom" type="radio" value="1" onclick="unDimPlanets()">
-                <label id="lblB1" for="optB1" class="mfdButtonLabel">opt B1</label>
-            
-                <input id="optB2" name="bottom" form="frmBottom" type="radio" value="2" onclick="unDimPlanets()">
-                <label id="lblB2" for="optB2" class="mfdButtonLabel">opt B2</label>
-            
-                <input id="optB3" name="bottom" form="frmBottom" type="radio" value="3">
-                <label id="lblB3" for="optB3" class="mfdButtonLabel">opt B3</label>
-            
-                <input id="optB4" name="bottom" form="frmBottom" type="radio" value="4">
-                <label id="lblB4" for="optB4" class="mfdButtonLabel">opt B4</label>
-            
-                <input id="optB5" name="bottom" form="frmBottom" type="radio" value="5" onclick="next()">
-                <label id="lblB5" for="optB5" class="mfdButtonLabel">opt B5</label>
+                    <input id="optL1" name="left" type="radio">
+                    <label id="lblL1" for="optL1"  class="mfdButtonLabel"></label>
+                
+                    <input id="optL2" name="left" type="radio">
+                    <label id="lblL2" for="optL2" class="mfdButtonLabel"></label>
+                
+                    <input id="optL3" name="left" type="radio">
+                    <label id="lblL3" for="optL3" class="mfdButtonLabel"></label>
+                
+                    <input id="optL4" name="left" type="radio">
+                    <label id="lblL4" for="optL4" class="mfdButtonLabel"></label>
+                
+                    <input id="optL5" name="left" type="radio">
+                    <label id="lblL5" for="optL5" class="mfdButtonLabel"></label>
+                </div>
 
+                <div id="divRightButtonGroup">
+                    <label for="optR0">
+                        <svg class="button">
+                            <use href="#button"></use>
+                        </svg>
+                    </label>
+                
+                    <label for="optR1">
+                        <svg class="button">
+                            <use href="#button"></use>
+                        </svg>
+                    </label>
+                
+                    <label for="optR2">
+                        <svg class="button">
+                            <use href="#button"></use>
+                        </svg>
+                    </label>
+                
+                    <label for="optR3">
+                        <svg class="button">
+                            <use href="#button"></use>
+                        </svg>
+                    </label>
+                
+                    <label for="optR4">
+                        <svg class="button">
+                            <use href="#button"></use>
+                        </svg>
+                    </label>
+                
+                    <label for="optR5">
+                        <svg class="button">
+                            <use href="#button"></use>
+                        </svg>
+                    </label>
+                </div>
+                
+                <div id="divRightLabelGroup">
+                    <input id="optR0" name="right" type="radio">
+                    <label id="lblR0" for="optR0"></label>
+                
+                    <input id="optR1" name="right" type="radio">
+                    <label id="lblR1" for="optR1"></label>
+                
+                    <input id="optR2" name="right" type="radio">
+                    <label id="lblR2" for="optR2"></label>
+                
+                    <input id="optR3" name="right" type="radio">
+                    <label id="lblR3" for="optR3"></label>
+                
+                    <input id="optR4" name="right" type="radio">
+                    <label id="lblR4" for="optR4"></label>
+                
+                    <input id="optR5" name="top" type="radio">
+                    <label id="lblR5" for="optR5"></label>
+                </div>
+
+                <div id="divBottomButtonGroup">
+                
+                    <label for="optB0">
+                        <svg class="button">
+                            <use href="#button"></use>
+                        </svg>
+                    </label>
+                
+                    <label for="optB1">
+                        <svg class="button">
+                            <use href="#button"></use>
+                        </svg>
+                    </label>
+                
+                    <label for="optB2">
+                        <svg class="button">
+                            <use href="#button"></use>
+                        </svg>
+                    </label>
+                
+                    <label for="optB3">
+                        <svg class="button">
+                            <use href="#button"></use>
+                        </svg>
+                    </label>
+                
+                    <label for="optB4">
+                        <svg class="button">
+                            <use href="#button"></use>
+                        </svg>
+                    </label>
+                
+                    <label for="optB5">
+                        <svg class="button">
+                            <use href="#button"></use>
+                        </svg>
+                    </label>
+                
+                </div>
+                
+                <div id="divBottomLabelGroup">
+                    
+                    <input id="optB0" name="bottom" form="frmBottom" type="radio" value="0">
+                    <label id="lblB0" for="optB0" class="mfdButtonLabel">opt B0</label>
+                
+                    <input id="optB1" name="bottom" form="frmBottom" type="radio" value="1" onclick="unDimPlanets()">
+                    <label id="lblB1" for="optB1" class="mfdButtonLabel">opt B1</label>
+                
+                    <input id="optB2" name="bottom" form="frmBottom" type="radio" value="2" onclick="unDimPlanets()">
+                    <label id="lblB2" for="optB2" class="mfdButtonLabel">opt B2</label>
+                
+                    <input id="optB3" name="bottom" form="frmBottom" type="radio" value="3">
+                    <label id="lblB3" for="optB3" class="mfdButtonLabel">opt B3</label>
+                
+                    <input id="optB4" name="bottom" form="frmBottom" type="radio" value="4">
+                    <label id="lblB4" for="optB4" class="mfdButtonLabel">opt B4</label>
+                
+                    <input id="optB5" name="bottom" form="frmBottom" type="radio" value="5" onclick="next()">
+                    <label id="lblB5" for="optB5" class="mfdButtonLabel">opt B5</label>
+
+                </div>
             </div>
         </div>
 
-        <form id="frmBottom" onformchange="bottomRadioButtonChanged()" style="appearance:none;">
+        <form id="frmBottom" onformchange="bottomRadioButtonChanged()">
+            <p>zoom <output id="zoom" name="zoom"></output></p>
+            <p>X,Y : <output id="xyCoordinates" name="xyCoordinates"></output></p>
             <output name="outBottom"></output>
         </form>
 
         <form id="options">
             <input id="alignToLn0" name="alignToLn0" type="checkbox">
-            <p>zoom <output id="zoom" name="zoom"></output></p>
-            <p>Unicode characters: Aries: &#x2648;&#xfe0e  AN: &#x260a DN: &#x260b  Ln PE:&#x03d6 </p>
+            
+            <!-- <p>Unicode characters: Aries: &#x2648;&#xfe0e  AN: &#x260a DN: &#x260b  Ln PE:&#x03d6 </p> -->
         </form>
         
     </body>
