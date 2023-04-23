@@ -411,9 +411,20 @@ function gotoPage(pageNumber) {
 
 function setActiveView(params){
 
-     console.log("..setting active page");
+    console.log("..setting active page");
 
-    switch(Number(params.page)){
+    let page = Number(params.get("page"));
+    let utNow = Number(params.get("utNow"));
+    let originName = params.get("origin");
+    let destinationName = params.get("destination");
+    let tod = Number(params.get("tod"));
+    let v3o = Number(params.get("v3o"));
+    let originPark = Number(params.get("originPark"));
+    let toa = Number(params.get("toa"));
+    let v3d = Number(params.get("v3d"));
+    let destinationPark = Number(params.get("destinationPark"));
+
+    switch(Number(page)){
 
         case 1:
             // origin/destination selection
@@ -425,37 +436,37 @@ function setActiveView(params){
             // transfer orbit
             console.log("..setting page 2");
             setSolarSystemSVG().then(function(x){
-                initializeTransfer(params.originName, params.destinationName, params.utNow);
+                initializeTransfer(originName, destinationName, utNow);
                 });
             break;
         case 3:
             // ejection
             console.log("..setting page 3")
-            setPlanetSystemSVG(params.originName).then(function(){
+            setPlanetSystemSVG(originName).then(function(){
 
-                initializeHyperbolicSVG(params.originName, params.tod, params.originPark, params.v3o, true);
+                initializeHyperbolicSVG(originName, tod, originPark, v3o, true);
 
                 document.getElementById('altEntry').addEventListener("submit", setPeAlt);
                 document.forms["options"]["alignToLn0"].addEventListener("click", updateHypSVG);
                 
-                document.querySelector("output[name='utNow']").textContent = convertSecondsToDateObj(params.utNow).toString();
+                document.querySelector("output[name='utNow']").textContent = convertSecondsToDateObj(utNow).toString();
             });
             break;
         case 4:
             // plane change
             console.log("..setting page 4");
             setSolarSystemSVG().then(function (x) {
-                setTransferOrbit(params.originName, params.destinationName, params.tod);
+                setTransferOrbit(originName, destinationName, tod);
             });
             break;
         case 5:
             // capture
             console.log("..setting page 5")
-            setPlanetSystemSVG(params.destinationName).then(function () {
-                initializeHyperbolicSVG(params.destinationName, params.toa, params.destinationPark, params.v3d, false);
+            setPlanetSystemSVG(destinationName).then(function () {
+                initializeHyperbolicSVG(destinationName, toa, destinationPark, v3d, false);
                 document.getElementById('altEntry').addEventListener("submit", setPeAlt);
                 document.forms["options"]["alignToLn0"].addEventListener("click", updateHypSVG);
-                document.querySelector("output[name='utNow']").textContent = convertSecondsToDateObj(params.utNow).toString();
+                document.querySelector("output[name='utNow']").textContent = convertSecondsToDateObj(utNow).toString();
             });
             break;
     }
@@ -480,7 +491,7 @@ function initializeMFDfromFile(params) {
 
     console.log(".starting MFD initialization...");
 
-    let pageNumber = params.page;
+    let pageNumber = params.get("page");
 
     fetch(`transferApp_P${pageNumber}.json`).then(response => response.json()).then( (dataObj) => 
         
@@ -521,9 +532,9 @@ function initializeMFDfromFile(params) {
 
             outputFields.forEach((field) =>{
 
-                if(params[field]){
-                    console.log(".." + field + " = ", params[field]);
-                    document.querySelector(`output[name='${field}']`).textContent = params[field];
+                if(params.has(field)){
+                    console.log(".." + field + " = ", params.get(field));
+                    document.querySelector(`output[name='${field}']`).textContent = params.get(field);
                 }
 
             });
@@ -535,11 +546,25 @@ function initializeMFDfromFile(params) {
 
 function parseQueryString(){
 
-    let params = new URLSearchParams(location.search);
-    let i = params.length;
-    console.log(params.entries.length);
+    let queryStr = location.search;
+    let form = document.forms["initializeTransfer"];
+    let formData = new FormData(form);
+    let i=0;
 
+    if(queryStr == ""){
+        console.log("submitting form to set defaults");
+        document.forms["initializeTransfer"].submit();
+        return;
+    }
 
+    form["utNow"].value = 10;
+
+    queryStr = location.search;
+    console.log("queryStr 2: ", queryStr);
+    
+    let params = new URLSearchParams(queryStr);
+    
+    // update form to match query string
     let page = Number(params.get("page"));
     let utNow = Number(params.get("utNow"));
     let originName = params.get("origin");
@@ -551,7 +576,6 @@ function parseQueryString(){
     let v3d = Number(params.get("v3d"));
     let destinationPark = Number(params.get("destinationPark"));
 
-    let form = document.forms["initializeTransfer"];
     form["utNow"].value = utNow;
     form["origin"].value = originName;
     form["destination"].value = destinationName;
@@ -564,13 +588,14 @@ function parseQueryString(){
 
     page = (page == 0) ? document.forms["initializeTransfer"]["page"].value : page;
 
-    return { "page": page, "utNow": utNow, "originName": originName, "destinationName": destinationName, "tod": tod, "v3o": v3o, "toa": toa, "v3d": v3d, "originPark": originPark, "destinationPark": destinationPark};
+    return params;
+
+    //{ "page": page, "utNow": utNow, "originName": originName, "destinationName": destinationName, "tod": tod, "v3o": v3o, "toa": toa, "v3d": v3d, "originPark": originPark, "destinationPark": destinationPark};
 }
 
 function initialize() {
 
     console.log("====================================");
-    console.log(planets);
     console.log("initializing...")
 
     let params = parseQueryString();
